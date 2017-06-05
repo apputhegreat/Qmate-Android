@@ -1,0 +1,94 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:layout_gravity="center"
+    android:background="@android:color/white"
+    android:gravity="center"
+    android:orientation="vertical">
+
+    <TextView
+        android:id="@+id/quote_text"
+        fontPath="fonts/JosefinSans-SemiBold.ttf"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_margin="16dip"
+        android:gravity="left"
+        android:text="If you want to shine like a sun, first burn like a sun"
+        android:textAlignment="center"
+        android:textColor="@android:color/black"
+        android:textSize="28sp"
+        tools:ignore="MissingPrefix" />
+
+    <de.hdodenhof.circleimageview.CircleImageView xmlns:app="http://schemas.android.com/apk/res-auto"
+        android:id="@+id/profile_image"
+        android:layout_width="46dp"
+        android:layout_height="46dp"
+        android:src="@drawable/gandhi"
+        app:civ_border_color="#FF000000"
+        app:civ_border_width="1dp" />
+
+    <TextView
+        android:id="@+id/cquote_author"
+        fontPath="fonts/Cabin-Regular.ttf"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_margin="8dip"
+        android:textAlignment="center"
+        android:textColor="@android:color/black"
+        android:textSize="14sp"
+        tools:ignore="MissingPrefix"
+        tools:text="Abdul Kalam" />
+
+    <RelativeLayout
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_marginTop="80dp">
+
+        <com.balysv.materialripple.MaterialRippleLayout
+            android:id="@+id/stars"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_centerInParent="true">
+
+            <android.support.v7.widget.AppCompatImageButton
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:tint="@color/gray"
+                android:backgroundTint="@android:color/white"
+                android:src="@drawable/ic_star_black_24dp" />
+        </com.balysv.materialripple.MaterialRippleLayout>
+
+        <com.balysv.materialripple.MaterialRippleLayout
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginRight="70dp"
+            android:layout_centerVertical="true"
+            android:layout_toLeftOf="@+id/stars">
+
+            <android.support.v7.widget.AppCompatImageButton
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:tint="@color/gray"
+                android:backgroundTint="@android:color/white"
+                android:src="@drawable/ic_favorite_black_24dp" />
+        </com.balysv.materialripple.MaterialRippleLayout>
+
+        <com.balysv.materialripple.MaterialRippleLayout
+            android:layout_centerVertical="true"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginLeft="70dp"
+            android:layout_toRightOf="@+id/stars">
+
+            <android.support.v7.widget.AppCompatImageButton
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:tint="@color/gray"
+                android:backgroundTint="@android:color/white"
+                android:src="@drawable/ic_share_black_24dp" />
+        </com.balysv.materialripple.MaterialRippleLayout>
+    </RelativeLayout>
+
+</LinearLayout>
