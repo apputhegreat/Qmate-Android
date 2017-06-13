@@ -22,7 +22,7 @@
         tools:ignore="MissingPrefix" />
 
     <de.hdodenhof.circleimageview.CircleImageView xmlns:app="http://schemas.android.com/apk/res-auto"
-        android:id="@+id/profile_image"
+        android:id="@+id/author_image"
         android:layout_width="46dp"
         android:layout_height="46dp"
         android:src="@drawable/gandhi"
@@ -30,7 +30,7 @@
         app:civ_border_width="1dp" />
 
     <TextView
-        android:id="@+id/cquote_author"
+        android:id="@+id/quote_author"
         fontPath="fonts/Cabin-Regular.ttf"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"

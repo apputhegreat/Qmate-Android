@@ -35,7 +35,8 @@
             </com.balysv.materialripple.MaterialRippleLayout>
 
 
-            <EditText
+            <TextView
+                android:id="@+id/search_bar"
                 fontPath="fonts/JosefinSans-Regular.ttf"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
@@ -46,7 +47,7 @@
                 android:background="@android:color/transparent"
                 android:drawableLeft="@drawable/ic_search_black_24dp"
                 android:drawablePadding="5dp"
-                android:text="Motivational"
+                android:text="Search"
                 android:textColor="@android:color/black"
                 android:textSize="16sp"
                 tools:ignore="MissingPrefix" />
@@ -94,6 +95,7 @@
                 android:background="@color/gray"
                 android:layout_height="10dp"/>
             <TextView
+                android:id="@+id/current_tag_text"
                 android:layout_centerInParent="true"
                 android:layout_width="match_parent"
                 android:textAlignment="center"
@@ -101,7 +103,7 @@
                 android:background="@color/gray"
                 android:layout_height="40dp"
                 android:textColor="@android:color/white"
-                android:text="Motivational" />
+                android:text="All" />
             <View
                 android:layout_alignParentBottom="true"
                 android:layout_width="match_parent"
@@ -128,7 +130,7 @@
                 android:background="@color/gray"
                 android:layout_height="10dp"/>
             <TextView
-                android:id="@+id/author_spin"
+                android:id="@+id/current_author_text"
                 android:background="@color/gray"
                 android:layout_centerInParent="true"
                 android:textAlignment="center"
@@ -136,7 +138,7 @@
                 android:textColor="@android:color/white"
                 android:layout_width="match_parent"
                 android:layout_height="40dp"
-                android:text="Gandhi" />
+                android:text="All" />
         </RelativeLayout>
     </RelativeLayout>
 
