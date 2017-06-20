@@ -35,11 +35,13 @@ public class QuotesUtil {
         quotesListener = new ValueEventListener() {
             @Override
             public void onDataChange(DataSnapshot dataSnapshot) {
+                ArrayList<Quote> quotesNew = new ArrayList<>();
                 for (DataSnapshot snap : dataSnapshot.getChildren()
                         ) {
                     Quote quote = snap.getValue(Quote.class);
-                    quotes.add(quote);
+                    quotesNew.add(quote);
                 }
+                quotes = quotesNew;
                 callUpdateView(quotes);
             }
 
@@ -51,11 +53,17 @@ public class QuotesUtil {
         authorsListener = new ValueEventListener() {
             @Override
             public void onDataChange(DataSnapshot dataSnapshot) {
+                LinkedHashMap<String, Author> authorsNew = new LinkedHashMap<>();
+                Author all = new Author();
+                all.name = "All";
+                all.id = "-1";
+                authorsNew.put("-1",all);
                 for (DataSnapshot snap : dataSnapshot.getChildren()
                         ) {
                     Author author = snap.getValue(Author.class);
-                    authors.put(snap.getKey(), author);
+                    authorsNew.put(snap.getKey(), author);
                 }
+                authors = authorsNew;
             }
 
             @Override
@@ -66,11 +74,14 @@ public class QuotesUtil {
         tagsListener = new ValueEventListener() {
             @Override
             public void onDataChange(DataSnapshot dataSnapshot) {
+                ArrayList<String> tagsNew = new ArrayList<>();
+                tagsNew.add("All");
                 for (DataSnapshot snap : dataSnapshot.getChildren()
                         ) {
                     String tag = snap.getValue().toString();
-                    tags.add(tag);
+                    tagsNew.add(tag);
                 }
+                tags = tagsNew;
             }
 
             @Override

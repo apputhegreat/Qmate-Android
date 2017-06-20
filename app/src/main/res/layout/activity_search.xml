@@ -10,52 +10,53 @@
         android:id="@+id/toolbar"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:background="@android:color/white"
+        android:background="@android:color/black"
         android:elevation="1dp"
         android:focusableInTouchMode="true"
         android:minHeight="45dp"
         app:titleTextColor="@android:color/black">
 
         <RelativeLayout
+            android:background="@android:color/white"
             android:layout_width="match_parent"
             android:layout_height="wrap_content">
-
-            <com.balysv.materialripple.MaterialRippleLayout
-                android:id="@+id/speech_icon"
+            <Spinner
+                android:background="@android:color/black"
+                tools:listitem="@layout/spinner_view"
+                android:layout_alignParentLeft="true"
+                android:id="@+id/search_spinner"
                 android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:layout_alignParentRight="true"
-                android:layout_centerVertical="true"
-                android:padding="10dp">
+                android:layout_height="wrap_content">
 
-                <android.support.v7.widget.AppCompatImageView
-                    android:layout_width="wrap_content"
-                    android:layout_height="wrap_content"
-                    android:src="@drawable/ic_keyboard_voice_black_24dp" />
-            </com.balysv.materialripple.MaterialRippleLayout>
-
+            </Spinner>
 
             <EditText
+                android:layout_toRightOf="@+id/search_spinner"
                 android:id="@+id/search_bar"
                 fontPath="fonts/JosefinSans-Regular.ttf"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                android:layout_alignParentLeft="true"
                 android:layout_centerVertical="true"
                 android:layout_marginRight="10dp"
-                android:layout_toLeftOf="@+id/speech_icon"
+                android:hint="Search author"
+                android:layout_toLeftOf="@+id/close_search"
                 android:background="@android:color/transparent"
-                android:drawableLeft="@drawable/ic_search_black_24dp"
-                android:drawablePadding="5dp"
-                android:text="Motivational"
                 android:textColor="@android:color/black"
                 android:textSize="16sp"
                 tools:ignore="MissingPrefix" />
+            <android.support.v7.widget.AppCompatImageView
+                android:id="@+id/close_search"
+                android:layout_alignParentRight="true"
+                android:layout_centerVertical="true"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:src="@drawable/ic_share_black_24dp"/>
         </RelativeLayout>
 
     </android.support.v7.widget.Toolbar>
 
     <LinearLayout
+        android:visibility="visible"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:layout_below="@id/toolbar"
@@ -94,4 +95,13 @@
             android:stretchMode="columnWidth"
             android:verticalSpacing="10dp"></GridView>
     </LinearLayout>
+
+    <ListView
+        android:visibility="gone"
+        android:layout_below="@id/toolbar"
+        android:id="@+id/search_list"
+        android:layout_width="match_parent"
+        android:layout_height="300dp"
+        android:background="@android:color/white">
+    </ListView>
 </RelativeLayout>
