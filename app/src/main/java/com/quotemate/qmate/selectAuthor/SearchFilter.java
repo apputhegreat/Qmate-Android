@@ -1,6 +1,6 @@
 package com.quotemate.qmate.selectAuthor;
 
-import android.util.Pair;
+import android.support.v4.util.Pair;
 import android.widget.Filter;
 
 import com.quotemate.qmate.adapters.KeyValueAdapter;
@@ -12,7 +12,7 @@ import java.util.ArrayList;
  */
 
 public class SearchFilter extends Filter{
-    private ArrayList<Pair<String,String>> mOriginalList;
+    public ArrayList<Pair<String,String>> mOriginalList;
     private ArrayList<Pair<String,String>> mFilteredList = new ArrayList<>();
     private KeyValueAdapter mAdapter;
 

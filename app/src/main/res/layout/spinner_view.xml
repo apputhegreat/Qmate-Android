@@ -1,6 +1,15 @@
 <?xml version="1.0" encoding="utf-8"?>
-<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
-    android:orientation="vertical" android:layout_width="match_parent"
-    android:layout_height="match_parent">
-
-</LinearLayout>
+<CheckedTextView xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:id="@android:id/text1"
+    android:background="@android:color/black"
+    android:layout_width="match_parent"
+    android:textColor="@android:color/white"
+    tools:text="Author"
+    android:padding="10dp"
+    android:gravity="center"
+    style="?android:attr/spinnerDropDownItemStyle"
+    android:checkMarkTint="@color/chat"
+    android:textAlignment="center"
+    android:layout_height="match_parent"
+    android:ellipsize="marquee" />

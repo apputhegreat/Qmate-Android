@@ -60,8 +60,7 @@
         android:layout_width="match_parent"
         android:layout_height="65dp"
         android:layout_alignParentBottom="true"
-        android:layout_centerHorizontal="true"
-        android:layout_marginBottom="10dp">
+        android:layout_alignParentStart="true">
 
         <com.balysv.materialripple.MaterialRippleLayout
             android:id="@+id/spin"
@@ -88,8 +87,11 @@
             android:layout_alignParentLeft="true"
             android:layout_toLeftOf="@+id/spin"
             android:orientation="vertical"
-            android:layout_height="match_parent">
+            android:background="@color/gray"
+            android:layout_marginLeft="10dp"
+            android:layout_height="40dp">
             <View
+                android:visibility="gone"
                 android:layout_alignParentTop="true"
                 android:layout_width="match_parent"
                 android:background="@color/gray"
@@ -101,43 +103,47 @@
                 android:textAlignment="center"
                 android:gravity="center"
                 android:background="@color/gray"
-                android:layout_height="40dp"
+                android:layout_height="wrap_content"
                 android:textColor="@android:color/white"
                 android:text="All" />
             <View
+                android:visibility="gone"
                 android:layout_alignParentBottom="true"
                 android:layout_width="match_parent"
-                android:background="@color/gray"
                 android:layout_height="10dp"/>
         </RelativeLayout>
         <RelativeLayout
+            android:layout_marginRight="10dp"
             android:layout_centerVertical="true"
             android:layout_width="wrap_content"
+            android:layout_height="40dp"
             android:layout_alignParentRight="true"
             android:layout_toRightOf="@+id/spin"
             android:orientation="vertical"
-            android:layout_height="match_parent">
+            android:background="@color/gray"
+            >
 
             <View
+                android:visibility="gone"
                 android:layout_alignParentTop="true"
                 android:layout_width="match_parent"
                 android:background="@color/gray"
                 android:layout_height="10dp"/>
 
             <View
+                android:visibility="gone"
                 android:layout_alignParentBottom="true"
                 android:layout_width="match_parent"
                 android:background="@color/gray"
                 android:layout_height="10dp"/>
             <TextView
+                android:layout_height="wrap_content"
                 android:id="@+id/current_author_text"
-                android:background="@color/gray"
                 android:layout_centerInParent="true"
                 android:textAlignment="center"
                 android:gravity="center"
                 android:textColor="@android:color/white"
                 android:layout_width="match_parent"
-                android:layout_height="40dp"
                 android:text="All" />
         </RelativeLayout>
     </RelativeLayout>

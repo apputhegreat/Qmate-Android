@@ -6,7 +6,6 @@ package com.quotemate.qmate.model;
 
 import java.io.Serializable;
 import java.util.ArrayList;
-import java.util.List;
 
 public class Quote implements Serializable {
 
@@ -15,7 +14,7 @@ public class Quote implements Serializable {
 
     public String id;
     public String text;
-    public String tags;
+    public ArrayList<String> tags;
     public String author;
     public String authorId;
     public int likes;

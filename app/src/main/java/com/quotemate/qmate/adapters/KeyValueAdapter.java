@@ -8,9 +8,11 @@ import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.ArrayAdapter;
+import android.widget.Filter;
 import android.widget.TextView;
 
 import com.quotemate.qmate.R;
+import com.quotemate.qmate.selectAuthor.SearchFilter;
 
 import java.util.ArrayList;
 
@@ -20,17 +22,29 @@ import java.util.ArrayList;
 
 public class KeyValueAdapter extends ArrayAdapter<Pair<String,String>> {
     ArrayList<Pair<String,String>> pairs;
+    private Filter mFilter;
+
     private static class ViewHolder {
         TextView displayText;
     }
     public KeyValueAdapter(@NonNull Context context, ArrayList<Pair<String ,String>> pairs) {
-        super(context, 0);
+        super(context, 0, pairs);
         this.pairs = pairs;
+        mFilter = new SearchFilter(this, pairs);
     }
 
     @Override
     public int getCount() {
         return pairs.size();
+    }
+
+    @Override
+    public Filter getFilter() {
+        return mFilter;
+    }
+
+    public Pair<String,String> getItem(int pos) {
+        return pairs.get(pos);
     }
 
     @NonNull

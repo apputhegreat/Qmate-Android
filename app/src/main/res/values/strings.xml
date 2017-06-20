@@ -3,4 +3,11 @@
     <string name="title_home">Home</string>
     <string name="title_dashboard">Dashboard</string>
     <string name="title_notifications">Notifications</string>
+    <string name="SEARCH_TYPE">SearchType</string>
+    <string name="SEARCH_TYPE_AUTHOR">Author</string>
+    <string name="facebook_app_id">1933272276942241</string>
+    <string name="fb_login_protocol_scheme">fb1933272276942241</string>
+
+    <!-- TODO: Remove or change this placeholder text -->
+    <string name="hello_blank_fragment">Hello blank fragment</string>
 </resources>
