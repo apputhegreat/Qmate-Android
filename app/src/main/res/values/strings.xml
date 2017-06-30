@@ -10,4 +10,7 @@
 
     <!-- TODO: Remove or change this placeholder text -->
     <string name="hello_blank_fragment">Hello blank fragment</string>
+    <string name="title_profile">Profile</string>
+    <string name="title_invite">Invite</string>
+    <string name="banner_home_footer">ca-app-pub-1043371367952934/3727694203</string>
 </resources>

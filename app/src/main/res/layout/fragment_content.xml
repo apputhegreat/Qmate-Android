@@ -8,6 +8,7 @@
     android:gravity="center"
     android:orientation="vertical">
 
+
     <TextView
         android:id="@+id/quote_text"
         fontPath="fonts/JosefinSans-SemiBold.ttf"
@@ -42,12 +43,13 @@
         tools:text="Abdul Kalam" />
 
     <RelativeLayout
+        android:id="@+id/action_btns_quote"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:layout_marginTop="80dp">
 
         <com.balysv.materialripple.MaterialRippleLayout
-            android:id="@+id/stars"
+            android:id="@+id/book_mark_quote_btn"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:layout_centerInParent="true">
@@ -55,39 +57,57 @@
             <android.support.v7.widget.AppCompatImageButton
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:tint="@color/gray"
                 android:backgroundTint="@android:color/white"
-                android:src="@drawable/ic_star_black_24dp" />
+                android:src="@drawable/ic_star_black_24dp"
+                android:tint="@color/gray" />
         </com.balysv.materialripple.MaterialRippleLayout>
 
         <com.balysv.materialripple.MaterialRippleLayout
+            android:id="@+id/like_quote_btn"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
+            android:layout_centerVertical="true"
             android:layout_marginRight="70dp"
-            android:layout_centerVertical="true"
-            android:layout_toLeftOf="@+id/stars">
-
-            <android.support.v7.widget.AppCompatImageButton
+            android:layout_toLeftOf="@+id/book_mark_quote_btn">
+            <RelativeLayout
                 android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:tint="@color/gray"
-                android:backgroundTint="@android:color/white"
-                android:src="@drawable/ic_favorite_black_24dp" />
+                android:layout_height="wrap_content">
+                <android.support.v7.widget.AppCompatImageView
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:id="@+id/like_image"
+                    android:backgroundTint="@android:color/white"
+                    android:src="@drawable/ic_favorite_black_24dp"
+                    android:tint="@color/gray" />
+                <TextView
+                    android:layout_marginLeft="-3dp"
+                    android:layout_toRightOf="@+id/like_image"
+                    android:id="@+id/badge_like"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:background="@drawable/item_count"
+                    tools:text="16"
+                    android:textColor="#FFF"
+                    android:textSize="12sp"
+                    android:textStyle="bold" />
+            </RelativeLayout>
+            
         </com.balysv.materialripple.MaterialRippleLayout>
 
         <com.balysv.materialripple.MaterialRippleLayout
-            android:layout_centerVertical="true"
+            android:id="@+id/share_quote_btn"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
+            android:layout_centerVertical="true"
             android:layout_marginLeft="70dp"
-            android:layout_toRightOf="@+id/stars">
+            android:layout_toRightOf="@+id/book_mark_quote_btn">
 
             <android.support.v7.widget.AppCompatImageButton
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:tint="@color/gray"
                 android:backgroundTint="@android:color/white"
-                android:src="@drawable/ic_share_black_24dp" />
+                android:src="@drawable/ic_share_black_24dp"
+                android:tint="@color/gray" />
         </com.balysv.materialripple.MaterialRippleLayout>
     </RelativeLayout>
 

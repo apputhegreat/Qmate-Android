@@ -22,19 +22,24 @@ import java.util.Random;
 
 public class RandomSelector {
     public static Random randomGenerator = new Random();
+
     public static Author getRandomAuthor(LinkedHashMap<String, Author> authors) {
-        Author author;
-        Object[] keys = authors.keySet().toArray();
-        int next =  randomGenerator.nextInt(keys.length);
-        Object key = keys[next];
-        author = authors.get(key.toString());
+        Author author = null;
+        if (authors != null && !authors.isEmpty()) {
+            Object[] keys = authors.keySet().toArray();
+            int next = randomGenerator.nextInt(keys.length);
+            Object key = keys[next];
+            author = authors.get(key.toString());
+        }
         return author;
     }
 
     public static String getRandomTag(ArrayList<String> tags) {
-        String tag;
-        int next =  randomGenerator.nextInt(tags.size());
-        tag = tags.get(next);
+        String tag = null;
+        if (tags != null && !tags.isEmpty()) {
+            int next = randomGenerator.nextInt(tags.size());
+            tag = tags.get(next);
+        }
         return tag;
     }
 
