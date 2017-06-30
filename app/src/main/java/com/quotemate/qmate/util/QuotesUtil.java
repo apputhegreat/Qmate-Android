@@ -1,6 +1,6 @@
 package com.quotemate.qmate.util;
 
-
+import com.google.firebase.database.ChildEventListener;
 import com.google.firebase.database.DataSnapshot;
 import com.google.firebase.database.DatabaseError;
 import com.google.firebase.database.DatabaseReference;
@@ -9,10 +9,13 @@ import com.google.firebase.database.ValueEventListener;
 import com.quotemate.qmate.Interfaces.IUpdateView;
 import com.quotemate.qmate.model.Author;
 import com.quotemate.qmate.model.Quote;
+import com.quotemate.qmate.model.RealmString;
 
 import java.util.ArrayList;
 import java.util.LinkedHashMap;
 import java.util.Objects;
+
+import io.realm.RealmList;
 
 /**
  * Created by anji kinnara on 6/7/17.
@@ -20,6 +23,7 @@ import java.util.Objects;
 
 public class QuotesUtil {
     private final ValueEventListener tagsListener;
+    private final ChildEventListener quotesChildListener;
     private ValueEventListener quotesListener;
     private ValueEventListener authorsListener;
     private IUpdateView updateView;
@@ -29,20 +33,34 @@ public class QuotesUtil {
     public static LinkedHashMap<String, Author> authors = new LinkedHashMap<>();
     public static ArrayList<Quote> quotes = new ArrayList<>();
     public static ArrayList<String> tags = new ArrayList<>();
+    public static ArrayList<BookMarkQuoteId> bookMarkQuoteIds = new ArrayList<>();
 
     public QuotesUtil(final IUpdateView updateView) {
         this.updateView = updateView;
-        quotesListener = new ValueEventListener() {
+        quotesChildListener =  new ChildEventListener() {
             @Override
-            public void onDataChange(DataSnapshot dataSnapshot) {
-                ArrayList<Quote> quotesNew = new ArrayList<>();
-                for (DataSnapshot snap : dataSnapshot.getChildren()
-                        ) {
-                    Quote quote = snap.getValue(Quote.class);
-                    quotesNew.add(quote);
+            public void onChildAdded(DataSnapshot dataSnapshot, String s) {
+                try {
+                    Quote quote = getQuote(dataSnapshot);
+                    quotes.add(quote);
+                    callUpdateView(quotes);
+                } catch (Exception ex) {
                 }
-                quotes = quotesNew;
-                callUpdateView(quotes);
+            }
+
+            @Override
+            public void onChildChanged(DataSnapshot dataSnapshot, String s) {
+
+            }
+
+            @Override
+            public void onChildRemoved(DataSnapshot dataSnapshot) {
+
+            }
+
+            @Override
+            public void onChildMoved(DataSnapshot dataSnapshot, String s) {
+
             }
 
             @Override
@@ -50,6 +68,29 @@ public class QuotesUtil {
 
             }
         };
+//
+//        quotesListener = new ValueEventListener() {
+//            @Override
+//            public void onDataChange(DataSnapshot dataSnapshot) {
+//                ArrayList<Quote> quotesNew = new ArrayList<>();
+//                for (DataSnapshot snap : dataSnapshot.getChildren()
+//                        ) {
+//                    try {
+//                        Quote quote = getQuote(snap);
+//                        quotesNew.add(quote);
+//                    } catch (Exception ex) {
+//                        continue;
+//                    }
+//                }
+//                quotes = quotesNew;
+//                callUpdateView(quotes);
+//            }
+//
+//            @Override
+//            public void onCancelled(DatabaseError databaseError) {
+//
+//            }
+//        };
         authorsListener = new ValueEventListener() {
             @Override
             public void onDataChange(DataSnapshot dataSnapshot) {
@@ -71,6 +112,7 @@ public class QuotesUtil {
 
             }
         };
+
         tagsListener = new ValueEventListener() {
             @Override
             public void onDataChange(DataSnapshot dataSnapshot) {
@@ -91,13 +133,34 @@ public class QuotesUtil {
         };
     }
 
+    public static Quote getQuote(DataSnapshot snap) {
+        Quote quote = new Quote();
+        try {
+            quote.id = snap.getKey();
+            quote.text = snap.child("text").getValue().toString();
+            quote.authorId = snap.child("authorId").getValue().toString();
+            quote.author = snap.child("author").getValue().toString();
+            if( snap.child("likes").exists()) {
+                quote.likes =(int) snap.child("likes").getValue();
+            }
+            quote.tags = new RealmList<>();
+            for (DataSnapshot sanpshot: snap.child("tags").getChildren()
+                 ) {
+                quote.tags.add(new RealmString(sanpshot.getValue().toString()));
+            }
+        } catch (Exception ex) {
+          throw  ex;
+        }
+        return quote;
+    }
+
     public void addQuotesListener() {
-        quotesRef.addValueEventListener(quotesListener);
-        tagsRef.addValueEventListener(tagsListener);
+        quotesRef.addChildEventListener(quotesChildListener);
     }
 
     public void addAuthorsListener() {
-        authorsRef.addValueEventListener(authorsListener);
+        authorsRef.addListenerForSingleValueEvent(authorsListener);
+        tagsRef.addListenerForSingleValueEvent(tagsListener);
     }
 
     public void removeAuthorsListenr() {
@@ -105,8 +168,7 @@ public class QuotesUtil {
     }
 
     public void removeQuotesListener() {
-        quotesRef.removeEventListener(quotesListener);
-        tagsRef.removeEventListener(tagsListener);
+        quotesRef.removeEventListener(quotesChildListener);
     }
 
     public void callUpdateView(ArrayList<Quote> quotes) {
