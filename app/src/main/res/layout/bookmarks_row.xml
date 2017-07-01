@@ -1,0 +1,43 @@
+<?xml version="1.0" encoding="utf-8"?>
+<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:layout_width="match_parent"
+    android:layout_height="wrap_content"
+    android:background="@android:color/white"
+    android:orientation="vertical"
+    android:paddingBottom="10dp"
+    android:paddingLeft="10dp"
+    android:paddingTop="10dp">
+
+    <android.support.v7.widget.AppCompatImageView
+        android:id="@+id/book_mark_img"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_alignParentRight="true"
+        android:layout_centerVertical="true"
+        android:layout_marginLeft="5dp"
+        android:layout_marginRight="5dp"
+        android:tint="@color/gray"
+        android:src="@drawable/ic_star_black_24dp" />
+
+    <TextView
+        android:id="@+id/book_mark_quote_txt"
+        fontPath="fonts/JosefinSans-SemiBold.ttf"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_alignParentLeft="true"
+        android:layout_toLeftOf="@+id/book_mark_img"
+        android:textColor="@android:color/black"
+        android:textSize="16sp"
+        tools:ignore="MissingPrefix"
+        tools:text="If you want to shine like a sun, first burn like a sun test quotes" />
+
+    <TextView
+        android:id="@+id/book_mark_quote_author"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_below="@+id/book_mark_quote_txt"
+        android:textColor="@color/contentColor"
+        android:textSize="14sp"
+        tools:text="-A.P.J. Kalam" />
+</RelativeLayout>

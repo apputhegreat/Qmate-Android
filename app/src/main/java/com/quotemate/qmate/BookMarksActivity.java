@@ -1,0 +1,71 @@
+package com.quotemate.qmate;
+
+import android.content.Context;
+import android.support.v7.app.ActionBar;
+import android.support.v7.app.AppCompatActivity;
+import android.os.Bundle;
+import android.support.v7.widget.DefaultItemAnimator;
+import android.support.v7.widget.LinearLayoutManager;
+import android.support.v7.widget.RecyclerView;
+import android.support.v7.widget.Toolbar;
+import android.view.MenuItem;
+import android.widget.TextView;
+
+import com.quotemate.qmate.adapters.BookMarksAdapter;
+import com.quotemate.qmate.model.Quote;
+import com.quotemate.qmate.util.QuotesUtil;
+
+import java.util.ArrayList;
+
+import uk.co.chrisjenx.calligraphy.CalligraphyContextWrapper;
+
+public class BookMarksActivity extends AppCompatActivity {
+
+    private RecyclerView recyclerView;
+    private ArrayList<Quote> quotesList = new ArrayList<>();
+    private BookMarksAdapter mAdapter;
+    private TextView title;
+
+    @Override
+    protected void onCreate(Bundle savedInstanceState) {
+        super.onCreate(savedInstanceState);
+        setContentView(R.layout.activity_book_marks);
+        Toolbar toolbar = (Toolbar) findViewById(R.id.toolbar);
+        setSupportActionBar(toolbar);
+        ActionBar actionBar = getSupportActionBar();
+        if (actionBar != null) {
+            actionBar.setDisplayHomeAsUpEnabled(true);
+        }
+        title = (TextView) findViewById(R.id.book_marks_title);
+        recyclerView = (RecyclerView) findViewById(R.id.book_marks_recycler_view);
+        mAdapter = new BookMarksAdapter(quotesList);
+        RecyclerView.LayoutManager mLayoutManager = new LinearLayoutManager(getApplicationContext());
+        recyclerView.setLayoutManager(mLayoutManager);
+        recyclerView.setItemAnimator(new DefaultItemAnimator());
+        recyclerView.setAdapter(mAdapter);
+
+        prepareBookMarksData();
+    }
+    @Override
+    protected void attachBaseContext(Context newBase) {
+        super.attachBaseContext(CalligraphyContextWrapper.wrap(newBase));
+    }
+    private void prepareBookMarksData() {
+        for (Quote quote:QuotesUtil.quotes
+             ) {
+            if(quote.isBookMarked) {
+                quotesList.add(quote);
+            }
+        }
+        title.setText("BookMarks" + "(" + quotesList.size() +")");
+        mAdapter.notifyDataSetChanged();
+    }
+    @Override
+    public boolean onOptionsItemSelected(MenuItem item) {
+        int id = item.getItemId();
+        if (id == android.R.id.home) {
+            finish();
+        }
+        return super.onOptionsItemSelected(item);
+    }
+}

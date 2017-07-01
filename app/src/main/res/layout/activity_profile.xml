@@ -3,23 +3,65 @@
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    android:gravity="center"
+    android:background="@color/cardColor"
     tools:context="com.quotemate.qmate.ProfileActivity">
 
-    <Button
-        android:width="150dp"
-        android:text="Book Marks"
-        android:id="@+id/book_marks_btn"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:layout_centerHorizontal="true" />
+    <android.support.v7.widget.Toolbar
+        android:id="@+id/toolbar"
+        android:layout_width="match_parent"
+        android:layout_height="?attr/actionBarSize"
+        android:elevation="2dp"
+        android:layout_alignParentTop="true"
+        >
+        <TextView
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:textColor="@color/contentColor"
+            android:textSize="18sp"
+            android:text="Home"/>
+    </android.support.v7.widget.Toolbar>
+    <LinearLayout
+        android:orientation="vertical"
+        android:layout_below="@+id/toolbar"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content">
+        <Button
+            android:background="@color/cardColor"
+            android:width="150dp"
+            android:text="Book Marks"
+            android:padding="20dp"
+            android:gravity="left"
+            android:elevation="2dp"
+            android:textColor="@color/contentColor"
+            android:id="@+id/book_marks_btn"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_centerHorizontal="true" />
+        <Button
+            android:background="@color/cardColor"
+            android:width="150dp"
+            android:text="Invite your friends"
+            android:padding="20dp"
+            android:gravity="left"
+            android:elevation="2dp"
+            android:textColor="@color/contentColor"
+            android:id="@+id/invite_btn"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_centerHorizontal="true" />
+        <Button
+            android:background="@color/cardColor"
+            android:textColor="@color/contentColor"
+            android:padding="20dp"
+            android:gravity="left"
+            android:width="150dp"
+            android:elevation="2dp"
+            android:text="Logout"
+            android:id="@+id/logout_btn"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_below="@+id/book_marks_btn"
+            android:layout_centerHorizontal="true" />
+    </LinearLayout>
 
-    <Button
-        android:width="150dp"
-        android:text="Logout"
-        android:id="@+id/logout_btn"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:layout_below="@+id/book_marks_btn"
-        android:layout_centerHorizontal="true" />
 </RelativeLayout>

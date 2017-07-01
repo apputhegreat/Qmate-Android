@@ -8,39 +8,49 @@
     android:gravity="center"
     android:orientation="vertical">
 
+    <RelativeLayout
+        android:background="@android:color/white"
+        android:id="@+id/quote_layout"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content">
 
-    <TextView
-        android:id="@+id/quote_text"
-        fontPath="fonts/JosefinSans-SemiBold.ttf"
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:layout_margin="16dip"
-        android:gravity="left"
-        android:text="If you want to shine like a sun, first burn like a sun"
-        android:textAlignment="center"
-        android:textColor="@android:color/black"
-        android:textSize="28sp"
-        tools:ignore="MissingPrefix" />
+        <TextView
+            android:id="@+id/quote_text"
+            fontPath="fonts/JosefinSans-SemiBold.ttf"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_alignParentTop="true"
+            android:layout_margin="16dip"
+            android:gravity="left"
+            android:text="If you want to shine like a sun, first burn like a sun"
+            android:textAlignment="center"
+            android:textColor="@android:color/black"
+            android:textSize="28sp"
+            tools:ignore="MissingPrefix" />
 
-    <de.hdodenhof.circleimageview.CircleImageView xmlns:app="http://schemas.android.com/apk/res-auto"
-        android:id="@+id/author_image"
-        android:layout_width="46dp"
-        android:layout_height="46dp"
-        android:src="@drawable/gandhi"
-        app:civ_border_color="#FF000000"
-        app:civ_border_width="1dp" />
+        <de.hdodenhof.circleimageview.CircleImageView xmlns:app="http://schemas.android.com/apk/res-auto"
+            android:id="@+id/author_image"
+            android:layout_width="46dp"
+            android:layout_height="46dp"
+            android:layout_below="@+id/quote_text"
+            android:layout_centerHorizontal="true"
+            android:src="@drawable/gandhi"
+            app:civ_border_color="#FF000000"
+            app:civ_border_width="1dp" />
 
-    <TextView
-        android:id="@+id/quote_author"
-        fontPath="fonts/Cabin-Regular.ttf"
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:layout_margin="8dip"
-        android:textAlignment="center"
-        android:textColor="@android:color/black"
-        android:textSize="14sp"
-        tools:ignore="MissingPrefix"
-        tools:text="Abdul Kalam" />
+        <TextView
+            android:id="@+id/quote_author"
+            fontPath="fonts/Cabin-Regular.ttf"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_below="@+id/author_image"
+            android:layout_margin="8dip"
+            android:textAlignment="center"
+            android:textColor="@android:color/black"
+            android:textSize="14sp"
+            tools:ignore="MissingPrefix"
+            tools:text="Abdul Kalam" />
+    </RelativeLayout>
 
     <RelativeLayout
         android:id="@+id/action_btns_quote"
@@ -54,11 +64,12 @@
             android:layout_height="wrap_content"
             android:layout_centerInParent="true">
 
-            <android.support.v7.widget.AppCompatImageButton
+            <android.support.v7.widget.AppCompatImageView
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
+                android:id="@+id/book_mark_img"
                 android:backgroundTint="@android:color/white"
-                android:src="@drawable/ic_star_black_24dp"
+                android:src="@drawable/ic_star_border_black_24dp"
                 android:tint="@color/gray" />
         </com.balysv.materialripple.MaterialRippleLayout>
 
@@ -69,29 +80,33 @@
             android:layout_centerVertical="true"
             android:layout_marginRight="70dp"
             android:layout_toLeftOf="@+id/book_mark_quote_btn">
+
             <RelativeLayout
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content">
+
                 <android.support.v7.widget.AppCompatImageView
-                    android:layout_width="wrap_content"
-                    android:layout_height="wrap_content"
                     android:id="@+id/like_image"
-                    android:backgroundTint="@android:color/white"
-                    android:src="@drawable/ic_favorite_black_24dp"
-                    android:tint="@color/gray" />
-                <TextView
-                    android:layout_marginLeft="-3dp"
-                    android:layout_toRightOf="@+id/like_image"
-                    android:id="@+id/badge_like"
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
+                    android:backgroundTint="@android:color/white"
+                    android:src="@drawable/ic_favorite_border_black_24dp"
+                    android:tint="@color/gray" />
+
+                <TextView
+                    android:textAlignment="center"
+                    android:id="@+id/badge_like"
+                    android:gravity="center"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_toRightOf="@+id/like_image"
                     android:background="@drawable/item_count"
-                    tools:text="16"
                     android:textColor="#FFF"
                     android:textSize="12sp"
-                    android:textStyle="bold" />
+                    android:textStyle="bold"
+                    tools:text="16" />
             </RelativeLayout>
-            
+
         </com.balysv.materialripple.MaterialRippleLayout>
 
         <com.balysv.materialripple.MaterialRippleLayout
@@ -105,6 +120,7 @@
             <android.support.v7.widget.AppCompatImageButton
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
+                android:id="@+id/share_img"
                 android:backgroundTint="@android:color/white"
                 android:src="@drawable/ic_share_black_24dp"
                 android:tint="@color/gray" />

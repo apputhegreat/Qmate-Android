@@ -19,8 +19,8 @@ public class Quote extends RealmObject {
     public RealmList<RealmString> tags;
     public String author;
     public String authorId;
-    public int likes;
-    public int shares;
+    public long likes;
+    public long shares;
     public String moodCode;
     public String mood;
     public boolean isBookMarked;
