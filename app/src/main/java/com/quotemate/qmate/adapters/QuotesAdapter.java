@@ -44,14 +44,14 @@ import java.util.ArrayList;
 import de.hdodenhof.circleimageview.CircleImageView;
 
 public class QuotesAdapter extends PagerAdapter{
-    AppCompatActivity context;
+    MainActivity context;
     ArrayList<Quote> quotes = new ArrayList<>();
     LayoutInflater layoutInflater;
     boolean isQuoteOftheDay;
     private File imagePath;
 
 
-    public QuotesAdapter(AppCompatActivity context, ArrayList<Quote> quotes, boolean isQuoteOftheDay) {
+    public QuotesAdapter(MainActivity context, ArrayList<Quote> quotes, boolean isQuoteOftheDay) {
         this.context = context;
         this.quotes = quotes;
         this.isQuoteOftheDay = isQuoteOftheDay;
@@ -72,9 +72,15 @@ public class QuotesAdapter extends PagerAdapter{
     public Object instantiateItem(ViewGroup container, final int position) {
         final View itemView = layoutInflater.inflate(R.layout.fragment_content, container, false);
         final Quote quote = quotes.get(position);
-
         TextView quoteText = (TextView) itemView.findViewById(R.id.quote_text);
         quoteText.setText(quote.text);
+        final View quoteLayout = itemView.findViewById(R.id.quote_layout);
+        quoteLayout.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                context.showZooView();
+            }
+        });
         TextView authorText = (TextView) itemView.findViewById(R.id.quote_author);
         authorText.setText(quote.author);
         CircleImageView authorImg = (CircleImageView) itemView.findViewById(R.id.author_image);
@@ -119,7 +125,7 @@ public class QuotesAdapter extends PagerAdapter{
         shareBtn.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
-                handleShare(quote,itemView.findViewById(R.id.quote_layout));
+                handleShare(quote,quoteLayout);
             }
         });
         container.addView(itemView);

@@ -69,6 +69,7 @@ public class MainActivity extends AppCompatActivity implements IUpdateView {
     private RelativeLayout mSpinTag;
     private RelativeLayout mSpinAuthor;
     private CustomProgressBar myProgressBar;
+    public boolean isZoomView = false;
 
 
     @Override
@@ -115,7 +116,7 @@ public class MainActivity extends AppCompatActivity implements IUpdateView {
                         mQuoteOFtheDayLabel.setVisibility(View.GONE);
                         mSpinTag.setVisibility(View.VISIBLE);
                         mSpinAuthor.setVisibility(View.VISIBLE);
-                        mAdView.setVisibility(View.VISIBLE);
+                        //mAdView.setVisibility(View.VISIBLE);
                     }
                     if(QuotesUtil.quotes==null || QuotesUtil.quotes.isEmpty()) {
                         toolBar.setVisibility(View.VISIBLE);
@@ -225,14 +226,18 @@ public class MainActivity extends AppCompatActivity implements IUpdateView {
                 currentAuthor = QuotesUtil.authors.get(authorId);
                 currentAutohrText.setText(currentAuthor.name);
             } else {
-                currentAutohrText.setText("All");
+                if(currentAuthor!=null) {
+                    authorId = currentAuthor.id;
+                }
             }
             String tag = data.getStringExtra("tag");
             if(tag != null) {
                 currentTag = tag;
                 currentTagText.setText(currentTag);
             } else {
-                currentTagText.setText("All");
+               if(currentTag!=null) {
+                   tag = currentTag;
+               }
             }
             filterQuotesAndUpdateView(authorId, tag, false);
         }
@@ -288,6 +293,7 @@ public class MainActivity extends AppCompatActivity implements IUpdateView {
     private void initViewPager() {
         viewPager = (VerticalViewPager) findViewById(R.id.vertical_viewpager);
         viewPager.setPageTransformer(false, new ZoomOutTransformer());
+
         //viewPager.setPageTransformer(true, new StackTransformer());
         quotesUtil = new QuotesUtil(this);
         quotesUtil.addAuthorsListener();
@@ -297,6 +303,16 @@ public class MainActivity extends AppCompatActivity implements IUpdateView {
         //If you setting other scroll mode, the scrolled fade is shown from either side of display.
         //viewPager.setPageTransformer(false, new DefaultTransformer());
         viewPager.setOverScrollMode(View.OVER_SCROLL_NEVER);
+    }
+
+    public void showZooView() {
+        int visiblity = View.VISIBLE;
+        isZoomView = ! isZoomView;
+        if(isZoomView) {
+           visiblity = View.GONE;
+        }
+        toolBar.setVisibility(visiblity);
+        bottomLayout.setVisibility(visiblity);
     }
 
     @Override
