@@ -3,7 +3,6 @@ package com.quotemate.qmate;
 import android.content.Context;
 import android.content.Intent;
 import android.os.Bundle;
-import android.support.annotation.NonNull;
 import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.Toolbar;
 import android.util.Log;
@@ -14,13 +13,10 @@ import android.widget.RelativeLayout;
 import android.widget.TextView;
 
 import com.balysv.materialripple.MaterialRippleLayout;
-import com.facebook.AccessToken;
 import com.google.android.gms.ads.AdRequest;
 import com.google.android.gms.ads.doubleclick.PublisherAdRequest;
 import com.google.android.gms.ads.doubleclick.PublisherAdView;
 import com.google.firebase.auth.FirebaseAuth;
-import com.google.firebase.auth.FirebaseUser;
-import com.google.firebase.auth.UserInfo;
 import com.google.firebase.database.DataSnapshot;
 import com.google.firebase.database.DatabaseError;
 import com.google.firebase.database.DatabaseReference;
@@ -32,12 +28,13 @@ import com.quotemate.qmate.login.FBLoginFragment;
 import com.quotemate.qmate.model.Author;
 import com.quotemate.qmate.model.Quote;
 import com.quotemate.qmate.model.RealmString;
-import com.quotemate.qmate.model.User;
 import com.quotemate.qmate.util.Constants;
 import com.quotemate.qmate.util.CustomProgressBar;
+import com.quotemate.qmate.util.FBUtil;
 import com.quotemate.qmate.util.QuotesUtil;
 import com.quotemate.qmate.util.RandomSelector;
 import com.quotemate.qmate.util.RealmUtil;
+import com.quotemate.qmate.util.Transitions;
 
 import java.util.ArrayList;
 import java.util.Objects;
@@ -78,6 +75,9 @@ public class MainActivity extends AppCompatActivity implements IUpdateView {
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
+        mAuth = FirebaseAuth.getInstance();
+        mAuthListener = FBUtil.getAuthStateListener();
+        mAuth.addAuthStateListener(mAuthListener);
         myProgressBar = new CustomProgressBar(this,false);
         myProgressBar.setProgressBarMessage("Loading");
         myProgressBar.showProgressBar();
@@ -104,7 +104,6 @@ public class MainActivity extends AppCompatActivity implements IUpdateView {
         mAdView.setVisibility(View.GONE);
         spin = (MaterialRippleLayout) findViewById(R.id.spin);
         bottomLayout = (RelativeLayout) findViewById(R.id.bottom_layout);
-        mAuth = FirebaseAuth.getInstance();
         mSpinTag = (RelativeLayout) findViewById(R.id.tag_spin);
         mSpinAuthor = (RelativeLayout) findViewById(R.id.author_spin);
         spin.setOnClickListener(new View.OnClickListener() {
@@ -164,6 +163,7 @@ public class MainActivity extends AppCompatActivity implements IUpdateView {
             Intent intent = new Intent(this, ProfileActivity.class);
             intent.setFlags(FLAG_ACTIVITY_REORDER_TO_FRONT);
             startActivity(intent);
+            Transitions.rightToLeft(this);
         } else {
             openLoginDialog();
         }
@@ -172,77 +172,18 @@ public class MainActivity extends AppCompatActivity implements IUpdateView {
     @Override
     public void onStart() {
         super.onStart();
-        mAuth.addAuthStateListener(getAuthListener());
     }
 
     @Override
     public void onStop() {
         super.onStop();
-        if (mAuthListener != null) {
-            mAuth.removeAuthStateListener(mAuthListener);
-        }
+
     }
     private void openLoginDialog() {
         fbfragment  = new FBLoginFragment();
         fbfragment.show(getSupportFragmentManager(),MainActivity.class.getSimpleName());
     }
 
-    private FirebaseAuth.AuthStateListener getAuthListener() {
-        mAuthListener = new FirebaseAuth.AuthStateListener() {
-            @Override
-            public void onAuthStateChanged(@NonNull FirebaseAuth firebaseAuth) {
-                final FirebaseUser fUser = firebaseAuth.getCurrentUser();
-                if (fUser != null) {
-                    if (AccessToken.getCurrentAccessToken() != null) {
-                        mUserRef = FirebaseDatabase.getInstance().getReference("users/" + fUser.getUid());
-                        mUserRef.addListenerForSingleValueEvent(new ValueEventListener() {
-                            @Override
-                            public void onDataChange(DataSnapshot dataSnapshot) {
-                                mUserRef.child("deviceOS").setValue("Android");
-                                if (!dataSnapshot.exists()) {
-                                        UserInfo profile = fUser.getProviderData().get(0);
-                                        User user = new User();
-                                        user.id = fUser.getUid();
-                                        mUserRef.child("name").setValue(profile.getDisplayName());
-                                        user.name = profile.getDisplayName();
-                                         user.readbleId = profile.getDisplayName();
-                                        if (profile.getEmail() != null) {
-                                            mUserRef.child("email").setValue(profile.getEmail());
-                                            user.email = profile.getEmail();
-                                        }
-                                        mUserRef.child("readableId").setValue(profile.getDisplayName());
-                                        if (profile.getPhotoUrl() != null) {
-                                            mUserRef.child("photoURL").setValue(profile.getPhotoUrl().toString());
-                                            user.photoURL = profile.getPhotoUrl().toString();
-                                        }
-                                        User.currentUser = user;
-                                } else {
-                                    User.currentUser = dataSnapshot.getValue(User.class);
-                                    User.currentUser.id =  fUser.getUid();
-                                }
-                                finishDialog();
-                            }
-
-                            @Override
-                            public void onCancelled(DatabaseError databaseError) {
-                                finishDialog();
-                            }
-                        });
-                    }
-                }
-            }
-        };
-        return mAuthListener;
-    }
-
-    private void showProgress(boolean b) {
-    }
-
-    private void finishDialog() {
-        Log.d("fbDialog", "finishDialog: ");
-        if(fbfragment!=null)
-        fbfragment.dismiss();
-    }
 
     private void selectRandomAuthorAndTag() {
         //Animation hyperspaceJumpAnimation = AnimationUtils.loadAnimation(this, R.anim.shuffle_anim);
@@ -272,6 +213,7 @@ public class MainActivity extends AppCompatActivity implements IUpdateView {
         intent.putExtra("authorId", currentAutohrText.getText().toString());
         intent.putExtra("tag", currentTagText.getText().toString());
         this.startActivityForResult(intent, 100);
+        Transitions.rightToLeft(this);
     }
 
     @Override
@@ -404,6 +346,9 @@ public class MainActivity extends AppCompatActivity implements IUpdateView {
     protected void onDestroy() {
         if(myProgressBar!=null) {
             myProgressBar.destroyProgressBar();
+        }
+        if (mAuthListener != null) {
+            mAuth.removeAuthStateListener(mAuthListener);
         }
         quotesUtil.removeQuotesListener();
         quotesUtil.removeAuthorsListenr();

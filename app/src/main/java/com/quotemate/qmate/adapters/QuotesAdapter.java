@@ -10,6 +10,7 @@ import android.net.Uri;
 import android.support.annotation.NonNull;
 import android.support.v4.content.ContextCompat;
 import android.support.v4.view.PagerAdapter;
+import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.AppCompatImageView;
 import android.view.LayoutInflater;
 import android.view.View;
@@ -25,7 +26,9 @@ import com.google.android.gms.tasks.Task;
 import com.google.firebase.database.FirebaseDatabase;
 import com.google.firebase.storage.FirebaseStorage;
 import com.google.firebase.storage.StorageReference;
+import com.quotemate.qmate.MainActivity;
 import com.quotemate.qmate.R;
+import com.quotemate.qmate.login.FBLoginFragment;
 import com.quotemate.qmate.model.Author;
 import com.quotemate.qmate.model.Quote;
 import com.quotemate.qmate.model.User;
@@ -41,14 +44,14 @@ import java.util.ArrayList;
 import de.hdodenhof.circleimageview.CircleImageView;
 
 public class QuotesAdapter extends PagerAdapter{
-    Context context;
+    AppCompatActivity context;
     ArrayList<Quote> quotes = new ArrayList<>();
     LayoutInflater layoutInflater;
     boolean isQuoteOftheDay;
     private File imagePath;
 
 
-    public QuotesAdapter(Context context, ArrayList<Quote> quotes, boolean isQuoteOftheDay) {
+    public QuotesAdapter(AppCompatActivity context, ArrayList<Quote> quotes, boolean isQuoteOftheDay) {
         this.context = context;
         this.quotes = quotes;
         this.isQuoteOftheDay = isQuoteOftheDay;
@@ -149,6 +152,10 @@ public class QuotesAdapter extends PagerAdapter{
     }
 
     private void handleBookMark(Quote quote, AppCompatImageView bookMarkImgView) {
+        if(User.currentUser==null) {
+            openLoginDialog();
+            return;
+        }
         if(quote.isBookMarked){
             return;
         }
@@ -172,6 +179,10 @@ public class QuotesAdapter extends PagerAdapter{
     }
 
     private void handleLike(Quote quote, AppCompatImageView likeImgView, TextView badge) {
+        if(User.currentUser==null) {
+            openLoginDialog();
+            return;
+        }
         if(quote.isLiked) {
             return;
         }
@@ -195,5 +206,10 @@ public class QuotesAdapter extends PagerAdapter{
     @Override
     public void destroyItem(ViewGroup container, int position, Object object) {
         container.removeView((LinearLayout) object);
+    }
+
+    private void openLoginDialog() {
+       FBLoginFragment fbfragment  = new FBLoginFragment();
+        fbfragment.show(context.getSupportFragmentManager(),MainActivity.class.getSimpleName());
     }
 }

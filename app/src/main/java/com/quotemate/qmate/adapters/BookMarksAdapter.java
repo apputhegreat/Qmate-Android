@@ -2,6 +2,7 @@ package com.quotemate.qmate.adapters;
 
 import android.content.Context;
 import android.content.Intent;
+import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.RecyclerView;
 import android.view.LayoutInflater;
 import android.view.View;
@@ -13,6 +14,7 @@ import com.quotemate.qmate.QuoteDetailFragment;
 import com.quotemate.qmate.R;
 import com.quotemate.qmate.model.Quote;
 import com.quotemate.qmate.util.QuotesUtil;
+import com.quotemate.qmate.util.Transitions;
 
 import java.util.ArrayList;
 
@@ -22,7 +24,9 @@ import java.util.ArrayList;
 
 public class BookMarksAdapter extends RecyclerView.Adapter<BookMarksAdapter.MyViewHolder> {
     ArrayList<Quote> quotesList = new ArrayList<>();
-    public BookMarksAdapter(ArrayList<Quote> quotes) {
+    AppCompatActivity mActivity ;
+    public BookMarksAdapter(AppCompatActivity activity,ArrayList<Quote> quotes) {
+        this.mActivity = activity;
         this.quotesList = quotes;
     }
 
@@ -47,6 +51,7 @@ public class BookMarksAdapter extends RecyclerView.Adapter<BookMarksAdapter.MyVi
                     intent.putExtra(QuoteDetailFragment.ARG_QUOTE_AUTHOR, quote.author);
                     intent.putExtra(QuoteDetailFragment.ARG_QUOTE_AUTHOR_IMAGE, QuotesUtil.authors.get(quote.authorId).image);
                     context.startActivity(intent);
+                    Transitions.rightToLeft(mActivity);
             }
         });
     }

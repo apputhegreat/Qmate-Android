@@ -16,16 +16,18 @@
         <TextView
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:textColor="@color/contentColor"
+            android:textColor="@android:color/black"
             android:textSize="18sp"
             android:text="Home"/>
     </android.support.v7.widget.Toolbar>
     <LinearLayout
+        android:background="@color/contentColor"
         android:orientation="vertical"
         android:layout_below="@+id/toolbar"
         android:layout_width="match_parent"
-        android:layout_height="wrap_content">
+        android:layout_height="match_parent">
         <Button
+            android:layout_marginTop="15dp"
             android:background="@color/cardColor"
             android:width="150dp"
             android:text="Book Marks"
@@ -38,6 +40,7 @@
             android:layout_height="wrap_content"
             android:layout_centerHorizontal="true" />
         <Button
+            android:layout_marginTop="5dp"
             android:background="@color/cardColor"
             android:width="150dp"
             android:text="Invite your friends"
@@ -50,6 +53,8 @@
             android:layout_height="wrap_content"
             android:layout_centerHorizontal="true" />
         <Button
+            android:layout_marginTop="5dp"
+            android:layout_marginBottom="5dp"
             android:background="@color/cardColor"
             android:textColor="@color/contentColor"
             android:padding="20dp"

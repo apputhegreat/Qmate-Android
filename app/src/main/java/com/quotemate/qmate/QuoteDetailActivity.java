@@ -14,6 +14,7 @@ import android.view.MenuItem;
 import com.quotemate.qmate.model.Quote;
 import com.quotemate.qmate.util.Permissions;
 import com.quotemate.qmate.util.ShareView;
+import com.quotemate.qmate.util.Transitions;
 
 import java.io.File;
 
@@ -80,8 +81,12 @@ public class QuoteDetailActivity extends AppCompatActivity {
     public boolean onOptionsItemSelected(MenuItem item) {
         int id = item.getItemId();
         if (id == android.R.id.home) {
-           finish();
+           handleBackPressed();
         }
         return super.onOptionsItemSelected(item);
+    }
+    private void handleBackPressed() {
+        finish();
+        Transitions.leftToRight(this);
     }
 }

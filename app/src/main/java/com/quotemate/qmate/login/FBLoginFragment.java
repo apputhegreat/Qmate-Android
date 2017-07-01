@@ -5,6 +5,7 @@ import android.content.Intent;
 import android.os.Bundle;
 import android.support.annotation.NonNull;
 import android.support.v4.app.DialogFragment;
+import android.support.v7.app.AppCompatActivity;
 import android.util.Log;
 import android.view.Gravity;
 import android.view.LayoutInflater;
@@ -30,14 +31,16 @@ import com.google.firebase.auth.FacebookAuthProvider;
 import com.google.firebase.auth.FirebaseAuth;
 import com.quotemate.qmate.MainActivity;
 import com.quotemate.qmate.R;
+import com.quotemate.qmate.util.CustomProgressBar;
 import com.quotemate.qmate.util.KeyBoardUtil;
 
 public class FBLoginFragment extends DialogFragment {
     private LoginButton loginButton;
 
-    private MainActivity mActivity;
+    private AppCompatActivity mActivity;
     private FirebaseAuth mAuth;
     private CallbackManager mCallbackManager;
+    private CustomProgressBar mProgressBar;
     private FacebookCallback<LoginResult> mCallback = new FacebookCallback<LoginResult>() {
         private ProfileTracker mProfileTracker;
 
@@ -75,6 +78,7 @@ public class FBLoginFragment extends DialogFragment {
         mAuth = FirebaseAuth.getInstance();
         mCallbackManager = CallbackManager.Factory.create();
         mActivity = (MainActivity) getActivity();
+        mProgressBar = new CustomProgressBar(mActivity,false);
     }
 
     @Override
@@ -106,6 +110,7 @@ public class FBLoginFragment extends DialogFragment {
         fbloginCustomBtn.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
+                showProgress(true);
                 loginButton.performClick();
             }
         });
@@ -127,6 +132,9 @@ public class FBLoginFragment extends DialogFragment {
     @Override
     public void onStop() {
         super.onStop();
+        if(mProgressBar!=null) {
+            mProgressBar.hideProgressBar();
+        }
     }
 
     private void handleFacebookAccessToken(AccessToken accessToken) {
@@ -145,11 +153,21 @@ public class FBLoginFragment extends DialogFragment {
                             Toast.makeText(getActivity(), "Authentication failed.",
                                     Toast.LENGTH_SHORT).show();
                         }
+                        showProgress(false);
+                        FBLoginFragment.this.dismiss();
                     }
                 });
     }
 
     private void showProgress(final boolean show) {
+        if(mProgressBar!=null) {
+            if(show) {
+                mProgressBar.showProgressBar();
+            } else {
+                mProgressBar.hideProgressBar();
+            }
+        }
+
         KeyBoardUtil.hideKeyboard(mActivity);
     }
 }
