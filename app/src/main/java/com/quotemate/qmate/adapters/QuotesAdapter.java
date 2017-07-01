@@ -5,41 +5,47 @@ package com.quotemate.qmate.adapters;
  */
 
 import android.content.Context;
+import android.graphics.Bitmap;
 import android.net.Uri;
 import android.support.annotation.NonNull;
 import android.support.v4.content.ContextCompat;
-import android.view.View;
-
-import com.balysv.materialripple.MaterialRippleLayout;
-import com.google.android.gms.tasks.OnCompleteListener;
-import com.google.android.gms.tasks.Task;
-import com.google.firebase.storage.FirebaseStorage;
-import com.google.firebase.storage.StorageReference;
-import com.quotemate.qmate.R;
-import com.quotemate.qmate.model.Author;
-import com.quotemate.qmate.model.Quote;
-import com.quotemate.qmate.util.FBUtil;
-import com.quotemate.qmate.util.QuotesUtil;
-import com.squareup.picasso.Picasso;
 import android.support.v4.view.PagerAdapter;
+import android.support.v7.widget.AppCompatImageView;
 import android.view.LayoutInflater;
+import android.view.View;
 import android.view.ViewGroup;
 import android.widget.ImageView;
 import android.widget.LinearLayout;
 import android.widget.RelativeLayout;
 import android.widget.TextView;
-import android.widget.Toast;
 
+import com.balysv.materialripple.MaterialRippleLayout;
+import com.google.android.gms.tasks.OnCompleteListener;
+import com.google.android.gms.tasks.Task;
+import com.google.firebase.database.FirebaseDatabase;
+import com.google.firebase.storage.FirebaseStorage;
+import com.google.firebase.storage.StorageReference;
+import com.quotemate.qmate.R;
+import com.quotemate.qmate.model.Author;
+import com.quotemate.qmate.model.Quote;
+import com.quotemate.qmate.model.User;
+import com.quotemate.qmate.util.FBUtil;
+import com.quotemate.qmate.util.Permissions;
+import com.quotemate.qmate.util.QuotesUtil;
+import com.quotemate.qmate.util.ShareView;
+import com.squareup.picasso.Picasso;
+
+import java.io.File;
 import java.util.ArrayList;
 
 import de.hdodenhof.circleimageview.CircleImageView;
-import io.realm.Realm;
 
 public class QuotesAdapter extends PagerAdapter{
     Context context;
     ArrayList<Quote> quotes = new ArrayList<>();
     LayoutInflater layoutInflater;
     boolean isQuoteOftheDay;
+    private File imagePath;
 
 
     public QuotesAdapter(Context context, ArrayList<Quote> quotes, boolean isQuoteOftheDay) {
@@ -75,6 +81,7 @@ public class QuotesAdapter extends PagerAdapter{
         }
         MaterialRippleLayout likeBtn = (MaterialRippleLayout) itemView.findViewById(R.id.like_quote_btn);
         final TextView likeCountBadge = (TextView) itemView.findViewById(R.id.badge_like);
+        final AppCompatImageView likeImgView = (AppCompatImageView) itemView.findViewById(R.id.like_image);
         if(quote.likes!=0) {
             likeCountBadge.setVisibility(View.VISIBLE);
             likeCountBadge.setText(String.valueOf(quote.likes));
@@ -82,28 +89,34 @@ public class QuotesAdapter extends PagerAdapter{
             likeCountBadge.setVisibility(View.INVISIBLE);
         }
         MaterialRippleLayout bookMarkBtn = (MaterialRippleLayout) itemView.findViewById(R.id.book_mark_quote_btn);
-
+        final AppCompatImageView bookMarkImgView = (AppCompatImageView) itemView.findViewById(R.id.book_mark_img);
         MaterialRippleLayout shareBtn = (MaterialRippleLayout) itemView.findViewById(R.id.share_quote_btn);
         if(isQuoteOftheDay){
             RelativeLayout actionsLayout =(RelativeLayout) itemView.findViewById(R.id.action_btns_quote);
             actionsLayout.setVisibility(View.GONE);
         }
+        if(quote.isBookMarked) {
+            bookMarkImgView.setImageDrawable(ContextCompat.getDrawable(context,R.drawable.ic_star_black_24dp));
+        }
+        if(quote.isLiked) {
+            likeImgView.setImageDrawable(ContextCompat.getDrawable(context,R.drawable.ic_favorite_black_24dp));
+        }
         likeBtn.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
-                handleLike(quote,likeCountBadge);
+                handleLike(quote, likeImgView, likeCountBadge);
             }
         });
         bookMarkBtn.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
-                handleBookMark(quote);
+                handleBookMark(quote,bookMarkImgView);
             }
         });
         shareBtn.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
-                handleShare(quote);
+                handleShare(quote,itemView.findViewById(R.id.quote_layout));
             }
         });
         container.addView(itemView);
@@ -125,21 +138,52 @@ public class QuotesAdapter extends PagerAdapter{
         });
     }
 
-    private void handleShare(Quote quote) {
-    }
-
-    private void handleBookMark(Quote quote) {
-        Realm realm = Realm.getDefaultInstance();
-        realm.beginTransaction();
-        try {
-            realm.copyToRealm(quote);
-            realm.commitTransaction();
-        } catch (io.realm.exceptions.RealmPrimaryKeyConstraintException ex) {
-            Toast.makeText(context,"Already added to book marks", Toast.LENGTH_SHORT).show();
+    private void handleShare(Quote quote, View view) {
+        boolean resultExternal = Permissions.checkExternalStoragePermission(context);
+        if(resultExternal) {
+            Bitmap bitmap = ShareView.takeScreenshot(view);
+            File imagePath = ShareView.saveBitmap(bitmap);
+            String shareBody = quote.text + "\n-" + quote.author;
+            ShareView.shareIt(context,imagePath,shareBody);
         }
     }
 
-    private void handleLike(Quote quote, TextView badge) {
+    private void handleBookMark(Quote quote, AppCompatImageView bookMarkImgView) {
+        if(quote.isBookMarked){
+            return;
+        }
+        bookMarkImgView.setImageDrawable(ContextCompat.getDrawable(context,R.drawable.ic_star_black_24dp));
+        quote.isBookMarked = true;
+        if(User.currentUser!=null)  {
+            User.currentUser.bookMarkedQuoteIds.add(quote.id);
+            FirebaseDatabase.getInstance().getReference("users")
+                    .child(User.currentUser.id)
+                    .child("bookMarkedQuoteIds")
+                    .setValue(User.currentUser.bookMarkedQuoteIds);
+        }
+//        Realm realm = Realm.getDefaultInstance();
+//        realm.beginTransaction();
+//        try {
+//            realm.copyToRealm(quote);
+//            realm.commitTransaction();
+//        } catch (io.realm.exceptions.RealmPrimaryKeyConstraintException ex) {
+//            Toast.makeText(context,"Already added to book marks", Toast.LENGTH_SHORT).show();
+//        }
+    }
+
+    private void handleLike(Quote quote, AppCompatImageView likeImgView, TextView badge) {
+        if(quote.isLiked) {
+            return;
+        }
+        likeImgView.setImageDrawable(ContextCompat.getDrawable(context,R.drawable.ic_favorite_black_24dp));
+        quote.isLiked = true;
+        if(User.currentUser!=null)  {
+            User.currentUser.likedQuoteIds.add(quote.id);
+            FirebaseDatabase.getInstance().getReference("users")
+                    .child(User.currentUser.id)
+                    .child("likedQuoteIds")
+                    .setValue(User.currentUser.likedQuoteIds);
+        }
         FBUtil.updateLikes(quote.id);
         quote.likes = quote.likes+1;
         if(badge!=null) {

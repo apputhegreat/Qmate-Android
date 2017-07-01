@@ -1,0 +1,43 @@
+<RelativeLayout android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:gravity="center"
+    android:background="@android:color/white"
+    xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:tools="http://schemas.android.com/tools">
+    <TextView
+        android:id="@+id/quote_text"
+        fontPath="fonts/JosefinSans-SemiBold.ttf"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_alignParentTop="true"
+        android:layout_margin="16dip"
+        android:gravity="left"
+        android:text="If you want to shine like a sun, first burn like a sun"
+        android:textAlignment="center"
+        android:textColor="@android:color/black"
+        android:textSize="28sp"
+        tools:ignore="MissingPrefix" />
+
+    <de.hdodenhof.circleimageview.CircleImageView xmlns:app="http://schemas.android.com/apk/res-auto"
+        android:id="@+id/author_image"
+        android:layout_width="46dp"
+        android:layout_height="46dp"
+        android:layout_below="@+id/quote_text"
+        android:layout_centerHorizontal="true"
+        android:src="@drawable/gandhi"
+        app:civ_border_color="#FF000000"
+        app:civ_border_width="1dp" />
+
+    <TextView
+        android:id="@+id/quote_author"
+        fontPath="fonts/Cabin-Regular.ttf"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_below="@+id/author_image"
+        android:layout_margin="8dip"
+        android:textAlignment="center"
+        android:textColor="@android:color/black"
+        android:textSize="14sp"
+        tools:ignore="MissingPrefix"
+        tools:text="Abdul Kalam" />
+</RelativeLayout>

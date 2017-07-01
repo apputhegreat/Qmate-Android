@@ -1,0 +1,42 @@
+<?xml version="1.0" encoding="utf-8"?>
+<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:background="@color/backgroundColor"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    tools:context="com.quotemate.qmate.BookMarksActivity">
+
+    <android.support.v7.widget.Toolbar
+        android:id="@+id/toolbar"
+        android:layout_width="match_parent"
+        android:layout_height="50dp"
+        android:background="@android:color/white"
+        android:elevation="1dp"
+        android:focusableInTouchMode="true"
+        android:minHeight="45dp"
+        app:titleTextColor="@android:color/black">
+
+        <TextView
+            android:gravity="center_vertical"
+            android:id="@+id/book_marks_title"
+            fontPath="fonts/JosefinSans-Regular.ttf"
+            android:layout_width="match_parent"
+            android:layout_height="match_parent"
+            android:layout_alignParentLeft="true"
+            android:layout_centerVertical="true"
+            android:background="@android:color/transparent"
+            android:drawableRight="@drawable/ic_search_black_24dp"
+            android:drawablePadding="5dp"
+            android:text="BookMarks"
+            android:textColor="@android:color/black"
+            android:textSize="16sp"
+            tools:ignore="MissingPrefix" />
+    </android.support.v7.widget.Toolbar>
+    <android.support.v7.widget.RecyclerView
+        android:layout_below="@+id/toolbar"
+        android:id="@+id/book_marks_recycler_view"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:scrollbars="vertical" />
+</RelativeLayout>

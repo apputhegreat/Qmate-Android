@@ -34,6 +34,7 @@ import com.quotemate.qmate.model.Quote;
 import com.quotemate.qmate.model.RealmString;
 import com.quotemate.qmate.model.User;
 import com.quotemate.qmate.util.Constants;
+import com.quotemate.qmate.util.CustomProgressBar;
 import com.quotemate.qmate.util.QuotesUtil;
 import com.quotemate.qmate.util.RandomSelector;
 import com.quotemate.qmate.util.RealmUtil;
@@ -70,12 +71,16 @@ public class MainActivity extends AppCompatActivity implements IUpdateView {
     private TextView mQuoteOFtheDayLabel;
     private RelativeLayout mSpinTag;
     private RelativeLayout mSpinAuthor;
+    private CustomProgressBar myProgressBar;
 
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
+        myProgressBar = new CustomProgressBar(this,false);
+        myProgressBar.setProgressBarMessage("Loading");
+        myProgressBar.showProgressBar();
         Realm.init(getApplicationContext());
         toolBar = (Toolbar) findViewById(R.id.toolbar);
         setSupportActionBar(toolBar);
@@ -115,7 +120,9 @@ public class MainActivity extends AppCompatActivity implements IUpdateView {
                     }
                     if(QuotesUtil.quotes==null || QuotesUtil.quotes.isEmpty()) {
                         toolBar.setVisibility(View.VISIBLE);
+                        myProgressBar.showProgressBar();
                         quotesUtil.addQuotesListener();
+                        return;
                     }
                     selectRandomAuthorAndTag();
                 } else {
@@ -184,17 +191,18 @@ public class MainActivity extends AppCompatActivity implements IUpdateView {
         mAuthListener = new FirebaseAuth.AuthStateListener() {
             @Override
             public void onAuthStateChanged(@NonNull FirebaseAuth firebaseAuth) {
-                final FirebaseUser user = firebaseAuth.getCurrentUser();
-                if (user != null) {
+                final FirebaseUser fUser = firebaseAuth.getCurrentUser();
+                if (fUser != null) {
                     if (AccessToken.getCurrentAccessToken() != null) {
-                        mUserRef = FirebaseDatabase.getInstance().getReference("users/" + user.getUid());
+                        mUserRef = FirebaseDatabase.getInstance().getReference("users/" + fUser.getUid());
                         mUserRef.addListenerForSingleValueEvent(new ValueEventListener() {
                             @Override
                             public void onDataChange(DataSnapshot dataSnapshot) {
                                 mUserRef.child("deviceOS").setValue("Android");
                                 if (!dataSnapshot.exists()) {
-                                        UserInfo profile = user.getProviderData().get(0);
+                                        UserInfo profile = fUser.getProviderData().get(0);
                                         User user = new User();
+                                        user.id = fUser.getUid();
                                         mUserRef.child("name").setValue(profile.getDisplayName());
                                         user.name = profile.getDisplayName();
                                          user.readbleId = profile.getDisplayName();
@@ -210,6 +218,7 @@ public class MainActivity extends AppCompatActivity implements IUpdateView {
                                         User.currentUser = user;
                                 } else {
                                     User.currentUser = dataSnapshot.getValue(User.class);
+                                    User.currentUser.id =  fUser.getUid();
                                 }
                                 finishDialog();
                             }
@@ -359,6 +368,9 @@ public class MainActivity extends AppCompatActivity implements IUpdateView {
             adapter = new QuotesAdapter(MainActivity.this, quotes, false);
             viewPager.setAdapter(adapter);
             adapter.notifyDataSetChanged();
+            if(myProgressBar!=null) {
+                myProgressBar.hideProgressBar();
+            }
         }
     }
 
@@ -375,18 +387,24 @@ public class MainActivity extends AppCompatActivity implements IUpdateView {
                     adapter = new QuotesAdapter(MainActivity.this, quotes, true);
                     viewPager.setAdapter(adapter);
                     adapter.notifyDataSetChanged();
+                    myProgressBar.hideProgressBar();
                 }
             }
 
             @Override
             public void onCancelled(DatabaseError databaseError) {
-
+                if(myProgressBar!=null) {
+                    myProgressBar.hideProgressBar();
+                }
             }
         });
     }
 
     @Override
     protected void onDestroy() {
+        if(myProgressBar!=null) {
+            myProgressBar.destroyProgressBar();
+        }
         quotesUtil.removeQuotesListener();
         quotesUtil.removeAuthorsListenr();
         super.onDestroy();

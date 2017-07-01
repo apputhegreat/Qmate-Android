@@ -10,6 +10,7 @@ import com.quotemate.qmate.Interfaces.IUpdateView;
 import com.quotemate.qmate.model.Author;
 import com.quotemate.qmate.model.Quote;
 import com.quotemate.qmate.model.RealmString;
+import com.quotemate.qmate.model.User;
 
 import java.util.ArrayList;
 import java.util.LinkedHashMap;
@@ -141,17 +142,36 @@ public class QuotesUtil {
             quote.authorId = snap.child("authorId").getValue().toString();
             quote.author = snap.child("author").getValue().toString();
             if( snap.child("likes").exists()) {
-                quote.likes =(int) snap.child("likes").getValue();
+                quote.likes =(long) snap.child("likes").getValue();
             }
             quote.tags = new RealmList<>();
             for (DataSnapshot sanpshot: snap.child("tags").getChildren()
                  ) {
                 quote.tags.add(new RealmString(sanpshot.getValue().toString()));
             }
+            quote  = synchWithUser(quote);
         } catch (Exception ex) {
           throw  ex;
         }
         return quote;
+    }
+
+    private static Quote synchWithUser(Quote quote) {
+        if(User.currentUser!=null) {
+            if(!User.currentUser.bookMarkedQuoteIds.isEmpty()) {
+                if(User.currentUser.bookMarkedQuoteIds.contains(quote.id)) {
+                    quote.isBookMarked = true;
+                }
+            }
+            if(!User.currentUser.likedQuoteIds.isEmpty()) {
+                if(User.currentUser.likedQuoteIds.contains(quote.id)) {
+                    quote.isLiked = true;
+                }
+            }
+            return quote;
+        } else {
+            return quote;
+        }
     }
 
     public void addQuotesListener() {

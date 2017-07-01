@@ -1,0 +1,86 @@
+<?xml version="1.0" encoding="utf-8"?>
+<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:id="@+id/activity_share"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:background="@android:color/white"
+    android:paddingLeft="10dp"
+    android:paddingRight="10dp">
+
+    <android.support.v7.widget.AppCompatImageView
+        android:id="@+id/close_share"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_alignParentRight="true"
+        android:paddingRight="5dp"
+        android:paddingTop="20dp"
+        android:tint="@color/contentColor"
+        android:src="@drawable/ic_cancel_black_24dp" />
+
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:gravity="center"
+        android:orientation="vertical"
+        android:layout_centerVertical="true"
+        android:layout_alignParentStart="true">
+
+        <TextView
+            android:id="@+id/invite_header"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_centerHorizontal="true"
+            android:paddingBottom="50dp"
+            android:text="Did you like the experience?"
+            android:textAlignment="center"
+            android:textColor="@color/contentColor"
+            android:textSize="27sp" />
+
+        <android.support.v7.widget.AppCompatImageView
+            android:id="@+id/image_view"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_centerInParent="true"
+            android:layout_marginBottom="30dp"
+            android:src="@drawable/ic_share_black_24dp" />
+
+        <TextView
+            android:id="@+id/invite_title"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_below="@+id/image_view"
+            android:layout_centerHorizontal="true"
+            android:layout_marginBottom="10dp"
+            android:text="Spread the Happiness"
+            android:textColor="@color/contentColor"
+            android:textSize="22sp" />
+
+        <TextView
+            android:id="@+id/invite_message"
+            fontPath="fonts/SourceSansPro-Regular"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_below="@+id/invite_title"
+            android:layout_centerHorizontal="true"
+            android:layout_marginBottom="20dp"
+            android:paddingBottom="10dp"
+            android:textAlignment="center"
+            android:textSize="14sp"
+            android:textColor="@color/contentColor"
+            tools:ignore="MissingPrefix" />
+
+
+        <Button
+            android:id="@+id/invite_btn"
+            android:layout_width="220dp"
+            android:layout_height="40dp"
+            android:layout_below="@+id/invite_message"
+            android:layout_centerHorizontal="true"
+            android:paddingLeft="10dp"
+            android:paddingRight="10dp"
+            android:text="Share" />
+
+    </LinearLayout>
+
+</RelativeLayout>

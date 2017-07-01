@@ -13,4 +13,7 @@
     <string name="title_profile">Profile</string>
     <string name="title_invite">Invite</string>
     <string name="banner_home_footer">ca-app-pub-1043371367952934/3727694203</string>
+    <string name="title_quote_list">Quotes</string>
+    <string name="title_quote_detail">Quote Detail</string>
+    <string name="invitation_message">invite your friends</string>
 </resources>
