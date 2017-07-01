@@ -13,8 +13,10 @@ import android.widget.Button;
 import com.facebook.AccessToken;
 import com.facebook.login.LoginManager;
 import com.google.firebase.auth.FirebaseAuth;
+import com.quotemate.qmate.model.User;
 import com.quotemate.qmate.util.Constants;
 import com.quotemate.qmate.util.InviteDialog;
+import com.quotemate.qmate.util.Transitions;
 
 import uk.co.chrisjenx.calligraphy.CalligraphyContextWrapper;
 
@@ -71,8 +73,9 @@ public class ProfileActivity extends AppCompatActivity implements View.OnClickLi
             FirebaseAuth.getInstance().signOut();
             if (AccessToken.getCurrentAccessToken() != null) {
                 LoginManager.getInstance().logOut();
+                User.currentUser = null;
             }
-            finish();
+            handleBackPressed();
         }
     }
 
@@ -81,13 +84,13 @@ public class ProfileActivity extends AppCompatActivity implements View.OnClickLi
         intent.putExtra(Constants.FROM_SCREEN,Constants.BOOK_MARKS_SCREEN);
         finish();
         startActivity(intent);
-        finish();
+        Transitions.rightToLeft(this);
     }
     @Override
     public boolean onOptionsItemSelected(MenuItem item) {
         int id = item.getItemId();
         if (id == android.R.id.home) {
-            finish();
+            handleBackPressed();
         }
         return super.onOptionsItemSelected(item);
     }
@@ -99,5 +102,10 @@ public class ProfileActivity extends AppCompatActivity implements View.OnClickLi
             mInviteDialog.dismiss();
             mInviteDialog=null;
         }
+    }
+
+    private void handleBackPressed() {
+        finish();
+        Transitions.leftToRight(this);
     }
 }

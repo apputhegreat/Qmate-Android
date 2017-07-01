@@ -14,6 +14,8 @@ import android.widget.TextView;
 import com.quotemate.qmate.adapters.BookMarksAdapter;
 import com.quotemate.qmate.model.Quote;
 import com.quotemate.qmate.util.QuotesUtil;
+import com.quotemate.qmate.util.RecyclerViewDivider;
+import com.quotemate.qmate.util.Transitions;
 
 import java.util.ArrayList;
 
@@ -38,34 +40,42 @@ public class BookMarksActivity extends AppCompatActivity {
         }
         title = (TextView) findViewById(R.id.book_marks_title);
         recyclerView = (RecyclerView) findViewById(R.id.book_marks_recycler_view);
-        mAdapter = new BookMarksAdapter(quotesList);
+        mAdapter = new BookMarksAdapter(this,quotesList);
         RecyclerView.LayoutManager mLayoutManager = new LinearLayoutManager(getApplicationContext());
         recyclerView.setLayoutManager(mLayoutManager);
         recyclerView.setItemAnimator(new DefaultItemAnimator());
         recyclerView.setAdapter(mAdapter);
-
+        recyclerView.addItemDecoration(new RecyclerViewDivider(this));
         prepareBookMarksData();
     }
+
     @Override
     protected void attachBaseContext(Context newBase) {
         super.attachBaseContext(CalligraphyContextWrapper.wrap(newBase));
     }
+
     private void prepareBookMarksData() {
-        for (Quote quote:QuotesUtil.quotes
-             ) {
-            if(quote.isBookMarked) {
+        for (Quote quote : QuotesUtil.quotes
+                ) {
+            if (quote.isBookMarked) {
                 quotesList.add(quote);
             }
         }
-        title.setText("BookMarks" + "(" + quotesList.size() +")");
+        title.setText("BookMarks" + "(" + quotesList.size() + ")");
         mAdapter.notifyDataSetChanged();
     }
+
     @Override
     public boolean onOptionsItemSelected(MenuItem item) {
         int id = item.getItemId();
         if (id == android.R.id.home) {
-            finish();
+            handleBackPressed();
         }
         return super.onOptionsItemSelected(item);
+    }
+
+    private void handleBackPressed() {
+        finish();
+        Transitions.leftToRight(this);
     }
 }

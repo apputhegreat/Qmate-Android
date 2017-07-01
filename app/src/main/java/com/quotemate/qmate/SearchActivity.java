@@ -25,6 +25,7 @@ import com.quotemate.qmate.model.Author;
 import com.quotemate.qmate.selectAuthor.SearchFilter;
 import com.quotemate.qmate.util.KeyBoardUtil;
 import com.quotemate.qmate.util.QuotesUtil;
+import com.quotemate.qmate.util.Transitions;
 
 import java.util.ArrayList;
 import java.util.LinkedHashMap;
@@ -226,8 +227,12 @@ public class SearchActivity extends AppCompatActivity {
     public boolean onOptionsItemSelected(MenuItem item) {
         int id = item.getItemId();
         if (id == android.R.id.home) {
-            finish();
+            handleBackPressed();
         }
         return super.onOptionsItemSelected(item);
+    }
+    private void handleBackPressed() {
+        finish();
+        Transitions.leftToRight(this);
     }
 }
