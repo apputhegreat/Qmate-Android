@@ -1,31 +1,23 @@
 package com.quotemate.qmate;
 
-import android.app.Activity;
-import android.net.Uri;
-import android.support.annotation.NonNull;
-import android.support.design.widget.CollapsingToolbarLayout;
 import android.os.Bundle;
 import android.support.v4.app.Fragment;
-import android.support.v4.content.ContextCompat;
-import android.support.v7.widget.AppCompatImageView;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.ImageView;
 import android.widget.TextView;
 
-import com.google.android.gms.tasks.OnCompleteListener;
-import com.google.android.gms.tasks.Task;
+import com.bumptech.glide.Glide;
+import com.firebase.ui.storage.images.FirebaseImageLoader;
 import com.google.firebase.storage.FirebaseStorage;
 import com.google.firebase.storage.StorageReference;
-import com.squareup.picasso.Picasso;
 
 import de.hdodenhof.circleimageview.CircleImageView;
 
 
 /**
  * A fragment representing a single Quote detail screen.
- * This fragment is either contained in a {@link QuoteListActivity}
  * in two-pane mode (on tablets) or a {@link QuoteDetailActivity}
  * on handsets.
  */
@@ -83,15 +75,9 @@ public class QuoteDetailFragment extends Fragment {
 
     private void setImageFromRef(String imageURL, final ImageView view) {
         StorageReference ref = FirebaseStorage.getInstance().getReferenceFromUrl(imageURL);
-        ref.getDownloadUrl().addOnCompleteListener(new OnCompleteListener<Uri>() {
-            @Override
-            public void onComplete(@NonNull Task<Uri> task) {
-                if (task.isSuccessful()) {
-                    final Uri mImageDownloadUrl = task.getResult();
-                    Picasso.with(getContext()).load(mImageDownloadUrl)
-                            .placeholder(ContextCompat.getDrawable(getContext(), R.drawable.gandhi)).into(view);
-                }
-            }
-        });
+        Glide.with(getContext())
+                .using(new FirebaseImageLoader())
+                .load(ref)
+                .into(view);
     }
 }

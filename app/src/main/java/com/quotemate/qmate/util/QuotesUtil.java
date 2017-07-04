@@ -25,7 +25,6 @@ import io.realm.RealmList;
 public class QuotesUtil {
     private final ValueEventListener tagsListener;
     private final ChildEventListener quotesChildListener;
-    private ValueEventListener quotesListener;
     private ValueEventListener authorsListener;
     private IUpdateView updateView;
     DatabaseReference quotesRef = FirebaseDatabase.getInstance().getReference("quotes");
@@ -38,13 +37,12 @@ public class QuotesUtil {
 
     public QuotesUtil(final IUpdateView updateView) {
         this.updateView = updateView;
-        quotesChildListener =  new ChildEventListener() {
+        quotesChildListener = new ChildEventListener() {
             @Override
             public void onChildAdded(DataSnapshot dataSnapshot, String s) {
                 try {
                     Quote quote = getQuote(dataSnapshot);
                     quotes.add(quote);
-                    callUpdateView(quotes);
                 } catch (Exception ex) {
                 }
             }
@@ -99,7 +97,7 @@ public class QuotesUtil {
                 Author all = new Author();
                 all.name = "All";
                 all.id = "-1";
-                authorsNew.put("-1",all);
+                authorsNew.put("-1", all);
                 for (DataSnapshot snap : dataSnapshot.getChildren()
                         ) {
                     Author author = snap.getValue(Author.class);
@@ -141,30 +139,30 @@ public class QuotesUtil {
             quote.text = snap.child("text").getValue().toString();
             quote.authorId = snap.child("authorId").getValue().toString();
             quote.author = snap.child("author").getValue().toString();
-            if( snap.child("likes").exists()) {
-                quote.likes =(long) snap.child("likes").getValue();
+            if (snap.child("likes").exists()) {
+                quote.likes = (long) snap.child("likes").getValue();
             }
             quote.tags = new RealmList<>();
-            for (DataSnapshot sanpshot: snap.child("tags").getChildren()
-                 ) {
+            for (DataSnapshot sanpshot : snap.child("tags").getChildren()
+                    ) {
                 quote.tags.add(new RealmString(sanpshot.getValue().toString()));
             }
-            quote  = synchWithUser(quote);
+            quote = synchWithUser(quote);
         } catch (Exception ex) {
-          throw  ex;
+            throw ex;
         }
         return quote;
     }
 
     private static Quote synchWithUser(Quote quote) {
-        if(User.currentUser!=null) {
-            if(!User.currentUser.bookMarkedQuoteIds.isEmpty()) {
-                if(User.currentUser.bookMarkedQuoteIds.contains(quote.id)) {
+        if (User.currentUser != null) {
+            if (!User.currentUser.bookMarkedQuoteIds.isEmpty()) {
+                if (User.currentUser.bookMarkedQuoteIds.contains(quote.id)) {
                     quote.isBookMarked = true;
                 }
             }
-            if(!User.currentUser.likedQuoteIds.isEmpty()) {
-                if(User.currentUser.likedQuoteIds.contains(quote.id)) {
+            if (!User.currentUser.likedQuoteIds.isEmpty()) {
+                if (User.currentUser.likedQuoteIds.contains(quote.id)) {
                     quote.isLiked = true;
                 }
             }
