@@ -27,10 +27,10 @@ import com.quotemate.qmate.adapters.QuotesAdapter;
 import com.quotemate.qmate.login.FBLoginFragment;
 import com.quotemate.qmate.model.Author;
 import com.quotemate.qmate.model.Quote;
-import com.quotemate.qmate.model.RealmString;
 import com.quotemate.qmate.util.Constants;
 import com.quotemate.qmate.util.CustomProgressBar;
 import com.quotemate.qmate.util.FBUtil;
+import com.quotemate.qmate.util.FilterQuotes;
 import com.quotemate.qmate.util.QuotesUtil;
 import com.quotemate.qmate.util.RandomSelector;
 import com.quotemate.qmate.util.RealmUtil;
@@ -76,15 +76,13 @@ public class MainActivity extends AppCompatActivity implements IUpdateView {
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
-        mAuth = FirebaseAuth.getInstance();
-        mAuthListener = FBUtil.getAuthStateListener();
-        mAuth.addAuthStateListener(mAuthListener);
-        myProgressBar = new CustomProgressBar(this,false);
-        myProgressBar.setProgressBarMessage("Loading");
-        myProgressBar.showProgressBar();
+        handleAuth();
+        initProgressBar();
         Realm.init(getApplicationContext());
+
         toolBar = (Toolbar) findViewById(R.id.toolbar);
         setSupportActionBar(toolBar);
+
         searchBar = (TextView) findViewById(R.id.search_bar);
         searchBar.setOnClickListener(new View.OnClickListener() {
             @Override
@@ -92,10 +90,31 @@ public class MainActivity extends AppCompatActivity implements IUpdateView {
                 startSearchActivity();
             }
         });
+
         currentAutohrText = (TextView) findViewById(R.id.current_author_text);
         currentTagText = (TextView) findViewById(R.id.current_tag_text);
-        mQuoteOFtheDayLabel = (TextView) findViewById(R.id.quote_of_day_label) ;
-        mAdView =(PublisherAdView) findViewById(R.id.ad_view);
+
+        mQuoteOFtheDayLabel = (TextView) findViewById(R.id.quote_of_day_label);
+
+        handleAdView();
+
+        bottomLayout = (RelativeLayout) findViewById(R.id.bottom_layout);
+        spin = (MaterialRippleLayout) findViewById(R.id.spin);
+        mSpinTag = (RelativeLayout) findViewById(R.id.tag_spin);
+        mSpinAuthor = (RelativeLayout) findViewById(R.id.author_spin);
+        spin.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                handleSpinnerClick();
+            }
+        });
+
+        setTitle("");
+        initViewPager();
+    }
+
+    private void handleAdView() {
+        mAdView = (PublisherAdView) findViewById(R.id.ad_view);
         PublisherAdRequest adRequest = new PublisherAdRequest.Builder()
                 .addTestDevice(AdRequest.DEVICE_ID_EMULATOR)
                 // Check the LogCat to get your test device dID
@@ -103,41 +122,24 @@ public class MainActivity extends AppCompatActivity implements IUpdateView {
                 .build();
         mAdView.loadAd(adRequest);
         mAdView.setVisibility(View.GONE);
-        spin = (MaterialRippleLayout) findViewById(R.id.spin);
-        bottomLayout = (RelativeLayout) findViewById(R.id.bottom_layout);
-        mSpinTag = (RelativeLayout) findViewById(R.id.tag_spin);
-        mSpinAuthor = (RelativeLayout) findViewById(R.id.author_spin);
-        spin.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View view) {
-                if(FirebaseAuth.getInstance().getCurrentUser()!=null) {
-                    if(isFirstInstance) {
-                        isFirstInstance = false;
-                        mQuoteOFtheDayLabel.setVisibility(View.GONE);
-                        mSpinTag.setVisibility(View.VISIBLE);
-                        mSpinAuthor.setVisibility(View.VISIBLE);
-                        //mAdView.setVisibility(View.VISIBLE);
-                    }
-                    if(QuotesUtil.quotes==null || QuotesUtil.quotes.isEmpty()) {
-                        toolBar.setVisibility(View.VISIBLE);
-                        myProgressBar.showProgressBar();
-                        quotesUtil.addQuotesListener();
-                        return;
-                    }
-                    selectRandomAuthorAndTag();
-                } else {
-                    openLoginDialog();
-                }
-            }
-        });
-        setTitle("");
-        initViewPager();
+    }
+
+    private void initProgressBar() {
+        myProgressBar = new CustomProgressBar(this, false);
+        myProgressBar.setProgressBarMessage("Loading");
+        myProgressBar.showProgressBar();
+    }
+
+    private void handleAuth() {
+        mAuth = FirebaseAuth.getInstance();
+        mAuthListener = FBUtil.getAuthStateListener();
+        mAuth.addAuthStateListener(mAuthListener);
     }
 
     @Override
     protected void onNewIntent(Intent intent) {
         String fromScreen = intent.getStringExtra(Constants.FROM_SCREEN);
-        if(Objects.equals(fromScreen, Constants.BOOK_MARKS_SCREEN)) {
+        if (Objects.equals(fromScreen, Constants.BOOK_MARKS_SCREEN)) {
             updateView(RealmUtil.getBookMarks());
         }
         super.onNewIntent(intent);
@@ -155,12 +157,13 @@ public class MainActivity extends AppCompatActivity implements IUpdateView {
             case R.id.navigation_profile:
                 gotoProfilePage();
                 return true;
-            default: return  super.onOptionsItemSelected(item);
+            default:
+                return super.onOptionsItemSelected(item);
         }
     }
 
     private void gotoProfilePage() {
-        if(FirebaseAuth.getInstance().getCurrentUser()!=null) {
+        if (FirebaseAuth.getInstance().getCurrentUser() != null) {
             Intent intent = new Intent(this, ProfileActivity.class);
             intent.setFlags(FLAG_ACTIVITY_REORDER_TO_FRONT);
             startActivity(intent);
@@ -180,18 +183,19 @@ public class MainActivity extends AppCompatActivity implements IUpdateView {
         super.onStop();
 
     }
+
     private void openLoginDialog() {
-        fbfragment  = new FBLoginFragment();
-        fbfragment.show(getSupportFragmentManager(),MainActivity.class.getSimpleName());
+        fbfragment = new FBLoginFragment();
+        fbfragment.show(getSupportFragmentManager(), MainActivity.class.getSimpleName());
     }
 
 
     private void selectRandomAuthorAndTag() {
         //Animation hyperspaceJumpAnimation = AnimationUtils.loadAnimation(this, R.anim.shuffle_anim);
-        RandomSelector.setXRotaionAnimation(currentAutohrText,1,800);
-        RandomSelector.setXRotaionAnimation(currentTagText,1,800);
+        RandomSelector.setXRotaionAnimation(currentAutohrText, 1, 800);
+        RandomSelector.setXRotaionAnimation(currentTagText, 1, 800);
         //currentAutohrText.startAnimation(RandomSelector.getAnimation(5));
-       // currentTagText.startAnimation(RandomSelector.getAnimation(5));
+        // currentTagText.startAnimation(RandomSelector.getAnimation(5));
         currentAuthor = RandomSelector.getRandomAuthor(QuotesUtil.authors);
         currentTag = RandomSelector.getRandomTag(QuotesUtil.tags);
         currentAutohrText.setText("Author");
@@ -199,7 +203,7 @@ public class MainActivity extends AppCompatActivity implements IUpdateView {
         new android.os.Handler().postDelayed(
                 new Runnable() {
                     public void run() {
-                        if(currentAuthor!=null && currentTag!=null) {
+                        if (currentAuthor != null && currentTag != null) {
                             filterQuotesAndUpdateView(currentAuthor.id, currentTag, true);
                             currentAutohrText.setText(currentAuthor.name);
                             currentTagText.setText(currentTag);
@@ -226,59 +230,26 @@ public class MainActivity extends AppCompatActivity implements IUpdateView {
                 currentAuthor = QuotesUtil.authors.get(authorId);
                 currentAutohrText.setText(currentAuthor.name);
             } else {
-                if(currentAuthor!=null) {
+                if (currentAuthor != null) {
                     authorId = currentAuthor.id;
                 }
             }
             String tag = data.getStringExtra("tag");
-            if(tag != null) {
+            if (tag != null) {
                 currentTag = tag;
                 currentTagText.setText(currentTag);
             } else {
-               if(currentTag!=null) {
-                   tag = currentTag;
-               }
+                if (currentTag != null) {
+                    tag = currentTag;
+                }
             }
             filterQuotesAndUpdateView(authorId, tag, false);
         }
     }
 
     private void filterQuotesAndUpdateView(String authorId, String tag, boolean isSpin) {
-        ArrayList<Quote> filteredQuotes = new ArrayList<>();
-        if (authorId == null || Objects.equals(authorId, "-1")) {
-            if (tag != null && !Objects.equals(tag,"All")) {
-                for (Quote quote : QuotesUtil.quotes
-                        ) {
-                    for (RealmString mood : quote.tags
-                            ) {
-                        if (Objects.equals(mood.getValue().trim(), tag.trim())) {
-                            filteredQuotes.add(quote);
-                            break;
-                        }
-                    }
-                }
-            } else {
-                filteredQuotes = QuotesUtil.quotes;
-            }
-        } else {
-            for (Quote quote : QuotesUtil.quotes
-                    ) {
-                if (Objects.equals(quote.authorId, authorId)) {
-                    if (tag != null && !Objects.equals(tag,"All")) {
-                        for (RealmString mood : quote.tags
-                                ) {
-                            if (Objects.equals(mood.getValue().trim(), tag.trim())) {
-                                filteredQuotes.add(quote);
-                                break;
-                            }
-                        }
-                    } else {
-                        filteredQuotes.add(quote);
-                    }
-                }
-            }
-        }
-        if(isSpin && filteredQuotes.isEmpty()) {
+        ArrayList<Quote> filteredQuotes = FilterQuotes.getFilteredQuotes(authorId, tag);
+        if (isSpin && filteredQuotes.isEmpty()) {
             selectRandomAuthorAndTag();
         } else {
             updateView(filteredQuotes);
@@ -307,10 +278,18 @@ public class MainActivity extends AppCompatActivity implements IUpdateView {
 
     public void showZooView() {
         int visiblity = View.VISIBLE;
-        isZoomView = ! isZoomView;
-        if(isZoomView) {
-           visiblity = View.GONE;
+        isZoomView = !isZoomView;
+        if (isZoomView) {
+            visiblity = View.INVISIBLE;
+            bottomLayout.getRootView().setOnClickListener(new View.OnClickListener() {
+                @Override
+                public void onClick(View view) {
+                    toolBar.setVisibility(View.VISIBLE);
+                    bottomLayout.setVisibility(View.VISIBLE);
+                }
+            });
         }
+        bottomLayout.getRootView().setOnClickListener(null);
         toolBar.setVisibility(visiblity);
         bottomLayout.setVisibility(visiblity);
     }
@@ -321,24 +300,23 @@ public class MainActivity extends AppCompatActivity implements IUpdateView {
         if (isFirstInstance) {
             showQuoteoFtheDay();
         } else {
-            mQuoteOFtheDayLabel = (TextView) findViewById(R.id.quote_of_day_label);
             mQuoteOFtheDayLabel.setVisibility(View.GONE);
             adapter = new QuotesAdapter(MainActivity.this, quotes, false);
             viewPager.setAdapter(adapter);
             adapter.notifyDataSetChanged();
-            if(myProgressBar!=null) {
+            if (myProgressBar != null) {
                 myProgressBar.hideProgressBar();
             }
         }
     }
 
     private void showQuoteoFtheDay() {
-        toolBar.setVisibility(View.GONE);
+        isFirstInstance = false;
         FirebaseDatabase.getInstance().getReference().child("quoteOftheDay").addListenerForSingleValueEvent(new ValueEventListener() {
             @Override
             public void onDataChange(DataSnapshot dataSnapshot) {
                 ArrayList<Quote> quotes = new ArrayList<>();
-                if(dataSnapshot.exists()) {
+                if (dataSnapshot.exists()) {
                     mQuoteOFtheDayLabel.setVisibility(View.VISIBLE);
                     Quote quote = QuotesUtil.getQuote(dataSnapshot);
                     quotes.add(quote);
@@ -351,7 +329,7 @@ public class MainActivity extends AppCompatActivity implements IUpdateView {
 
             @Override
             public void onCancelled(DatabaseError databaseError) {
-                if(myProgressBar!=null) {
+                if (myProgressBar != null) {
                     myProgressBar.hideProgressBar();
                 }
             }
@@ -360,7 +338,7 @@ public class MainActivity extends AppCompatActivity implements IUpdateView {
 
     @Override
     protected void onDestroy() {
-        if(myProgressBar!=null) {
+        if (myProgressBar != null) {
             myProgressBar.destroyProgressBar();
         }
         if (mAuthListener != null) {
@@ -369,5 +347,25 @@ public class MainActivity extends AppCompatActivity implements IUpdateView {
         quotesUtil.removeQuotesListener();
         quotesUtil.removeAuthorsListenr();
         super.onDestroy();
+    }
+
+    private void handleSpinnerClick() {
+        if (FirebaseAuth.getInstance().getCurrentUser() != null) {
+            if (isFirstInstance) {
+                isFirstInstance = false;
+                //mAdView.setVisibility(View.VISIBLE);
+            }
+            mQuoteOFtheDayLabel.setVisibility(View.GONE);
+            mSpinTag.setVisibility(View.VISIBLE);
+            mSpinAuthor.setVisibility(View.VISIBLE);
+            if (QuotesUtil.quotes == null || QuotesUtil.quotes.isEmpty()) {
+                myProgressBar.showProgressBar();
+                quotesUtil.addQuotesListener();
+                return;
+            }
+            selectRandomAuthorAndTag();
+        } else {
+            openLoginDialog();
+        }
     }
 }

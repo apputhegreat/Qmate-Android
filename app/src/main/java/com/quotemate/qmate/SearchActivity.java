@@ -125,8 +125,8 @@ public class SearchActivity extends AppCompatActivity {
         // trending
         authorGridView = (GridView) findViewById(R.id.trending_authors_grid);
         tagGridView = (GridView) findViewById(R.id.trending_tags_grid);
-        authorGridView.setAdapter(new KeyValueAdapter(this, authorPairList));
-        tagGridView.setAdapter(new  KeyValueAdapter(this ,tagPairList));
+        authorGridView.setAdapter(new KeyValueAdapter(this, new ArrayList<Pair<String, String>>(authorPairList.subList(0,5)) ));
+        tagGridView.setAdapter(new  KeyValueAdapter(this ,new ArrayList<Pair<String,String>>(tagPairList.subList(0,5))));
         authorGridView.setOnItemClickListener(new AdapterView.OnItemClickListener() {
             @Override
             public void onItemClick(AdapterView<?> adapterView, View view, int i, long l) {
