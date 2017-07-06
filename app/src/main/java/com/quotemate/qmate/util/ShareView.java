@@ -7,9 +7,6 @@ import android.net.Uri;
 import android.os.Environment;
 import android.util.Log;
 import android.view.View;
-import android.widget.Filter;
-
-import com.quotemate.qmate.model.Quote;
 
 import java.io.File;
 import java.io.FileNotFoundException;

@@ -16,16 +16,18 @@
         android:id="@+id/info_txt_login"
         android:layout_alignParentTop="true"
         android:textSize="16sp"
+        android:layout_marginBottom="10dp"
         android:textColor="@color/contentColor"
         android:textAlignment="center"
-        android:text="Please Login to use this awesome feature"
+        android:text="Please Login to spin the Quote world"
         android:layout_width="match_parent"
         android:layout_height="wrap_content" />
     <Button
+        android:layout_marginRight="10dp"
+        android:layout_marginLeft="25dp"
         android:layout_below="@+id/info_txt_login"
-        android:layout_centerHorizontal="true"
         android:id="@+id/fb_login_custom_btn"
-        android:layout_width="220dp"
+        android:layout_width="150dp"
         android:layout_height="40dp"
         android:stateListAnimator="@null"
         android:text="Facebook"
@@ -34,5 +36,26 @@
         android:background="@color/colorPrimary"
         android:textColor="@android:color/white"
         tools:ignore="MissingPrefix" />
-
+    <Button
+        android:layout_marginLeft="10dp"
+        android:layout_marginRight="25dp"
+        android:layout_below="@+id/info_txt_login"
+        android:id="@+id/g_login_custom_btn"
+        android:layout_width="150dp"
+        android:layout_height="40dp"
+        android:layout_toRightOf="@+id/fb_login_custom_btn"
+        android:stateListAnimator="@null"
+        android:text="Google"
+        android:textSize="18sp"
+        android:textAllCaps="false"
+        android:background="@color/primaryButtonColor"
+        android:textColor="@android:color/white"
+        tools:ignore="MissingPrefix" />
+    <com.google.android.gms.common.SignInButton
+        android:visibility="gone"
+        android:layout_toRightOf="@+id/fb_login_custom_btn"
+        android:layout_centerHorizontal="true"
+        android:id="@+id/sign_in_button"
+        android:layout_width="220dp"
+        android:layout_height="40dp" />
 </RelativeLayout>

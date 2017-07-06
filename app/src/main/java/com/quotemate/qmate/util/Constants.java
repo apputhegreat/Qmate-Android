@@ -8,4 +8,5 @@ public class Constants {
     public static final String BOOK_MARKS_SCREEN = "BOOK_MARKS_SCREEN";
     public static String BOOK_MARKS_KEY = "BOOK_MARKS_KEY";
     public static String FROM_SCREEN = "FROM_SCREEN";
+    public static final int RC_SIGN_IN = 1001;
 }
