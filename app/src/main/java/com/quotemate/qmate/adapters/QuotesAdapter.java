@@ -119,7 +119,7 @@ public class QuotesAdapter extends PagerAdapter {
         shareBtn.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
-                handleShare(quote, quoteLayout);
+                handleShare(quote, itemView);
             }
         });
         container.addView(itemView);
@@ -138,8 +138,11 @@ public class QuotesAdapter extends PagerAdapter {
     private void handleShare(Quote quote, View view) {
         boolean resultExternal = Permissions.checkExternalStoragePermission(context);
         if (resultExternal) {
-            Bitmap bitmap = ShareView.takeScreenshot(view);
+            view.findViewById(R.id.share_bottom_content).setVisibility(View.VISIBLE);
+            View shareview = view.findViewById(R.id.quote_layout);
+            Bitmap bitmap = ShareView.takeScreenshot(shareview);
             File imagePath = ShareView.saveBitmap(bitmap);
+            shareview.findViewById(R.id.share_bottom_content).setVisibility(View.GONE);
             String shareBody = quote.text + "\n-" + quote.author;
             ShareView.shareIt(context, imagePath, shareBody);
         }

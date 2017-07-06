@@ -23,14 +23,23 @@ import com.facebook.Profile;
 import com.facebook.ProfileTracker;
 import com.facebook.login.LoginResult;
 import com.facebook.login.widget.LoginButton;
+import com.google.android.gms.auth.api.Auth;
+import com.google.android.gms.auth.api.signin.GoogleSignInAccount;
+import com.google.android.gms.auth.api.signin.GoogleSignInOptions;
+import com.google.android.gms.auth.api.signin.GoogleSignInResult;
+import com.google.android.gms.common.ConnectionResult;
+import com.google.android.gms.common.SignInButton;
+import com.google.android.gms.common.api.GoogleApiClient;
 import com.google.android.gms.tasks.OnCompleteListener;
 import com.google.android.gms.tasks.Task;
 import com.google.firebase.auth.AuthCredential;
 import com.google.firebase.auth.AuthResult;
 import com.google.firebase.auth.FacebookAuthProvider;
 import com.google.firebase.auth.FirebaseAuth;
+import com.google.firebase.auth.GoogleAuthProvider;
 import com.quotemate.qmate.MainActivity;
 import com.quotemate.qmate.R;
+import com.quotemate.qmate.util.Constants;
 import com.quotemate.qmate.util.CustomProgressBar;
 import com.quotemate.qmate.util.KeyBoardUtil;
 
@@ -41,6 +50,9 @@ public class FBLoginFragment extends DialogFragment {
     private FirebaseAuth mAuth;
     private CallbackManager mCallbackManager;
     private CustomProgressBar mProgressBar;
+    private GoogleApiClient mGoogleApiClient;
+    private SignInButton gloginBtn;
+
     private FacebookCallback<LoginResult> mCallback = new FacebookCallback<LoginResult>() {
         private ProfileTracker mProfileTracker;
 
@@ -78,6 +90,19 @@ public class FBLoginFragment extends DialogFragment {
         mAuth = FirebaseAuth.getInstance();
         mCallbackManager = CallbackManager.Factory.create();
         mActivity = (MainActivity) getActivity();
+        GoogleSignInOptions gso = new GoogleSignInOptions.Builder(GoogleSignInOptions.DEFAULT_SIGN_IN)
+                .requestIdToken(getString(R.string.default_web_client_id))
+                .requestEmail()
+                .build();
+        mGoogleApiClient = new GoogleApiClient.Builder(mActivity)
+                .enableAutoManage(mActivity, new GoogleApiClient.OnConnectionFailedListener() {
+                    @Override
+                    public void onConnectionFailed(@NonNull ConnectionResult connectionResult) {
+                        Log.d("GoogleApiClient", "onConnectionFailed: ");
+                    }
+                })
+                .addApi(Auth.GOOGLE_SIGN_IN_API, gso)
+                .build();
         mProgressBar = new CustomProgressBar(mActivity,false);
     }
 
@@ -107,21 +132,53 @@ public class FBLoginFragment extends DialogFragment {
         loginButton.setFragment(this);
         loginButton.registerCallback(mCallbackManager, mCallback);
         Button fbloginCustomBtn = (Button) view.findViewById(R.id.fb_login_custom_btn);
+        Button gloginCustomButton =(Button) view.findViewById(R.id.g_login_custom_btn);
+        gloginCustomButton.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                signInWithGoogle();
+            }
+        });
         fbloginCustomBtn.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                showProgress(true);
                 loginButton.performClick();
             }
         });
     }
 
+    private void signInWithGoogle() {
+        Intent signInIntent = Auth.GoogleSignInApi.getSignInIntent(mGoogleApiClient);
+        startActivityForResult(signInIntent, Constants.RC_SIGN_IN);
+    }
+
     @Override
     public void onActivityResult(int requestCode, int resultCode, Intent data) {
         super.onActivityResult(requestCode, resultCode, data);
-        if (mCallbackManager.onActivityResult(requestCode, resultCode, data)) {
+        if(requestCode==Constants.RC_SIGN_IN) {
+            GoogleSignInResult result = Auth.GoogleSignInApi.getSignInResultFromIntent(data);
+            handleGSignInResult(result);
+        }
+        else if (mCallbackManager.onActivityResult(requestCode, resultCode, data)) {
             return;
         }
+    }
+
+    private void handleGSignInResult(GoogleSignInResult result) {
+        if (result.isSuccess()) {
+            // Google Sign In was successful, authenticate with Firebase
+            GoogleSignInAccount account = result.getSignInAccount();
+            firebaseAuthWithGoogle(account);
+        } else {
+            // Google Sign In failed, update UI appropriately
+            // ...
+        }
+    }
+
+    private void firebaseAuthWithGoogle(GoogleSignInAccount account) {
+        Log.d("firebaseAuthWithGoogle", "firebaseAuthWithGoogle:" + account.getId());
+        AuthCredential credential = GoogleAuthProvider.getCredential(account.getIdToken(), null);
+        signInWithCredential(credential);
     }
 
     @Override
@@ -140,8 +197,11 @@ public class FBLoginFragment extends DialogFragment {
     private void handleFacebookAccessToken(AccessToken accessToken) {
         Log.d("token", "handleFacebookAccessToken:" + accessToken);
         // Exchange credentials with facebook
-        showProgress(true);
         AuthCredential credential = FacebookAuthProvider.getCredential(accessToken.getToken());
+        signInWithCredential(credential);
+    }
+
+    private void signInWithCredential(AuthCredential credential) {
         mAuth.signInWithCredential(credential)
                 .addOnCompleteListener(getActivity(), new OnCompleteListener<AuthResult>() {
                     @Override
@@ -153,7 +213,6 @@ public class FBLoginFragment extends DialogFragment {
                             Toast.makeText(getActivity(), "Authentication failed.",
                                     Toast.LENGTH_SHORT).show();
                         }
-                        showProgress(false);
                         FBLoginFragment.this.dismiss();
                     }
                 });
@@ -169,5 +228,12 @@ public class FBLoginFragment extends DialogFragment {
         }
 
         KeyBoardUtil.hideKeyboard(mActivity);
+    }
+
+    @Override
+    public void onDestroy() {
+        super.onDestroy();
+        mGoogleApiClient.stopAutoManage(getActivity());
+        mGoogleApiClient.disconnect();
     }
 }

@@ -50,6 +50,10 @@
             android:textSize="14sp"
             tools:ignore="MissingPrefix"
             tools:text="Abdul Kalam" />
+
+        <include
+            layout="@layout/share_bottom_content"/>
+
     </RelativeLayout>
 
     <RelativeLayout
