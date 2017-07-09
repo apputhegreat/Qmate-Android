@@ -109,17 +109,19 @@ public class FBLoginFragment extends DialogFragment {
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container,
                              Bundle savedInstanceState) {
+
         return inflater.inflate(R.layout.fragment_fblogin, container, false);
     }
+
     @Override
     public void onActivityCreated(Bundle arg0) {
         super.onActivityCreated(arg0);
         WindowManager.LayoutParams params = getDialog().getWindow()
                 .getAttributes();
         params.gravity = Gravity.BOTTOM | Gravity.CENTER;
+        params.windowAnimations = R.style.DialogAnimation;
         getDialog().getWindow().setAttributes(params);
-        getDialog().getWindow()
-                .getAttributes().windowAnimations = R.style.DialogAnimation;
+        this.setStyle(DialogFragment.STYLE_NORMAL,R.style.CustomDialog);
         getDialog().getWindow().setLayout(ViewGroup.LayoutParams.MATCH_PARENT, ViewGroup.LayoutParams.WRAP_CONTENT);
     }
     @Override

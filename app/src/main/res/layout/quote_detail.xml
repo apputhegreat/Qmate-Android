@@ -40,4 +40,82 @@
         android:textSize="14sp"
         tools:ignore="MissingPrefix"
         tools:text="Abdul Kalam" />
+
+    <RelativeLayout
+        android:layout_below="@+id/quote_author"
+        android:id="@+id/action_btns_quote"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_marginTop="75dp">
+
+        <com.balysv.materialripple.MaterialRippleLayout
+            android:id="@+id/book_mark_quote_btn"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_centerInParent="true">
+
+            <android.support.v7.widget.AppCompatImageView
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:id="@+id/book_mark_img"
+                android:backgroundTint="@android:color/white"
+                android:src="@drawable/ic_star_black_24dp"
+                android:tint="@color/gray" />
+        </com.balysv.materialripple.MaterialRippleLayout>
+
+        <com.balysv.materialripple.MaterialRippleLayout
+            android:id="@+id/like_quote_btn"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_centerVertical="true"
+            android:layout_marginRight="75dp"
+            android:layout_toLeftOf="@+id/book_mark_quote_btn">
+
+            <RelativeLayout
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content">
+
+                <android.support.v7.widget.AppCompatImageView
+                    android:id="@+id/like_image"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:backgroundTint="@android:color/white"
+                    android:src="@drawable/ic_favorite_border_black_24dp"
+                    android:tint="@color/gray" />
+
+                <TextView
+                    android:id="@+id/badge_like"
+                    android:gravity="top"
+                    android:visibility="visible"
+                    android:textAlignment="gravity"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_toRightOf="@+id/like_image"
+                    android:textColor="@color/yellowGreen"
+                    android:textSize="13sp"
+                    fontPath="fonts/Cabin-SemiBold.ttf"
+                    tools:text="16"
+                    tools:ignore="MissingPrefix" />
+            </RelativeLayout>
+
+        </com.balysv.materialripple.MaterialRippleLayout>
+
+        <com.balysv.materialripple.MaterialRippleLayout
+            android:id="@+id/share_quote_btn"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_centerVertical="true"
+            android:layout_marginLeft="75dp"
+            android:layout_toRightOf="@+id/book_mark_quote_btn">
+
+            <android.support.v7.widget.AppCompatImageView
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:id="@+id/share_img"
+                android:backgroundTint="@android:color/white"
+                android:src="@drawable/ic_share_black_24dp"
+                android:tint="@color/gray" />
+        </com.balysv.materialripple.MaterialRippleLayout>
+    </RelativeLayout>
+
 </RelativeLayout>

@@ -4,34 +4,31 @@
     android:layout_width="match_parent"
     android:layout_height="match_parent"
     android:background="@color/backgroundColor"
-    xmlns:app="http://schemas.android.com/apk/res-auto"
     tools:context="com.quotemate.qmate.BookMarksActivity">
 
     <android.support.v7.widget.Toolbar
         android:id="@+id/toolbar"
         android:layout_width="match_parent"
         android:layout_height="50dp"
-        android:background="@android:color/white"
-        android:elevation="1dp"
-        android:focusableInTouchMode="true"
-        android:minHeight="45dp"
-        app:titleTextColor="@android:color/black">
+        android:elevation="2dp"
+        android:gravity="left"
+        android:background="@color/cardColor"
+        android:layout_alignParentTop="true">
 
         <TextView
-            android:gravity="center_vertical"
             android:id="@+id/book_marks_title"
-            fontPath="fonts/JosefinSans-Regular.ttf"
-            android:layout_width="match_parent"
-            android:layout_height="match_parent"
-            android:layout_alignParentLeft="true"
-            android:layout_centerVertical="true"
-            android:background="@android:color/transparent"
-            android:drawableRight="@drawable/ic_search_black_24dp"
-            android:drawablePadding="5dp"
-            android:text="BookMarks"
-            android:textColor="@android:color/black"
+            android:letterSpacing="0.04"
+            fontPath="fonts/Cabin-Regular.ttf"
+            tools:ignore="MissingPrefix"
             android:textSize="16sp"
-            tools:ignore="MissingPrefix" />
+            android:gravity="left"
+            android:background="@color/transparent"
+            android:textAlignment="gravity"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:text="Bookmarks"
+            android:textColor="@color/contentColor"
+             />
     </android.support.v7.widget.Toolbar>
     <android.support.v7.widget.RecyclerView
         android:layout_below="@+id/toolbar"

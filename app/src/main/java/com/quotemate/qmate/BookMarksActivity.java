@@ -61,8 +61,12 @@ public class BookMarksActivity extends AppCompatActivity {
                 quotesList.add(quote);
             }
         }
-        title.setText("BookMarks" + "(" + quotesList.size() + ")");
+        setBookMarksTitle(quotesList.size());
         mAdapter.notifyDataSetChanged();
+    }
+
+    public void setBookMarksTitle(int size) {
+        title.setText("Bookmarks" + "(" + quotesList.size() + ")");
     }
 
     @Override

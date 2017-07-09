@@ -21,7 +21,7 @@
             <TextView
                 android:gravity="center_vertical"
                 android:id="@+id/search_bar"
-                fontPath="fonts/JosefinSans-Regular.ttf"
+                fontPath="fonts/Cabin-Regular.ttf"
                 android:layout_width="match_parent"
                 android:layout_height="match_parent"
                 android:layout_alignParentLeft="true"
@@ -29,14 +29,15 @@
                 android:background="@android:color/transparent"
                 android:drawableLeft="@drawable/ic_search_black_24dp"
                 android:drawablePadding="5dp"
-                android:text="Search"
-                android:textColor="@android:color/black"
-                android:textSize="16sp"
+                android:drawableTint="@color/yellowGreen"
+                android:text="Search by Tag or Authors"
+                android:textColor="@color/placeHolderColor"
+                android:textSize="15sp"
                 tools:ignore="MissingPrefix" />
     </android.support.v7.widget.Toolbar>
 
     <RelativeLayout
-        android:layout_marginBottom="5dp"
+        android:layout_marginBottom="30dp"
         android:layout_above="@+id/ad_view_layout"
         android:id="@+id/bottom_layout"
         android:layout_width="match_parent"
@@ -45,34 +46,40 @@
 
         <com.balysv.materialripple.MaterialRippleLayout
             android:id="@+id/spin"
+            android:elevation="1dp"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:layout_centerInParent="true">
 
             <TextView
+                android:id="@+id/spin_text"
+                fontPath="fonts/Cabin-Bold.ttf"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:background="@drawable/bg_spin_gray"
                 android:gravity="center"
                 android:paddingLeft="-5dp"
                 android:paddingRight="-5dp"
-                android:text="spin"
+                android:text="Spin"
+                android:letterSpacing="0.04"
                 android:textAlignment="center"
-                android:textColor="@android:color/white"
-                android:textSize="18sp" />
+                android:textColor="@color/cardColor"
+                android:textSize="16sp"
+                tools:ignore="MissingPrefix" />
         </com.balysv.materialripple.MaterialRippleLayout>
 
         <RelativeLayout
-            android:visibility="gone"
+            android:visibility="visible"
             android:id="@+id/tag_spin"
             android:layout_centerVertical="true"
             android:layout_width="wrap_content"
             android:layout_alignParentLeft="true"
             android:layout_toLeftOf="@+id/spin"
             android:orientation="vertical"
-            android:background="@color/gray"
-            android:layout_marginLeft="10dp"
-            android:layout_height="40dp">
+            android:background="@color/placeHolderColor"
+            android:layout_marginLeft="15dp"
+            android:layout_marginRight="-10dp"
+            android:layout_height="44dp">
             <View
                 android:visibility="gone"
                 android:layout_alignParentTop="true"
@@ -80,15 +87,21 @@
                 android:background="@color/gray"
                 android:layout_height="10dp"/>
             <TextView
+                fontPath="fonts/Cabin-Regular.ttf"
                 android:id="@+id/current_tag_text"
                 android:layout_centerInParent="true"
                 android:layout_width="match_parent"
                 android:textAlignment="center"
                 android:gravity="center"
-                android:background="@color/gray"
+                android:lines="1"
+                android:paddingLeft="5dp"
+                android:paddingRight="10dp"
+                android:ellipsize="end"
+                android:textSize="14sp"
                 android:layout_height="wrap_content"
                 android:textColor="@android:color/white"
-                android:text="All" />
+                android:text="All"
+                tools:ignore="MissingPrefix" />
             <View
                 android:visibility="gone"
                 android:layout_alignParentBottom="true"
@@ -96,16 +109,17 @@
                 android:layout_height="10dp"/>
         </RelativeLayout>
         <RelativeLayout
-            android:visibility="gone"
+            android:visibility="visible"
             android:id="@+id/author_spin"
-            android:layout_marginRight="10dp"
+            android:layout_marginRight="15dp"
+            android:layout_marginLeft="-10dp"
             android:layout_centerVertical="true"
             android:layout_width="wrap_content"
-            android:layout_height="40dp"
+            android:layout_height="44dp"
             android:layout_alignParentRight="true"
             android:layout_toRightOf="@+id/spin"
             android:orientation="vertical"
-            android:background="@color/gray"
+            android:background="@color/placeHolderColor"
             >
 
             <View
@@ -122,14 +136,21 @@
                 android:background="@color/gray"
                 android:layout_height="10dp"/>
             <TextView
+                fontPath="fonts/Cabin-Regular.ttf"
                 android:layout_height="wrap_content"
                 android:id="@+id/current_author_text"
                 android:layout_centerInParent="true"
                 android:textAlignment="center"
                 android:gravity="center"
+                android:lines="1"
+                android:paddingLeft="15dp"
+                android:paddingRight="5dp"
+                android:ellipsize="end"
+                android:textSize="14sp"
                 android:textColor="@android:color/white"
                 android:layout_width="match_parent"
-                android:text="All" />
+                android:text="All"
+                tools:ignore="MissingPrefix" />
         </RelativeLayout>
 
     </RelativeLayout>
@@ -150,22 +171,23 @@
     </LinearLayout>
 
     <TextView
-        android:layout_marginTop="80dp"
+        fontPath="fonts/Cabin-SemiBold.ttf"
+        android:layout_marginTop="40dp"
         android:layout_marginBottom="10dp"
         android:id="@+id/quote_of_day_label"
-        android:layout_width="wrap_content"
+        android:layout_width="230dp"
         android:layout_height="45dp"
-        android:paddingLeft="30dp"
-        android:paddingRight="30dp"
+        android:letterSpacing="0.1"
         android:background="@color/contentColor"
         android:gravity="center"
         android:layout_centerHorizontal="true"
-        android:textSize="20sp"
+        android:textSize="17sp"
         android:text="Quote of the day"
         android:textAlignment="center"
         android:visibility="visible"
         android:layout_below="@+id/toolbar"
-        android:textColor="@android:color/white" />
+        android:textColor="@android:color/white"
+        tools:ignore="MissingPrefix" />
 
     <me.kaelaela.verticalviewpager.VerticalViewPager
         android:id="@+id/vertical_viewpager"

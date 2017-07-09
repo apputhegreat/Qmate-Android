@@ -13,6 +13,7 @@ import com.google.firebase.database.FirebaseDatabase;
 import com.google.firebase.database.MutableData;
 import com.google.firebase.database.Transaction;
 import com.google.firebase.database.ValueEventListener;
+import com.quotemate.qmate.MainActivity;
 import com.quotemate.qmate.model.User;
 
 /**
@@ -20,14 +21,14 @@ import com.quotemate.qmate.model.User;
  */
 
 public class FBUtil {
-    public static void updateLikes(String quoteId) {
+    public static void updateLikes(String quoteId, final long increment) {
         FirebaseDatabase.getInstance().getReference("quotes").child(quoteId).child("likes").runTransaction(new Transaction.Handler() {
             @Override
             public Transaction.Result doTransaction(final MutableData currentData) {
                 if (currentData.getValue() == null) {
                     currentData.setValue(1);
                 } else {
-                    currentData.setValue((Long) currentData.getValue() + 1);
+                    currentData.setValue((Long) currentData.getValue() + increment);
                 }
 
                 return Transaction.success(currentData);
@@ -44,21 +45,24 @@ public class FBUtil {
         });
     }
 
-    public static FirebaseAuth.AuthStateListener getAuthStateListener() {
+    public static FirebaseAuth.AuthStateListener getAuthStateListener(final MainActivity activity) {
        FirebaseAuth.AuthStateListener authListener = new FirebaseAuth.AuthStateListener() {
             @Override
             public void onAuthStateChanged(@NonNull FirebaseAuth firebaseAuth) {
                 final FirebaseUser fUser = firebaseAuth.getCurrentUser();
                 if (fUser != null) {
                     final DatabaseReference mUserRef = FirebaseDatabase.getInstance().getReference("users/" + fUser.getUid());
-                    setCurrentUser(fUser, mUserRef);
+                    setCurrentUser(fUser, mUserRef, activity);
+                } else {
+                    User.currentUser = null;
+                    activity.setSpinTxtAppearance();
                 }
             }
         };
         return authListener;
     }
 
-    private static void setCurrentUser(final FirebaseUser fUser, final DatabaseReference mUserRef) {
+    private static void setCurrentUser(final FirebaseUser fUser, final DatabaseReference mUserRef, final MainActivity activity) {
         mUserRef.addListenerForSingleValueEvent(new ValueEventListener() {
             @Override
             public void onDataChange(DataSnapshot dataSnapshot) {
@@ -84,6 +88,7 @@ public class FBUtil {
                     User.currentUser = dataSnapshot.getValue(User.class);
                     User.currentUser.id =  fUser.getUid();
                 }
+                activity.setSpinTxtAppearance();
             }
 
             @Override
