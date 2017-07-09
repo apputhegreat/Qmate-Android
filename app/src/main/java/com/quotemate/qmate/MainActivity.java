@@ -3,6 +3,7 @@ package com.quotemate.qmate;
 import android.content.Context;
 import android.content.Intent;
 import android.os.Bundle;
+import android.support.v4.content.ContextCompat;
 import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.Toolbar;
 import android.util.Log;
@@ -27,6 +28,7 @@ import com.quotemate.qmate.adapters.QuotesAdapter;
 import com.quotemate.qmate.login.FBLoginFragment;
 import com.quotemate.qmate.model.Author;
 import com.quotemate.qmate.model.Quote;
+import com.quotemate.qmate.model.User;
 import com.quotemate.qmate.util.Constants;
 import com.quotemate.qmate.util.CustomProgressBar;
 import com.quotemate.qmate.util.FBUtil;
@@ -70,7 +72,7 @@ public class MainActivity extends AppCompatActivity implements IUpdateView {
     private RelativeLayout mSpinAuthor;
     private CustomProgressBar myProgressBar;
     public boolean isZoomView = false;
-
+    private TextView spinTxt;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -100,17 +102,45 @@ public class MainActivity extends AppCompatActivity implements IUpdateView {
 
         bottomLayout = (RelativeLayout) findViewById(R.id.bottom_layout);
         spin = (MaterialRippleLayout) findViewById(R.id.spin);
+        spinTxt = (TextView) findViewById(R.id.spin_text);
         mSpinTag = (RelativeLayout) findViewById(R.id.tag_spin);
+        mSpinTag.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                startSearchActivity();
+            }
+        });
         mSpinAuthor = (RelativeLayout) findViewById(R.id.author_spin);
+        mSpinAuthor.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                startSearchActivity();
+            }
+        });
         spin.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
                 handleSpinnerClick();
             }
         });
+        setSpinTxtAppearance();
 
         setTitle("");
         initViewPager();
+    }
+
+    public void setSpinTxtAppearance() {
+        if(User.currentUser!=null) {
+            spinTxt.setTextColor(ContextCompat.getColor(this, R.color.contentColor));
+            spinTxt.setBackground(ContextCompat.getDrawable(this,R.drawable.bg_spin_yellow));
+            mSpinTag.setVisibility(View.VISIBLE);
+            mSpinAuthor.setVisibility(View.VISIBLE);
+        } else {
+            spinTxt.setTextColor(ContextCompat.getColor(this, R.color.cardColor));
+            spinTxt.setBackground(ContextCompat.getDrawable(this,R.drawable.bg_spin_gray));
+            mSpinTag.setVisibility(View.GONE);
+            mSpinAuthor.setVisibility(View.GONE);
+        }
     }
 
     private void handleAdView() {
@@ -132,7 +162,7 @@ public class MainActivity extends AppCompatActivity implements IUpdateView {
 
     private void handleAuth() {
         mAuth = FirebaseAuth.getInstance();
-        mAuthListener = FBUtil.getAuthStateListener();
+        mAuthListener = FBUtil.getAuthStateListener(this);
         mAuth.addAuthStateListener(mAuthListener);
     }
 
@@ -218,7 +248,7 @@ public class MainActivity extends AppCompatActivity implements IUpdateView {
         intent.putExtra("authorId", currentAutohrText.getText().toString());
         intent.putExtra("tag", currentTagText.getText().toString());
         this.startActivityForResult(intent, 100);
-        Transitions.rightToLeft(this);
+        Transitions.leftToRight(this);
     }
 
     @Override
@@ -355,9 +385,6 @@ public class MainActivity extends AppCompatActivity implements IUpdateView {
                 isFirstInstance = false;
                 //mAdView.setVisibility(View.VISIBLE);
             }
-            mQuoteOFtheDayLabel.setVisibility(View.GONE);
-            mSpinTag.setVisibility(View.VISIBLE);
-            mSpinAuthor.setVisibility(View.VISIBLE);
             if (QuotesUtil.quotes == null || QuotesUtil.quotes.isEmpty()) {
                 myProgressBar.showProgressBar();
                 quotesUtil.addQuotesListener();

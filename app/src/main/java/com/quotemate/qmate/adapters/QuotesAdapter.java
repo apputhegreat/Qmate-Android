@@ -6,11 +6,8 @@ package com.quotemate.qmate.adapters;
 
 import android.content.Context;
 import android.graphics.Bitmap;
-import android.net.Uri;
-import android.support.annotation.NonNull;
 import android.support.v4.content.ContextCompat;
 import android.support.v4.view.PagerAdapter;
-import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.AppCompatImageView;
 import android.view.LayoutInflater;
 import android.view.View;
@@ -23,7 +20,6 @@ import android.widget.TextView;
 import com.balysv.materialripple.MaterialRippleLayout;
 import com.bumptech.glide.Glide;
 import com.firebase.ui.storage.images.FirebaseImageLoader;
-import com.google.firebase.database.FirebaseDatabase;
 import com.google.firebase.storage.FirebaseStorage;
 import com.google.firebase.storage.StorageReference;
 import com.quotemate.qmate.MainActivity;
@@ -32,7 +28,8 @@ import com.quotemate.qmate.login.FBLoginFragment;
 import com.quotemate.qmate.model.Author;
 import com.quotemate.qmate.model.Quote;
 import com.quotemate.qmate.model.User;
-import com.quotemate.qmate.util.FBUtil;
+import com.quotemate.qmate.util.BookMarkUtil;
+import com.quotemate.qmate.util.LikeUtil;
 import com.quotemate.qmate.util.Permissions;
 import com.quotemate.qmate.util.QuotesUtil;
 import com.quotemate.qmate.util.ShareView;
@@ -43,11 +40,13 @@ import java.util.ArrayList;
 import de.hdodenhof.circleimageview.CircleImageView;
 
 public class QuotesAdapter extends PagerAdapter {
+    private final LikeUtil likeUtil;
     MainActivity context;
     ArrayList<Quote> quotes = new ArrayList<>();
     LayoutInflater layoutInflater;
     boolean isQuoteOftheDay;
     private File imagePath;
+    private BookMarkUtil bookMarkUtil;
 
 
     public QuotesAdapter(MainActivity context, ArrayList<Quote> quotes, boolean isQuoteOftheDay) {
@@ -55,6 +54,8 @@ public class QuotesAdapter extends PagerAdapter {
         this.quotes = quotes;
         this.isQuoteOftheDay = isQuoteOftheDay;
         layoutInflater = (LayoutInflater) context.getSystemService(Context.LAYOUT_INFLATER_SERVICE);
+        bookMarkUtil = new BookMarkUtil(context);
+        likeUtil = new LikeUtil(context);
     }
 
     @Override
@@ -107,13 +108,21 @@ public class QuotesAdapter extends PagerAdapter {
         likeBtn.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
-                handleLike(quote, likeImgView, likeCountBadge);
+                if (User.currentUser == null) {
+                    openLoginDialog();
+                    return;
+                }
+              likeUtil.handleLike(quote, likeImgView, likeCountBadge);
             }
         });
         bookMarkBtn.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
-                handleBookMark(quote, bookMarkImgView);
+                if (User.currentUser == null) {
+                    openLoginDialog();
+                    return;
+                }
+                bookMarkUtil.handleBookMark(quote, bookMarkImgView,true);
             }
         });
         shareBtn.setOnClickListener(new View.OnClickListener() {
@@ -145,58 +154,6 @@ public class QuotesAdapter extends PagerAdapter {
             shareview.findViewById(R.id.share_bottom_content).setVisibility(View.GONE);
             String shareBody = quote.text + "\n-" + quote.author;
             ShareView.shareIt(context, imagePath, shareBody);
-        }
-    }
-
-    private void handleBookMark(Quote quote, AppCompatImageView bookMarkImgView) {
-        if (User.currentUser == null) {
-            openLoginDialog();
-            return;
-        }
-        if (quote.isBookMarked) {
-            return;
-        }
-        bookMarkImgView.setImageDrawable(ContextCompat.getDrawable(context, R.drawable.ic_star_black_24dp));
-        quote.isBookMarked = true;
-        if (User.currentUser != null) {
-            User.currentUser.bookMarkedQuoteIds.add(quote.id);
-            FirebaseDatabase.getInstance().getReference("users")
-                    .child(User.currentUser.id)
-                    .child("bookMarkedQuoteIds")
-                    .setValue(User.currentUser.bookMarkedQuoteIds);
-        }
-//        Realm realm = Realm.getDefaultInstance();
-//        realm.beginTransaction();
-//        try {
-//            realm.copyToRealm(quote);
-//            realm.commitTransaction();
-//        } catch (io.realm.exceptions.RealmPrimaryKeyConstraintException ex) {
-//            Toast.makeText(context,"Already added to book marks", Toast.LENGTH_SHORT).show();
-//        }
-    }
-
-    private void handleLike(Quote quote, AppCompatImageView likeImgView, TextView badge) {
-        if (User.currentUser == null) {
-            openLoginDialog();
-            return;
-        }
-        if (quote.isLiked) {
-            return;
-        }
-        likeImgView.setImageDrawable(ContextCompat.getDrawable(context, R.drawable.ic_favorite_black_24dp));
-        quote.isLiked = true;
-        if (User.currentUser != null) {
-            User.currentUser.likedQuoteIds.add(quote.id);
-            FirebaseDatabase.getInstance().getReference("users")
-                    .child(User.currentUser.id)
-                    .child("likedQuoteIds")
-                    .setValue(User.currentUser.likedQuoteIds);
-        }
-        FBUtil.updateLikes(quote.id);
-        quote.likes = quote.likes + 1;
-        if (badge != null) {
-            badge.setVisibility(View.VISIBLE);
-            badge.setText(String.valueOf(quote.likes));
         }
     }
 

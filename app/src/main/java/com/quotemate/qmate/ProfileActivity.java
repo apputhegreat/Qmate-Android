@@ -61,8 +61,12 @@ public class ProfileActivity extends AppCompatActivity implements View.OnClickLi
         }
     }
     void gotoSharePage() {
-        mInviteDialog = new InviteDialog(this);
-        mInviteDialog.show();
+        Intent sendIntent = new Intent();
+        sendIntent.setAction(Intent.ACTION_SEND);
+        sendIntent.putExtra(Intent.EXTRA_TEXT, "A good quote on a bad day can rewrite the journey. Download the 'Qtoniq' app \n" + "app_store_url");
+        sendIntent.putExtra(Intent.EXTRA_SUBJECT, getString(R.string.invitation_message));
+        sendIntent.setType("text/plain");
+        startActivity(Intent.createChooser(sendIntent, "Send to a friend"));
     }
     @Override
     protected void attachBaseContext(Context newBase) {
@@ -71,9 +75,9 @@ public class ProfileActivity extends AppCompatActivity implements View.OnClickLi
     private void logoutUser() {
         if(FirebaseAuth.getInstance().getCurrentUser()!=null) {
             FirebaseAuth.getInstance().signOut();
+            User.currentUser = null;
             if (AccessToken.getCurrentAccessToken() != null) {
                 LoginManager.getInstance().logOut();
-                User.currentUser = null;
             }
             handleBackPressed();
         }
@@ -82,10 +86,10 @@ public class ProfileActivity extends AppCompatActivity implements View.OnClickLi
     private void openBookMarks() {
         Intent intent = new Intent(this, BookMarksActivity.class);
         intent.putExtra(Constants.FROM_SCREEN,Constants.BOOK_MARKS_SCREEN);
-        finish();
         startActivity(intent);
         Transitions.rightToLeft(this);
     }
+
     @Override
     public boolean onOptionsItemSelected(MenuItem item) {
         int id = item.getItemId();

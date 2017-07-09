@@ -1,11 +1,11 @@
 <?xml version="1.0" encoding="utf-8"?>
 <shape xmlns:android="http://schemas.android.com/apk/res/android">
-    <solid android:color="@color/yellowGreen" />
+    <solid android:color="@color/placeHolderColor" />
     <corners
-        android:topLeftRadius="40dp"
-        android:topRightRadius="40dp"
-        android:bottomLeftRadius="40dp"
-        android:bottomRightRadius="40dp"
+        android:topLeftRadius="65dp"
+        android:topRightRadius="65dp"
+        android:bottomLeftRadius="65dp"
+        android:bottomRightRadius="65dp"
         />
     <size
         android:height="65dp"

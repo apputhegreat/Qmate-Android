@@ -59,7 +59,7 @@ public class SearchActivity extends AppCompatActivity {
         setSupportActionBar(toolbar);
         ActionBar actionBar = getSupportActionBar();
         if (actionBar != null) {
-            actionBar.setDisplayHomeAsUpEnabled(true);
+            actionBar.setDisplayHomeAsUpEnabled(false);
         }
         tags = QuotesUtil.tags;
         searchBar = (EditText) findViewById(R.id.search_bar);
@@ -98,7 +98,7 @@ public class SearchActivity extends AppCompatActivity {
         }
 
         // Creating adapter for spinner
-        ArrayAdapter<String> dataAdapter = new ArrayAdapter<>(this, android.R.layout.simple_spinner_item, categories);
+        ArrayAdapter<String> dataAdapter = new ArrayAdapter<>(this, R.layout.simple_spinner_item, categories);
 
         // Drop down layout style - list view with radio button
         dataAdapter.setDropDownViewResource(R.layout.spinner_view);
@@ -231,8 +231,15 @@ public class SearchActivity extends AppCompatActivity {
         }
         return super.onOptionsItemSelected(item);
     }
+
+    @Override
+    public void onBackPressed() {
+        super.onBackPressed();
+        handleBackPressed();
+    }
+
     private void handleBackPressed() {
         finish();
-        Transitions.leftToRight(this);
+        Transitions.rightToLeft(this);
     }
 }

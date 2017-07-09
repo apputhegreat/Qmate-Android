@@ -9,6 +9,7 @@
     android:orientation="vertical">
 
     <RelativeLayout
+        android:layout_marginTop="-20dp"
         android:background="@android:color/white"
         android:id="@+id/quote_layout"
         android:layout_width="wrap_content"
@@ -20,12 +21,14 @@
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:layout_alignParentTop="true"
-            android:layout_margin="16dip"
+            android:layout_margin="19dp"
             android:gravity="left"
+            android:letterSpacing="0.04"
             android:text="If you want to shine like a sun, first burn like a sun"
             android:textAlignment="center"
             android:textColor="@android:color/black"
-            android:textSize="28sp"
+            android:textSize="30sp"
+            android:lineSpacingExtra="5dp"
             tools:ignore="MissingPrefix" />
 
         <de.hdodenhof.circleimageview.CircleImageView xmlns:app="http://schemas.android.com/apk/res-auto"
@@ -35,18 +38,18 @@
             android:layout_below="@+id/quote_text"
             android:layout_centerHorizontal="true"
             android:src="@drawable/ic_person_black_36dp"
-            app:civ_border_color="#FF000000"
-            app:civ_border_width="1dp" />
+            />
 
         <TextView
             android:id="@+id/quote_author"
             fontPath="fonts/Cabin-Regular.ttf"
             android:layout_width="match_parent"
+            android:letterSpacing="0.04"
             android:layout_height="wrap_content"
             android:layout_below="@+id/author_image"
-            android:layout_margin="8dip"
+            android:layout_margin="4dp"
             android:textAlignment="center"
-            android:textColor="@android:color/black"
+            android:textColor="@color/placeHolderColor"
             android:textSize="14sp"
             tools:ignore="MissingPrefix"
             tools:text="Abdul Kalam" />
@@ -60,7 +63,7 @@
         android:id="@+id/action_btns_quote"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:layout_marginTop="80dp">
+        android:layout_marginTop="45dp">
 
         <com.balysv.materialripple.MaterialRippleLayout
             android:id="@+id/book_mark_quote_btn"
@@ -82,7 +85,7 @@
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:layout_centerVertical="true"
-            android:layout_marginRight="70dp"
+            android:layout_marginRight="75dp"
             android:layout_toLeftOf="@+id/book_mark_quote_btn">
 
             <RelativeLayout
@@ -98,17 +101,18 @@
                     android:tint="@color/gray" />
 
                 <TextView
-                    android:textAlignment="center"
                     android:id="@+id/badge_like"
-                    android:gravity="center"
+                    android:gravity="top"
+                    android:visibility="visible"
+                    android:textAlignment="gravity"
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
                     android:layout_toRightOf="@+id/like_image"
-                    android:background="@drawable/item_count"
-                    android:textColor="#FFF"
-                    android:textSize="12sp"
-                    android:textStyle="bold"
-                    tools:text="16" />
+                    android:textColor="@color/yellowGreen"
+                    android:textSize="13sp"
+                    fontPath="fonts/Cabin-SemiBold.ttf"
+                    tools:text="16"
+                    tools:ignore="MissingPrefix" />
             </RelativeLayout>
 
         </com.balysv.materialripple.MaterialRippleLayout>
@@ -118,10 +122,10 @@
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:layout_centerVertical="true"
-            android:layout_marginLeft="70dp"
+            android:layout_marginLeft="75dp"
             android:layout_toRightOf="@+id/book_mark_quote_btn">
 
-            <android.support.v7.widget.AppCompatImageButton
+            <android.support.v7.widget.AppCompatImageView
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:id="@+id/share_img"
