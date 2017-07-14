@@ -29,6 +29,7 @@ import com.quotemate.qmate.model.Author;
 import com.quotemate.qmate.model.Quote;
 import com.quotemate.qmate.model.User;
 import com.quotemate.qmate.util.BookMarkUtil;
+import com.quotemate.qmate.util.IntroUtil;
 import com.quotemate.qmate.util.LikeUtil;
 import com.quotemate.qmate.util.Permissions;
 import com.quotemate.qmate.util.QuotesUtil;
@@ -41,6 +42,7 @@ import de.hdodenhof.circleimageview.CircleImageView;
 
 public class QuotesAdapter extends PagerAdapter {
     private final LikeUtil likeUtil;
+    private final IntroUtil mIntroUtil;
     MainActivity context;
     ArrayList<Quote> quotes = new ArrayList<>();
     LayoutInflater layoutInflater;
@@ -56,6 +58,7 @@ public class QuotesAdapter extends PagerAdapter {
         layoutInflater = (LayoutInflater) context.getSystemService(Context.LAYOUT_INFLATER_SERVICE);
         bookMarkUtil = new BookMarkUtil(context);
         likeUtil = new LikeUtil(context);
+        mIntroUtil = new IntroUtil(context);
     }
 
     @Override
@@ -98,6 +101,8 @@ public class QuotesAdapter extends PagerAdapter {
         if (isQuoteOftheDay) {
             RelativeLayout actionsLayout = (RelativeLayout) itemView.findViewById(R.id.action_btns_quote);
             actionsLayout.setVisibility(View.GONE);
+        } else {
+            mIntroUtil.showSwipeInfo(authorText,500,"swipe up to view more quotes");
         }
         if (quote.isBookMarked) {
             bookMarkImgView.setImageDrawable(ContextCompat.getDrawable(context, R.drawable.ic_star_black_24dp));

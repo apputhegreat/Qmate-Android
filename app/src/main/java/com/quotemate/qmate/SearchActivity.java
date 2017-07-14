@@ -12,6 +12,7 @@ import android.text.Editable;
 import android.text.TextWatcher;
 import android.util.Log;
 import android.view.MenuItem;
+import android.view.MotionEvent;
 import android.view.View;
 import android.widget.AdapterView;
 import android.widget.ArrayAdapter;
@@ -19,6 +20,7 @@ import android.widget.EditText;
 import android.widget.GridView;
 import android.widget.ListView;
 import android.widget.Spinner;
+import android.widget.Toast;
 
 import com.quotemate.qmate.adapters.KeyValueAdapter;
 import com.quotemate.qmate.model.Author;
@@ -49,7 +51,8 @@ public class SearchActivity extends AppCompatActivity {
     private KeyValueAdapter mAdapter;
     private TextWatcher mtextChabgeListner;
     private ArrayList<Pair<String, String>> mList;
-
+    private float x1, x2;
+    static final int MIN_DISTANCE = 150;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -145,19 +148,37 @@ public class SearchActivity extends AppCompatActivity {
     protected void attachBaseContext(Context newBase) {
         super.attachBaseContext(CalligraphyContextWrapper.wrap(newBase));
     }
-
+    @Override
+    public boolean onTouchEvent(MotionEvent event) {
+        switch (event.getAction()) {
+            case MotionEvent.ACTION_DOWN:
+                x1 = event.getX();
+                break;
+            case MotionEvent.ACTION_UP:
+                x2 = event.getX();
+                float deltaX = x2 - x1;
+                if (deltaX < 0) {
+                    handleBackPressed();
+                } else if (Math.abs(deltaX) > MIN_DISTANCE) {
+                } else {
+                    // consider as something else - a screen tap for example
+                }
+                break;
+        }
+        return super.onTouchEvent(event);
+    }
     private void sendSelectedTag(String tag) {
         Intent intent = new Intent();
         intent.putExtra("tag", tag);
         setResult(RESULT_OK, intent);
-        finish();
+        handleBackPressed();
     }
 
     private void sendSelectedAuthor(String authorId) {
         Intent intent = new Intent();
         intent.putExtra("authorId", authorId);
         setResult(RESULT_OK, intent);
-        finish();
+        handleBackPressed();
     }
 
     private void handleSearch() {

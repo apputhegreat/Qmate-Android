@@ -9,9 +9,11 @@ import android.support.v7.widget.Toolbar;
 import android.util.Log;
 import android.view.Menu;
 import android.view.MenuItem;
+import android.view.MotionEvent;
 import android.view.View;
 import android.widget.RelativeLayout;
 import android.widget.TextView;
+import android.widget.Toast;
 
 import com.balysv.materialripple.MaterialRippleLayout;
 import com.google.android.gms.ads.AdRequest;
@@ -33,6 +35,7 @@ import com.quotemate.qmate.util.Constants;
 import com.quotemate.qmate.util.CustomProgressBar;
 import com.quotemate.qmate.util.FBUtil;
 import com.quotemate.qmate.util.FilterQuotes;
+import com.quotemate.qmate.util.IntroUtil;
 import com.quotemate.qmate.util.QuotesUtil;
 import com.quotemate.qmate.util.RandomSelector;
 import com.quotemate.qmate.util.RealmUtil;
@@ -41,6 +44,10 @@ import com.quotemate.qmate.util.Transitions;
 import java.util.ArrayList;
 import java.util.Objects;
 
+import co.mobiwise.materialintro.shape.Focus;
+import co.mobiwise.materialintro.shape.FocusGravity;
+import co.mobiwise.materialintro.shape.ShapeType;
+import co.mobiwise.materialintro.view.MaterialIntroView;
 import io.realm.Realm;
 import me.kaelaela.verticalviewpager.VerticalViewPager;
 import me.kaelaela.verticalviewpager.transforms.ZoomOutTransformer;
@@ -73,6 +80,9 @@ public class MainActivity extends AppCompatActivity implements IUpdateView {
     private CustomProgressBar myProgressBar;
     public boolean isZoomView = false;
     private TextView spinTxt;
+    private IntroUtil mIntroUtil;
+    private float x1, x2;
+    static final int MIN_DISTANCE = 150;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -127,17 +137,41 @@ public class MainActivity extends AppCompatActivity implements IUpdateView {
 
         setTitle("");
         initViewPager();
+        mIntroUtil = new IntroUtil(this);
+        mIntroUtil.showSearchInfo(searchBar, 1500, "search quotes by author or any tag");
+        mIntroUtil.showSpinInfo(spin, 2000, "spin here to select random author and tags");
+    }
+
+    @Override
+    public boolean onTouchEvent(MotionEvent event) {
+        switch (event.getAction()) {
+            case MotionEvent.ACTION_DOWN:
+                x1 = event.getX();
+                break;
+            case MotionEvent.ACTION_UP:
+                x2 = event.getX();
+                float deltaX = x2 - x1;
+                if (deltaX < 0) {
+                    Toast.makeText(this, "right to left swipe", Toast.LENGTH_SHORT).show();
+                } else if (Math.abs(deltaX) > MIN_DISTANCE) {
+                    startSearchActivity();
+                } else {
+                    // consider as something else - a screen tap for example
+                }
+                break;
+        }
+        return super.onTouchEvent(event);
     }
 
     public void setSpinTxtAppearance() {
-        if(User.currentUser!=null) {
+        if (User.currentUser != null) {
             spinTxt.setTextColor(ContextCompat.getColor(this, R.color.contentColor));
-            spinTxt.setBackground(ContextCompat.getDrawable(this,R.drawable.bg_spin_yellow));
+            spinTxt.setBackground(ContextCompat.getDrawable(this, R.drawable.bg_spin_yellow));
             mSpinTag.setVisibility(View.VISIBLE);
             mSpinAuthor.setVisibility(View.VISIBLE);
         } else {
             spinTxt.setTextColor(ContextCompat.getColor(this, R.color.cardColor));
-            spinTxt.setBackground(ContextCompat.getDrawable(this,R.drawable.bg_spin_gray));
+            spinTxt.setBackground(ContextCompat.getDrawable(this, R.drawable.bg_spin_gray));
             mSpinTag.setVisibility(View.GONE);
             mSpinAuthor.setVisibility(View.GONE);
         }
@@ -157,7 +191,6 @@ public class MainActivity extends AppCompatActivity implements IUpdateView {
     private void initProgressBar() {
         myProgressBar = new CustomProgressBar(this, false);
         myProgressBar.setProgressBarMessage("Loading");
-        myProgressBar.showProgressBar();
     }
 
     private void handleAuth() {
@@ -240,7 +273,7 @@ public class MainActivity extends AppCompatActivity implements IUpdateView {
                         }
                     }
                 },
-                1800);
+                1500);
     }
 
     private void startSearchActivity() {
@@ -394,5 +427,10 @@ public class MainActivity extends AppCompatActivity implements IUpdateView {
         } else {
             openLoginDialog();
         }
+    }
+
+    @Override
+    public void onBackPressed() {
+        moveTaskToBack(true);
     }
 }
