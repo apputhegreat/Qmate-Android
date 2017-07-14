@@ -1,6 +1,9 @@
 package com.quotemate.qmate;
 
 import android.app.Application;
+import android.content.Context;
+import android.net.ConnectivityManager;
+import android.net.NetworkInfo;
 
 import com.google.firebase.auth.FirebaseAuth;
 import com.google.firebase.auth.FirebaseUser;
@@ -51,5 +54,21 @@ public class Qtoniq extends Application {
     private void setQuotes() {
         QuotesUtil quotesUtil = new QuotesUtil(null);
         quotesUtil.addQuotesListener();
+    }
+
+    public static boolean isConnectedToInternet(Context context){
+        ConnectivityManager connectivity = (ConnectivityManager)context.getSystemService(Context.CONNECTIVITY_SERVICE);
+        if (connectivity != null)
+        {
+            NetworkInfo[] info = connectivity.getAllNetworkInfo();
+            if (info != null)
+                for (int i = 0; i < info.length; i++)
+                    if (info[i].getState() == NetworkInfo.State.CONNECTED)
+                    {
+                        return true;
+                    }
+
+        }
+        return false;
     }
 }

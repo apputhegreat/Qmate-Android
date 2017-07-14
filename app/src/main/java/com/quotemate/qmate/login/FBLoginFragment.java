@@ -38,6 +38,7 @@ import com.google.firebase.auth.FacebookAuthProvider;
 import com.google.firebase.auth.FirebaseAuth;
 import com.google.firebase.auth.GoogleAuthProvider;
 import com.quotemate.qmate.MainActivity;
+import com.quotemate.qmate.Qtoniq;
 import com.quotemate.qmate.R;
 import com.quotemate.qmate.util.Constants;
 import com.quotemate.qmate.util.CustomProgressBar;
@@ -144,7 +145,10 @@ public class FBLoginFragment extends DialogFragment {
         fbloginCustomBtn.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                loginButton.performClick();
+                if(Qtoniq.isConnectedToInternet(getActivity())) {
+                    loginButton.performClick();
+
+                }
             }
         });
     }
