@@ -3,7 +3,9 @@ package com.quotemate.qmate;
 import android.content.Context;
 import android.content.Intent;
 import android.os.Bundle;
+import android.os.Handler;
 import android.support.v4.content.ContextCompat;
+import android.support.v4.view.ViewPager;
 import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.Toolbar;
 import android.util.Log;
@@ -25,6 +27,7 @@ import com.google.firebase.database.DatabaseError;
 import com.google.firebase.database.DatabaseReference;
 import com.google.firebase.database.FirebaseDatabase;
 import com.google.firebase.database.ValueEventListener;
+import com.quotemate.qmate.CustomViews.MyVerticalViewPager;
 import com.quotemate.qmate.Interfaces.IUpdateView;
 import com.quotemate.qmate.adapters.QuotesAdapter;
 import com.quotemate.qmate.login.FBLoginFragment;
@@ -44,12 +47,7 @@ import com.quotemate.qmate.util.Transitions;
 import java.util.ArrayList;
 import java.util.Objects;
 
-import co.mobiwise.materialintro.shape.Focus;
-import co.mobiwise.materialintro.shape.FocusGravity;
-import co.mobiwise.materialintro.shape.ShapeType;
-import co.mobiwise.materialintro.view.MaterialIntroView;
 import io.realm.Realm;
-import me.kaelaela.verticalviewpager.VerticalViewPager;
 import me.kaelaela.verticalviewpager.transforms.ZoomOutTransformer;
 import uk.co.chrisjenx.calligraphy.CalligraphyContextWrapper;
 
@@ -58,7 +56,7 @@ import static android.content.Intent.FLAG_ACTIVITY_REORDER_TO_FRONT;
 public class MainActivity extends AppCompatActivity implements IUpdateView {
 
     private QuotesUtil quotesUtil;
-    private VerticalViewPager viewPager;
+    private MyVerticalViewPager viewPager;
     private TextView searchBar;
     private QuotesAdapter adapter;
     private TextView currentAutohrText;
@@ -82,7 +80,9 @@ public class MainActivity extends AppCompatActivity implements IUpdateView {
     private TextView spinTxt;
     private IntroUtil mIntroUtil;
     private float x1, x2;
-    static final int MIN_DISTANCE = 150;
+    static final int MIN_DISTANCE = 350;
+    private Handler zoomViewHandle;
+    private Runnable zoomViewRuunable;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -91,7 +91,7 @@ public class MainActivity extends AppCompatActivity implements IUpdateView {
         handleAuth();
         initProgressBar();
         Realm.init(getApplicationContext());
-
+        zoomViewHandle = new Handler();
         toolBar = (Toolbar) findViewById(R.id.toolbar);
         setSupportActionBar(toolBar);
 
@@ -140,6 +140,11 @@ public class MainActivity extends AppCompatActivity implements IUpdateView {
         mIntroUtil = new IntroUtil(this);
         mIntroUtil.showSearchInfo(searchBar, 1500, "search quotes by author or any tag");
         mIntroUtil.showSpinInfo(spin, 2000, "spin here to select random author and tags");
+        zoomViewRuunable = new Runnable() {
+            public void run() {
+                showZooView(true);
+            }
+        };
     }
 
     @Override
@@ -151,12 +156,17 @@ public class MainActivity extends AppCompatActivity implements IUpdateView {
             case MotionEvent.ACTION_UP:
                 x2 = event.getX();
                 float deltaX = x2 - x1;
-                if (deltaX < 0) {
-                    Toast.makeText(this, "right to left swipe", Toast.LENGTH_SHORT).show();
+                if(x1 ==0) {
+                    showZooView(false);
+                    break;
+                }
+                x1 = 0;
+                if (deltaX < -1 * (MIN_DISTANCE)) {
+                   gotoProfilePage();
                 } else if (Math.abs(deltaX) > MIN_DISTANCE) {
                     startSearchActivity();
                 } else {
-                    // consider as something else - a screen tap for example
+                    showZooView(false);
                 }
                 break;
         }
@@ -325,9 +335,24 @@ public class MainActivity extends AppCompatActivity implements IUpdateView {
     }
 
     private void initViewPager() {
-        viewPager = (VerticalViewPager) findViewById(R.id.vertical_viewpager);
+        viewPager = (MyVerticalViewPager) findViewById(R.id.vertical_viewpager);
         viewPager.setPageTransformer(false, new ZoomOutTransformer());
+        viewPager.addOnPageChangeListener(new ViewPager.OnPageChangeListener() {
+            @Override
+            public void onPageScrolled(int position, float positionOffset, int positionOffsetPixels) {
 
+            }
+
+            @Override
+            public void onPageSelected(int position) {
+                zoomViewHandle.postDelayed(zoomViewRuunable, 3000);
+            }
+
+            @Override
+            public void onPageScrollStateChanged(int state) {
+
+            }
+        });
         //viewPager.setPageTransformer(true, new StackTransformer());
         quotesUtil = new QuotesUtil(this);
         quotesUtil.addAuthorsListener();
@@ -339,9 +364,8 @@ public class MainActivity extends AppCompatActivity implements IUpdateView {
         viewPager.setOverScrollMode(View.OVER_SCROLL_NEVER);
     }
 
-    public void showZooView() {
+    public void showZooView(boolean isZoomView) {
         int visiblity = View.VISIBLE;
-        isZoomView = !isZoomView;
         if (isZoomView) {
             visiblity = View.INVISIBLE;
             bottomLayout.getRootView().setOnClickListener(new View.OnClickListener() {

@@ -7,6 +7,7 @@ import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
 import android.support.v7.widget.Toolbar;
 import android.view.MenuItem;
+import android.view.MotionEvent;
 import android.view.View;
 import android.widget.Button;
 
@@ -26,6 +27,8 @@ public class ProfileActivity extends AppCompatActivity implements View.OnClickLi
     Button inviteButton;
     FirebaseAuth firebaseAuth;
     private InviteDialog mInviteDialog;
+    private float x1, x2;
+    static final int MIN_DISTANCE = 150;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -44,6 +47,27 @@ public class ProfileActivity extends AppCompatActivity implements View.OnClickLi
         logoutBtn.setOnClickListener(this);
         inviteButton = (Button) findViewById(R.id.invite_btn);
         inviteButton.setOnClickListener(this);
+    }
+
+    @Override
+    public boolean onTouchEvent(MotionEvent event) {
+        switch (event.getAction()) {
+            case MotionEvent.ACTION_DOWN:
+                x1 = event.getX();
+                break;
+            case MotionEvent.ACTION_UP:
+                x2 = event.getX();
+                float deltaX = x2 - x1;
+                if (deltaX < 0) {
+                   break;
+                } else if (Math.abs(deltaX) > MIN_DISTANCE) {
+                    handleBackPressed();
+                } else {
+                    // consider as something else - a screen tap for example
+                }
+                break;
+        }
+        return super.onTouchEvent(event);
     }
 
     @Override
