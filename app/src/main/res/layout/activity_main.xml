@@ -189,7 +189,7 @@
         android:textColor="@android:color/white"
         tools:ignore="MissingPrefix" />
 
-    <me.kaelaela.verticalviewpager.VerticalViewPager
+    <com.quotemate.qmate.CustomViews.MyVerticalViewPager
         android:id="@+id/vertical_viewpager"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"

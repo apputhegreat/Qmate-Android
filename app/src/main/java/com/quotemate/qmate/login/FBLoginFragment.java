@@ -147,15 +147,20 @@ public class FBLoginFragment extends DialogFragment {
             public void onClick(View v) {
                 if(Qtoniq.isConnectedToInternet(getActivity())) {
                     loginButton.performClick();
-
+                } else {
+                    Toast.makeText(getActivity(),"No Internet connection",Toast.LENGTH_SHORT).show();
                 }
             }
         });
     }
 
     private void signInWithGoogle() {
-        Intent signInIntent = Auth.GoogleSignInApi.getSignInIntent(mGoogleApiClient);
-        startActivityForResult(signInIntent, Constants.RC_SIGN_IN);
+        if(Qtoniq.isConnectedToInternet(getActivity())) {
+            Intent signInIntent = Auth.GoogleSignInApi.getSignInIntent(mGoogleApiClient);
+            startActivityForResult(signInIntent, Constants.RC_SIGN_IN);
+        } else {
+            Toast.makeText(getActivity(),"No Internet connection",Toast.LENGTH_SHORT).show();
+        }
     }
 
     @Override
