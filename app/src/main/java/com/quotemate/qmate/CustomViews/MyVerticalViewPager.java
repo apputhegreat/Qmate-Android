@@ -20,23 +20,23 @@ public class MyVerticalViewPager extends VerticalViewPager {
     public MyVerticalViewPager(Context context, AttributeSet attrs) {
         super(context, attrs);
     }
-    @Override
-    public boolean onTouchEvent(MotionEvent event) {
-        switch (event.getAction()) {
-            case MotionEvent.ACTION_DOWN:
-                x1 = event.getX();
-                y1 = event.getY();
-                break;
-            case MotionEvent.ACTION_UP:
-                x2 = event.getX();
-                y2 = event.getY();
-                float deltaY = y2 - y1;
-                if(Math.abs(deltaY) > MIN_DISTANCE) {
-                    break;
-                } else {
-                    return false;
-                }
-        }
-        return super.onTouchEvent(event);
-    }
+//    @Override
+//    public boolean onTouchEvent(MotionEvent event) {
+//        switch (event.getAction()) {
+//            case MotionEvent.ACTION_DOWN:
+//                x1 = event.getX();
+//                y1 = event.getY();
+//                break;
+//            case MotionEvent.ACTION_UP:
+//                x2 = event.getX();
+//                y2 = event.getY();
+//                float deltaY = y2 - y1;
+//                if(Math.abs(deltaY) > MIN_DISTANCE) {
+//                    break;
+//                } else {
+//                    return false;
+//                }
+//        }
+//        return super.onTouchEvent(event);
+//    }
 }

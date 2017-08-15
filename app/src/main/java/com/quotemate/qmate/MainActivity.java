@@ -1,14 +1,21 @@
 package com.quotemate.qmate;
 
+import android.app.AlarmManager;
+import android.app.PendingIntent;
 import android.content.Context;
 import android.content.Intent;
+import android.content.SharedPreferences;
+import android.content.pm.PackageInfo;
+import android.content.pm.PackageManager;
+import android.net.Uri;
 import android.os.Bundle;
 import android.os.Handler;
+import android.preference.PreferenceManager;
 import android.support.v4.content.ContextCompat;
 import android.support.v4.view.ViewPager;
+import android.support.v7.app.AlertDialog;
 import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.Toolbar;
-import android.util.Log;
 import android.view.Menu;
 import android.view.MenuItem;
 import android.view.MotionEvent;
@@ -22,13 +29,10 @@ import com.google.android.gms.ads.AdRequest;
 import com.google.android.gms.ads.doubleclick.PublisherAdRequest;
 import com.google.android.gms.ads.doubleclick.PublisherAdView;
 import com.google.firebase.auth.FirebaseAuth;
-import com.google.firebase.database.DataSnapshot;
-import com.google.firebase.database.DatabaseError;
 import com.google.firebase.database.DatabaseReference;
-import com.google.firebase.database.FirebaseDatabase;
-import com.google.firebase.database.ValueEventListener;
+import com.google.firebase.remoteconfig.FirebaseRemoteConfig;
 import com.quotemate.qmate.CustomViews.MyVerticalViewPager;
-import com.quotemate.qmate.Interfaces.IUpdateView;
+import com.quotemate.qmate.Recievers.AlarmReceiver;
 import com.quotemate.qmate.adapters.QuotesAdapter;
 import com.quotemate.qmate.login.FBLoginFragment;
 import com.quotemate.qmate.model.Author;
@@ -41,19 +45,20 @@ import com.quotemate.qmate.util.FilterQuotes;
 import com.quotemate.qmate.util.IntroUtil;
 import com.quotemate.qmate.util.QuotesUtil;
 import com.quotemate.qmate.util.RandomSelector;
-import com.quotemate.qmate.util.RealmUtil;
+import com.quotemate.qmate.util.RemoteConfigController;
 import com.quotemate.qmate.util.Transitions;
+import com.quotemate.qmate.util.UpdateAppDialog;
 
 import java.util.ArrayList;
-import java.util.Objects;
+import java.util.Calendar;
+import java.util.Collections;
 
-import io.realm.Realm;
 import me.kaelaela.verticalviewpager.transforms.ZoomOutTransformer;
 import uk.co.chrisjenx.calligraphy.CalligraphyContextWrapper;
 
 import static android.content.Intent.FLAG_ACTIVITY_REORDER_TO_FRONT;
 
-public class MainActivity extends AppCompatActivity implements IUpdateView {
+public class MainActivity extends AppCompatActivity {
 
     private QuotesUtil quotesUtil;
     private MyVerticalViewPager viewPager;
@@ -72,10 +77,9 @@ public class MainActivity extends AppCompatActivity implements IUpdateView {
     private Toolbar toolBar;
     private PublisherAdView mAdView;
     public static boolean isFirstInstance = true;
-    private TextView mQuoteOFtheDayLabel;
     private RelativeLayout mSpinTag;
     private RelativeLayout mSpinAuthor;
-    private CustomProgressBar myProgressBar;
+    public CustomProgressBar myProgressBar;
     public boolean isZoomView = false;
     private TextView spinTxt;
     private IntroUtil mIntroUtil;
@@ -83,14 +87,20 @@ public class MainActivity extends AppCompatActivity implements IUpdateView {
     static final int MIN_DISTANCE = 350;
     private Handler zoomViewHandle;
     private Runnable zoomViewRuunable;
+    private int currentListSize;
+    private boolean isTouched;
+    private RemoteConfigController mRemoteConfigController;
+    private AlertDialog updateDialog;
+    private int mspinCount = 0;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
+        mRemoteConfigController = new RemoteConfigController(this);
+        checkVersionInfo();
         handleAuth();
         initProgressBar();
-        Realm.init(getApplicationContext());
         zoomViewHandle = new Handler();
         toolBar = (Toolbar) findViewById(R.id.toolbar);
         setSupportActionBar(toolBar);
@@ -106,7 +116,7 @@ public class MainActivity extends AppCompatActivity implements IUpdateView {
         currentAutohrText = (TextView) findViewById(R.id.current_author_text);
         currentTagText = (TextView) findViewById(R.id.current_tag_text);
 
-        mQuoteOFtheDayLabel = (TextView) findViewById(R.id.quote_of_day_label);
+        //mQuoteOFtheDayLabel = (TextView) findViewById(R.id.quote_of_day_label);
 
         handleAdView();
 
@@ -139,16 +149,21 @@ public class MainActivity extends AppCompatActivity implements IUpdateView {
         initViewPager();
         mIntroUtil = new IntroUtil(this);
         mIntroUtil.showSearchInfo(searchBar, 1500, "search quotes by author or any tag");
-        mIntroUtil.showSpinInfo(spin, 2000, "spin here to select random author and tags");
+        mIntroUtil.showSpinInfo(spin, 6000, "spin here to select random author and tags");
         zoomViewRuunable = new Runnable() {
             public void run() {
                 showZooView(true);
             }
         };
+        zoomViewHandle.postDelayed(zoomViewRuunable, 2000);
+        setAlarmQuoteOftheDay();
     }
 
     @Override
     public boolean onTouchEvent(MotionEvent event) {
+        if (!isTouched) {
+            isTouched = true;
+        }
         switch (event.getAction()) {
             case MotionEvent.ACTION_DOWN:
                 x1 = event.getX();
@@ -156,13 +171,13 @@ public class MainActivity extends AppCompatActivity implements IUpdateView {
             case MotionEvent.ACTION_UP:
                 x2 = event.getX();
                 float deltaX = x2 - x1;
-                if(x1 ==0) {
+                if (x1 == 0) {
                     showZooView(false);
                     break;
                 }
                 x1 = 0;
                 if (deltaX < -1 * (MIN_DISTANCE)) {
-                   gotoProfilePage();
+                    gotoProfilePage();
                 } else if (Math.abs(deltaX) > MIN_DISTANCE) {
                     startSearchActivity();
                 } else {
@@ -171,6 +186,30 @@ public class MainActivity extends AppCompatActivity implements IUpdateView {
                 break;
         }
         return super.onTouchEvent(event);
+    }
+
+    private void setAlarmQuoteOftheDay() {
+        SharedPreferences prefs = PreferenceManager.getDefaultSharedPreferences(this);
+        if (!prefs.getBoolean("firstTime", false)) {
+
+            Intent alarmIntent = new Intent(this, AlarmReceiver.class);
+            PendingIntent pendingIntent = PendingIntent.getBroadcast(this, 0, alarmIntent, 0);
+
+            AlarmManager manager = (AlarmManager) getSystemService(Context.ALARM_SERVICE);
+
+            Calendar calendar = Calendar.getInstance();
+            calendar.setTimeInMillis(System.currentTimeMillis());
+            calendar.set(Calendar.HOUR_OF_DAY, 8);
+            calendar.set(Calendar.MINUTE, 5);
+            calendar.set(Calendar.SECOND, 1);
+
+            manager.setRepeating(AlarmManager.RTC_WAKEUP, calendar.getTimeInMillis(),
+                    AlarmManager.INTERVAL_DAY, pendingIntent);
+
+            SharedPreferences.Editor editor = prefs.edit();
+            editor.putBoolean("firstTime", true);
+            editor.apply();
+        }
     }
 
     public void setSpinTxtAppearance() {
@@ -207,15 +246,6 @@ public class MainActivity extends AppCompatActivity implements IUpdateView {
         mAuth = FirebaseAuth.getInstance();
         mAuthListener = FBUtil.getAuthStateListener(this);
         mAuth.addAuthStateListener(mAuthListener);
-    }
-
-    @Override
-    protected void onNewIntent(Intent intent) {
-        String fromScreen = intent.getStringExtra(Constants.FROM_SCREEN);
-        if (Objects.equals(fromScreen, Constants.BOOK_MARKS_SCREEN)) {
-            updateView(RealmUtil.getBookMarks());
-        }
-        super.onNewIntent(intent);
     }
 
     @Override
@@ -262,7 +292,6 @@ public class MainActivity extends AppCompatActivity implements IUpdateView {
         fbfragment.show(getSupportFragmentManager(), MainActivity.class.getSimpleName());
     }
 
-
     private void selectRandomAuthorAndTag() {
         //Animation hyperspaceJumpAnimation = AnimationUtils.loadAnimation(this, R.anim.shuffle_anim);
         RandomSelector.setXRotaionAnimation(currentAutohrText, 1, 800);
@@ -283,7 +312,7 @@ public class MainActivity extends AppCompatActivity implements IUpdateView {
                         }
                     }
                 },
-                1500);
+                700);
     }
 
     private void startSearchActivity() {
@@ -322,10 +351,19 @@ public class MainActivity extends AppCompatActivity implements IUpdateView {
 
     private void filterQuotesAndUpdateView(String authorId, String tag, boolean isSpin) {
         ArrayList<Quote> filteredQuotes = FilterQuotes.getFilteredQuotes(authorId, tag);
+        currentListSize = filteredQuotes.size();
         if (isSpin && filteredQuotes.isEmpty()) {
-            selectRandomAuthorAndTag();
+            filteredQuotes = FilterQuotes.getFilteredQuotes(authorId, "All");
+            if (filteredQuotes.isEmpty()) {
+                filteredQuotes = FilterQuotes.getFilteredQuotes("-1", "All");
+                currentAuthor = QuotesUtil.authors.get("-1");
+                currentAutohrText.setText("All");
+            }
+            currentTag = "All";
+            currentTagText.setText("All");
+            updateView(filteredQuotes, null);
         } else {
-            updateView(filteredQuotes);
+            updateView(filteredQuotes, null);
         }
     }
 
@@ -334,18 +372,23 @@ public class MainActivity extends AppCompatActivity implements IUpdateView {
         super.attachBaseContext(CalligraphyContextWrapper.wrap(newBase));
     }
 
-    private void initViewPager() {
+    public void initViewPager() {
         viewPager = (MyVerticalViewPager) findViewById(R.id.vertical_viewpager);
         viewPager.setPageTransformer(false, new ZoomOutTransformer());
         viewPager.addOnPageChangeListener(new ViewPager.OnPageChangeListener() {
             @Override
             public void onPageScrolled(int position, float positionOffset, int positionOffsetPixels) {
-
             }
 
             @Override
             public void onPageSelected(int position) {
-                zoomViewHandle.postDelayed(zoomViewRuunable, 3000);
+                if (!isZoomView) {
+                    zoomViewHandle.removeCallbacks(zoomViewRuunable);
+                    zoomViewHandle.postDelayed(zoomViewRuunable, 3000);
+                }
+                if (position != 0 && position == currentListSize - 1) {
+                    Toast.makeText(MainActivity.this, "Great! you have read all the quote in this category", Toast.LENGTH_SHORT).show();
+                }
             }
 
             @Override
@@ -355,9 +398,8 @@ public class MainActivity extends AppCompatActivity implements IUpdateView {
         });
         //viewPager.setPageTransformer(true, new StackTransformer());
         quotesUtil = new QuotesUtil(this);
-        quotesUtil.addAuthorsListener();
         if (isFirstInstance) {
-            showQuoteoFtheDay();
+            quotesUtil.setDataThenUpdateView();
         }
         //If you setting other scroll mode, the scrolled fade is shown from either side of display.
         //viewPager.setPageTransformer(false, new DefaultTransformer());
@@ -365,6 +407,9 @@ public class MainActivity extends AppCompatActivity implements IUpdateView {
     }
 
     public void showZooView(boolean isZoomView) {
+        if (!isTouched) {
+            return;
+        }
         int visiblity = View.VISIBLE;
         if (isZoomView) {
             visiblity = View.INVISIBLE;
@@ -379,48 +424,23 @@ public class MainActivity extends AppCompatActivity implements IUpdateView {
         bottomLayout.getRootView().setOnClickListener(null);
         toolBar.setVisibility(visiblity);
         bottomLayout.setVisibility(visiblity);
+        this.isZoomView = isZoomView;
     }
 
-    @Override
-    public void updateView(ArrayList<Quote> quotes) {
-        Log.d("updateView", "updateView: " + quotes);
-        if (isFirstInstance) {
-            showQuoteoFtheDay();
-        } else {
-            mQuoteOFtheDayLabel.setVisibility(View.GONE);
-            adapter = new QuotesAdapter(MainActivity.this, quotes, false);
-            viewPager.setAdapter(adapter);
-            adapter.notifyDataSetChanged();
-            if (myProgressBar != null) {
-                myProgressBar.hideProgressBar();
+    public void updateView(ArrayList<Quote> quotes, Quote quoteOftheDay) {
+        if (quoteOftheDay != null) {
+            if (!quotes.isEmpty()) {
+                quotes.remove(quoteOftheDay);
+                Collections.shuffle(quotes);
+                quotes.set(0, quoteOftheDay);
             }
         }
-    }
-
-    private void showQuoteoFtheDay() {
-        isFirstInstance = false;
-        FirebaseDatabase.getInstance().getReference().child("quoteOftheDay").addListenerForSingleValueEvent(new ValueEventListener() {
-            @Override
-            public void onDataChange(DataSnapshot dataSnapshot) {
-                ArrayList<Quote> quotes = new ArrayList<>();
-                if (dataSnapshot.exists()) {
-                    mQuoteOFtheDayLabel.setVisibility(View.VISIBLE);
-                    Quote quote = QuotesUtil.getQuote(dataSnapshot);
-                    quotes.add(quote);
-                    adapter = new QuotesAdapter(MainActivity.this, quotes, true);
-                    viewPager.setAdapter(adapter);
-                    adapter.notifyDataSetChanged();
-                    myProgressBar.hideProgressBar();
-                }
-            }
-
-            @Override
-            public void onCancelled(DatabaseError databaseError) {
-                if (myProgressBar != null) {
-                    myProgressBar.hideProgressBar();
-                }
-            }
-        });
+        adapter = new QuotesAdapter(MainActivity.this, quotes, false);
+        viewPager.setAdapter(adapter);
+        adapter.notifyDataSetChanged();
+        if (myProgressBar != null) {
+            myProgressBar.hideProgressBar();
+        }
     }
 
     @Override
@@ -433,6 +453,10 @@ public class MainActivity extends AppCompatActivity implements IUpdateView {
         }
         quotesUtil.removeQuotesListener();
         quotesUtil.removeAuthorsListenr();
+        if (updateDialog != null) {
+            updateDialog.dismiss();
+            updateDialog = null;
+        }
         super.onDestroy();
     }
 
@@ -444,7 +468,7 @@ public class MainActivity extends AppCompatActivity implements IUpdateView {
             }
             if (QuotesUtil.quotes == null || QuotesUtil.quotes.isEmpty()) {
                 myProgressBar.showProgressBar();
-                quotesUtil.addQuotesListener();
+                quotesUtil.addQuotesListener(true);
                 return;
             }
             selectRandomAuthorAndTag();
@@ -456,5 +480,29 @@ public class MainActivity extends AppCompatActivity implements IUpdateView {
     @Override
     public void onBackPressed() {
         moveTaskToBack(true);
+    }
+
+    private void checkVersionInfo() {
+        String versionName = "";
+        long versionCode = -1;
+        try {
+            PackageInfo packageInfo = getPackageManager().getPackageInfo(getPackageName(), 0);
+            versionName = packageInfo.versionName;
+            versionCode = (long) packageInfo.versionCode;
+            long playStoreVersion = FirebaseRemoteConfig.getInstance().getLong(Constants.play_store_version_code);
+            if (playStoreVersion != 0) {
+                if (playStoreVersion > versionCode) {
+                    handleUpdateApp();
+                }
+            }
+        } catch (PackageManager.NameNotFoundException e) {
+            e.printStackTrace();
+        }
+    }
+
+    private void handleUpdateApp() {
+        updateDialog = new UpdateAppDialog(this).dialog;
+        updateDialog.setCancelable(false);
+        updateDialog.show();
     }
 }

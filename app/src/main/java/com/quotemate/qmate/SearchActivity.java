@@ -20,7 +20,6 @@ import android.widget.EditText;
 import android.widget.GridView;
 import android.widget.ListView;
 import android.widget.Spinner;
-import android.widget.Toast;
 
 import com.quotemate.qmate.adapters.KeyValueAdapter;
 import com.quotemate.qmate.model.Author;
@@ -47,6 +46,8 @@ public class SearchActivity extends AppCompatActivity {
     private ListView mListView;
     private ArrayList<Pair<String,String>> authorPairList = new ArrayList<>();
     private ArrayList<Pair<String,String>> tagPairList = new ArrayList<>();
+    private ArrayList<Pair<String,String>> trendingauthorPairList = new ArrayList<>();
+    private ArrayList<Pair<String,String>> trendingtagPairList = new ArrayList<>();
     private Pair<String, String> mSelectedKeyValueapair;
     private KeyValueAdapter mAdapter;
     private TextWatcher mtextChabgeListner;
@@ -99,6 +100,13 @@ public class SearchActivity extends AppCompatActivity {
              ) {
             tagPairList.add(new Pair<>(str,str));
         }
+        for(String key: QuotesUtil.trendingAuthors) {
+            trendingauthorPairList.add(new Pair<>(key, hash.get(key).name));
+        }
+        for (String str:QuotesUtil.trendingTags
+                ) {
+            trendingtagPairList.add(new Pair<>(str,str));
+        }
 
         // Creating adapter for spinner
         ArrayAdapter<String> dataAdapter = new ArrayAdapter<>(this, R.layout.simple_spinner_item, categories);
@@ -128,18 +136,18 @@ public class SearchActivity extends AppCompatActivity {
         // trending
         authorGridView = (GridView) findViewById(R.id.trending_authors_grid);
         tagGridView = (GridView) findViewById(R.id.trending_tags_grid);
-        authorGridView.setAdapter(new KeyValueAdapter(this, new ArrayList<Pair<String, String>>(authorPairList.subList(0,5)) ));
-        tagGridView.setAdapter(new  KeyValueAdapter(this ,new ArrayList<Pair<String,String>>(tagPairList.subList(0,5))));
+        authorGridView.setAdapter(new KeyValueAdapter(this, trendingauthorPairList));
+        tagGridView.setAdapter(new  KeyValueAdapter(this ,trendingtagPairList));
         authorGridView.setOnItemClickListener(new AdapterView.OnItemClickListener() {
             @Override
             public void onItemClick(AdapterView<?> adapterView, View view, int i, long l) {
-                sendSelectedAuthor(authorPairList.get(i).first);
+                sendSelectedAuthor(trendingauthorPairList.get(i).first);
             }
         });
         tagGridView.setOnItemClickListener(new AdapterView.OnItemClickListener() {
             @Override
             public void onItemClick(AdapterView<?> adapterView, View view, int i, long l) {
-                sendSelectedTag(tags.get(i));
+                sendSelectedTag(trendingtagPairList.get(i).first);
             }
         });
     }

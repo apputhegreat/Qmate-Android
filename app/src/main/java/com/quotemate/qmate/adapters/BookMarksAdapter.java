@@ -63,9 +63,7 @@ public class BookMarksAdapter extends RecyclerView.Adapter<BookMarksAdapter.MyVi
         holder.mBookMarkImg.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
-                bookMarkUtil.handleBookMark(quote,holder.mBookMarkImg,false);
-                quotesList.remove(quote);
-                mActivity.setBookMarksTitle(quotesList.size());
+                bookMarkUtil.handleBookMark(quote,holder.mBookMarkImg,true);
                 BookMarksAdapter.this.notifyDataSetChanged();
             }
         });
