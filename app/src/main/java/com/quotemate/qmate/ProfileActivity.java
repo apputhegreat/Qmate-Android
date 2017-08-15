@@ -10,21 +10,27 @@ import android.view.MenuItem;
 import android.view.MotionEvent;
 import android.view.View;
 import android.widget.Button;
+import android.widget.TextView;
 
+import com.bumptech.glide.Glide;
 import com.facebook.AccessToken;
 import com.facebook.login.LoginManager;
+import com.firebase.ui.storage.images.FirebaseImageLoader;
 import com.google.firebase.auth.FirebaseAuth;
 import com.quotemate.qmate.model.User;
 import com.quotemate.qmate.util.Constants;
 import com.quotemate.qmate.util.InviteDialog;
 import com.quotemate.qmate.util.Transitions;
 
+import de.hdodenhof.circleimageview.CircleImageView;
 import uk.co.chrisjenx.calligraphy.CalligraphyContextWrapper;
 
 public class ProfileActivity extends AppCompatActivity implements View.OnClickListener {
     Button bookMarksBtn;
     Button logoutBtn;
     Button inviteButton;
+    CircleImageView profileImage;
+    TextView userNameTxt;
     FirebaseAuth firebaseAuth;
     private InviteDialog mInviteDialog;
     private float x1, x2;
@@ -37,14 +43,28 @@ public class ProfileActivity extends AppCompatActivity implements View.OnClickLi
         Toolbar toolbar = (Toolbar) findViewById(R.id.toolbar);
         setSupportActionBar(toolbar);
         ActionBar actionBar = getSupportActionBar();
+
         if (actionBar != null) {
             actionBar.setDisplayHomeAsUpEnabled(true);
         }
         firebaseAuth = FirebaseAuth.getInstance();
+
         bookMarksBtn = (Button) findViewById(R.id.book_marks_btn);
         bookMarksBtn.setOnClickListener(this);
+
+        profileImage = (CircleImageView) findViewById(R.id.user_img);
+        userNameTxt = (TextView) findViewById(R.id.user_name);
+
+        if(User.currentUser!=null) {
+            Glide.with(this)
+                    .load(User.currentUser.photoURL)
+                    .into(profileImage);
+            userNameTxt.setText(User.currentUser.name);
+        }
+
         logoutBtn = (Button) findViewById(R.id.logout_btn);
         logoutBtn.setOnClickListener(this);
+
         inviteButton = (Button) findViewById(R.id.invite_btn);
         inviteButton.setOnClickListener(this);
     }
@@ -84,6 +104,7 @@ public class ProfileActivity extends AppCompatActivity implements View.OnClickLi
                 break;
         }
     }
+
     void gotoSharePage() {
         Intent sendIntent = new Intent();
         sendIntent.setAction(Intent.ACTION_SEND);
@@ -92,10 +113,12 @@ public class ProfileActivity extends AppCompatActivity implements View.OnClickLi
         sendIntent.setType("text/plain");
         startActivity(Intent.createChooser(sendIntent, "Send to a friend"));
     }
+
     @Override
     protected void attachBaseContext(Context newBase) {
         super.attachBaseContext(CalligraphyContextWrapper.wrap(newBase));
     }
+
     private void logoutUser() {
         if(FirebaseAuth.getInstance().getCurrentUser()!=null) {
             FirebaseAuth.getInstance().signOut();

@@ -170,25 +170,6 @@
             ads:adUnitId="@string/banner_home_footer" />
     </LinearLayout>
 
-    <TextView
-        fontPath="fonts/Cabin-SemiBold.ttf"
-        android:layout_marginTop="40dp"
-        android:layout_marginBottom="10dp"
-        android:id="@+id/quote_of_day_label"
-        android:layout_width="230dp"
-        android:layout_height="45dp"
-        android:letterSpacing="0.1"
-        android:background="@color/contentColor"
-        android:gravity="center"
-        android:layout_centerHorizontal="true"
-        android:textSize="17sp"
-        android:text="Quote of the day"
-        android:textAlignment="center"
-        android:visibility="visible"
-        android:layout_below="@+id/toolbar"
-        android:textColor="@android:color/white"
-        tools:ignore="MissingPrefix" />
-
     <com.quotemate.qmate.CustomViews.MyVerticalViewPager
         android:id="@+id/vertical_viewpager"
         android:layout_width="match_parent"
@@ -196,5 +177,5 @@
         android:layout_marginLeft="20dp"
         android:layout_marginRight="20dp"
         android:layout_above="@+id/bottom_layout"
-        android:layout_below="@+id/quote_of_day_label" />
+        android:layout_below="@+id/toolbar" />
 </RelativeLayout>

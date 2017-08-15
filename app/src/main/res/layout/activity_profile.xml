@@ -10,94 +10,126 @@
         android:id="@+id/toolbar"
         android:layout_width="match_parent"
         android:layout_height="50dp"
-        android:elevation="2dp"
-        android:gravity="left"
         android:layout_alignParentTop="true"
-        >
+        android:elevation="2dp"
+        android:gravity="left">
+
         <TextView
-            android:letterSpacing="0.04"
             fontPath="fonts/Cabin-Regular.ttf"
-            tools:ignore="MissingPrefix"
-            android:textSize="16sp"
-            android:gravity="left"
-            android:textAlignment="gravity"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:textColor="@android:color/black"
+            android:gravity="left"
+            android:letterSpacing="0.04"
             android:text="More"
-             />
+            android:textAlignment="gravity"
+            android:textColor="@android:color/black"
+            android:textSize="16sp"
+            tools:ignore="MissingPrefix" />
     </android.support.v7.widget.Toolbar>
+
     <LinearLayout
-        android:background="@color/backgroundColor"
-        android:orientation="vertical"
-        android:layout_below="@+id/toolbar"
         android:layout_width="match_parent"
-        android:layout_height="match_parent">
+        android:layout_height="match_parent"
+        android:layout_below="@+id/toolbar"
+        android:background="@color/backgroundColor"
+        android:orientation="vertical">
+
         <Button
-            android:stateListAnimator="@null"
-            fontPath="fonts/Cabin-Regular.ttf"
-            tools:ignore="MissingPrefix"
-            android:textAllCaps="false"
-            android:layout_marginTop="2dp"
-            android:background="@color/cardColor"
-            android:width="150dp"
-            android:text="Bookmarks"
-            android:padding="10dp"
-            android:textSize="15sp"
-            android:letterSpacing="0.04"
-            android:drawableTint="@color/yellowGreen"
-            android:textAlignment="viewStart"
-            android:drawablePadding="20dp"
-            android:drawableLeft="@drawable/ic_star_black_36dp"
-            android:textColor="@color/contentColor"
             android:id="@+id/book_marks_btn"
+            fontPath="fonts/Cabin-Regular.ttf"
             android:layout_width="match_parent"
             android:layout_height="60dp"
-            android:layout_centerHorizontal="true" />
-        <Button
-            android:letterSpacing="0.04"
-            android:stateListAnimator="@null"
-            fontPath="fonts/Cabin-Regular.ttf"
-            tools:ignore="MissingPrefix"
-            android:textSize="15sp"
-            android:drawableTint="@color/yellowGreen"
-            android:textAlignment="viewStart"
-            android:drawablePadding="20dp"
-            android:drawableLeft="@drawable/ic_share_black_24dp"
+            android:layout_centerHorizontal="true"
             android:layout_marginTop="2dp"
-            android:background="@color/cardColor"
             android:width="150dp"
-            android:textAllCaps="false"
-            android:text="Let others know about the app"
+            android:background="@color/cardColor"
+            android:drawableLeft="@drawable/ic_star_black_36dp"
+            android:drawablePadding="20dp"
+            android:drawableTint="@color/yellowGreen"
+            android:letterSpacing="0.04"
             android:padding="10dp"
+            android:stateListAnimator="@null"
+            android:text="Bookmarks"
+            android:textAlignment="viewStart"
+            android:textAllCaps="false"
             android:textColor="@color/contentColor"
+            android:textSize="15sp"
+            tools:ignore="MissingPrefix" />
+
+        <Button
             android:id="@+id/invite_btn"
+            fontPath="fonts/Cabin-Regular.ttf"
             android:layout_width="match_parent"
             android:layout_height="60dp"
-            android:layout_centerHorizontal="true" />
-        <Button
-            android:letterSpacing="0.04"
-            android:stateListAnimator="@null"
-            fontPath="fonts/Cabin-Regular.ttf"
-            tools:ignore="MissingPrefix"
-            android:textSize="15sp"
-            android:drawableTint="@color/yellowGreen"
-            android:textAlignment="viewStart"
-            android:drawablePadding="20dp"
-            android:drawableLeft="@drawable/ic_person_black_36dp"
+            android:layout_centerHorizontal="true"
             android:layout_marginTop="2dp"
-            android:layout_marginBottom="2dp"
-            android:background="@color/cardColor"
-            android:textColor="@color/contentColor"
-            android:padding="10dp"
             android:width="150dp"
-            android:text="Logout"
+            android:background="@color/cardColor"
+            android:drawableLeft="@drawable/ic_share_black_24dp"
+            android:drawablePadding="20dp"
+            android:drawableTint="@color/yellowGreen"
+            android:letterSpacing="0.04"
+            android:padding="10dp"
+            android:stateListAnimator="@null"
+            android:text="Let others know about the app"
+            android:textAlignment="viewStart"
             android:textAllCaps="false"
-            android:id="@+id/logout_btn"
+            android:textColor="@color/contentColor"
+            android:textSize="15sp"
+            tools:ignore="MissingPrefix" />
+
+        <RelativeLayout
             android:layout_width="match_parent"
             android:layout_height="60dp"
             android:layout_below="@+id/book_marks_btn"
-            android:layout_centerHorizontal="true" />
+            android:layout_centerHorizontal="true"
+            android:layout_marginBottom="2dp"
+            android:layout_marginTop="2dp"
+            android:width="150dp"
+            android:background="@color/cardColor"
+            android:text="Logout"
+            android:textAllCaps="false"
+            android:textColor="@color/contentColor">
+
+            <de.hdodenhof.circleimageview.CircleImageView xmlns:app="http://schemas.android.com/apk/res-auto"
+                android:id="@+id/user_img"
+                android:layout_width="46dp"
+                android:layout_height="46dp"
+                android:layout_alignParentLeft="true"
+                android:layout_below="@+id/quote_text"
+                android:layout_centerHorizontal="true"
+                android:layout_centerVertical="true"
+                android:padding="2dp"
+                android:src="@drawable/ic_person_black_36dp"
+                app:civ_border_color="#FF000000"
+                app:civ_border_width="1dp" />
+
+            <TextView
+                android:id="@+id/user_name"
+                fontPath="fonts/Cabin-Regular.ttf"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_centerInParent="true"
+                android:layout_marginLeft="10dp"
+                android:layout_toRightOf="@+id/user_img"
+                android:textColor="@color/contentColor"
+                android:textSize="15sp"
+                tools:text="Anji kinnara" />
+
+            <Button
+                android:id="@+id/logout_btn"
+                fontPath="fonts/Cabin-Regular.ttf"
+                android:layout_width="wrap_content"
+                android:layout_height="30dp"
+                android:layout_alignParentRight="true"
+                android:layout_centerVertical="true"
+                android:layout_marginRight="15dp"
+                android:background="@color/yellowGreen"
+                android:text="Logout"
+                android:textAllCaps="false"
+                android:textColor="@color/contentColor"
+                android:textSize="15sp" />
+        </RelativeLayout>
     </LinearLayout>
 
 </RelativeLayout>

@@ -30,31 +30,10 @@ public class Qtoniq extends Application {
 //                .build()
 //        );
         FirebaseDatabase.getInstance().setPersistenceEnabled(true);
-        final FirebaseUser fUser = FirebaseAuth.getInstance().getCurrentUser();
-        if(FirebaseAuth.getInstance().getCurrentUser()!=null) {
-            DatabaseReference mUserRef = FirebaseDatabase.getInstance().getReference("users")
-                    .child(fUser.getUid());
-            mUserRef.addListenerForSingleValueEvent(new ValueEventListener() {
-                @Override
-                public void onDataChange(DataSnapshot dataSnapshot) {
-                        User.currentUser = dataSnapshot.getValue(User.class);
-                        User.currentUser.id =  fUser.getUid();
-                        setQuotes();
-                }
-                @Override
-                public void onCancelled(DatabaseError databaseError) {
 
-                }
-            });
-        } else {
-            setQuotes();
-        }
     }
 
-    private void setQuotes() {
-        QuotesUtil quotesUtil = new QuotesUtil(null);
-        quotesUtil.addQuotesListener();
-    }
+
 
     public static boolean isConnectedToInternet(Context context){
         ConnectivityManager connectivity = (ConnectivityManager)context.getSystemService(Context.CONNECTIVITY_SERVICE);

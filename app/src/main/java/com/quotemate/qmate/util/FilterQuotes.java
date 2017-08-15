@@ -1,7 +1,6 @@
 package com.quotemate.qmate.util;
 
 import com.quotemate.qmate.model.Quote;
-import com.quotemate.qmate.model.RealmString;
 
 import java.util.ArrayList;
 import java.util.Objects;
@@ -12,14 +11,15 @@ import java.util.Objects;
 
 public class FilterQuotes {
     public static ArrayList<Quote> getFilteredQuotes(String authorId, String tag) {
+        int sixe = QuotesUtil.quotes.size();
         ArrayList<Quote> filteredQuotes = new ArrayList<>();
         if (authorId == null || Objects.equals(authorId, "-1")) {
             if (tag != null && !Objects.equals(tag,"All")) {
                 for (Quote quote : QuotesUtil.quotes
                         ) {
-                    for (RealmString mood : quote.tags
+                    for (String  mood : quote.tags
                             ) {
-                        if (Objects.equals(mood.getValue().trim(), tag.trim())) {
+                        if (Objects.equals(mood.trim(), tag.trim())) {
                             filteredQuotes.add(quote);
                             break;
                         }
@@ -33,9 +33,9 @@ public class FilterQuotes {
                     ) {
                 if (Objects.equals(quote.authorId, authorId)) {
                     if (tag != null && !Objects.equals(tag,"All")) {
-                        for (RealmString mood : quote.tags
+                        for (String mood : quote.tags
                                 ) {
-                            if (Objects.equals(mood.getValue().trim(), tag.trim())) {
+                            if (Objects.equals(mood.trim(), tag.trim())) {
                                 filteredQuotes.add(quote);
                                 break;
                             }

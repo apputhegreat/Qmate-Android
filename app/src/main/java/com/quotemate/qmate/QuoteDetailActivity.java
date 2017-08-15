@@ -28,7 +28,7 @@ public class QuoteDetailActivity extends AppCompatActivity {
 
         if (savedInstanceState == null) {
             // Create the detail fragment and add it to the activity
-            // using a fragment transaction.
+            // using a fragment transaction
             Bundle arguments = new Bundle();
             arguments.putString(QuoteDetailFragment.ARG_QUOTE_ID,
                     getIntent().getStringExtra(QuoteDetailFragment.ARG_QUOTE_ID));
@@ -59,6 +59,7 @@ public class QuoteDetailActivity extends AppCompatActivity {
         }
         return super.onOptionsItemSelected(item);
     }
+
     private void handleBackPressed() {
         finish();
         Transitions.leftToRight(this);

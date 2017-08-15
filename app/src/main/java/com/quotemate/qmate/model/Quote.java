@@ -1,22 +1,19 @@
 package com.quotemate.qmate.model;
 
+import java.util.ArrayList;
+
 /**
  * Created by anji kinnara on 6/2/17.
  */
 
-import io.realm.RealmList;
-import io.realm.RealmObject;
-import io.realm.annotations.PrimaryKey;
-
-public class Quote extends RealmObject {
+public class Quote {
 
     public Quote() {
     }
 
-    @PrimaryKey
     public String id;
     public String text;
-    public RealmList<RealmString> tags;
+    public ArrayList<String> tags;
     public String author;
     public String authorId;
     public long likes;

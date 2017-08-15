@@ -28,7 +28,6 @@ public class InviteDialog extends Dialog {
             public void onClick(View view) {
                 Intent sendIntent = new Intent();
                 sendIntent.setAction(Intent.ACTION_SEND);
-                sendIntent.putExtra(Intent.EXTRA_TEXT, "Get your Missouri traffic ticket resolved. Download the resqyou app \n" + "app_store_url");
                 sendIntent.putExtra(Intent.EXTRA_SUBJECT, context.getString(R.string.invitation_message));
                 sendIntent.setType("text/plain");
                 context.startActivity(Intent.createChooser(sendIntent, "Send to a friend"));

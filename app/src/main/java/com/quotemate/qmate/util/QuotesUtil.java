@@ -1,22 +1,24 @@
 package com.quotemate.qmate.util;
 
+import android.util.Log;
+
+import com.google.firebase.auth.FirebaseAuth;
+import com.google.firebase.auth.FirebaseUser;
 import com.google.firebase.database.ChildEventListener;
 import com.google.firebase.database.DataSnapshot;
 import com.google.firebase.database.DatabaseError;
 import com.google.firebase.database.DatabaseReference;
 import com.google.firebase.database.FirebaseDatabase;
 import com.google.firebase.database.ValueEventListener;
-import com.quotemate.qmate.Interfaces.IUpdateView;
+import com.quotemate.qmate.MainActivity;
 import com.quotemate.qmate.model.Author;
 import com.quotemate.qmate.model.Quote;
-import com.quotemate.qmate.model.RealmString;
 import com.quotemate.qmate.model.User;
 
 import java.util.ArrayList;
 import java.util.LinkedHashMap;
 import java.util.Objects;
 
-import io.realm.RealmList;
 
 /**
  * Created by anji kinnara on 6/7/17.
@@ -25,18 +27,41 @@ import io.realm.RealmList;
 public class QuotesUtil {
     private final ValueEventListener tagsListener;
     private final ChildEventListener quotesChildListener;
+    private final ValueEventListener quoteOftheDayListener;
+    private final ValueEventListener quotesEventListener;
+    private final ValueEventListener trendingsListener;
     private ValueEventListener authorsListener;
-    private IUpdateView updateView;
+
+    MainActivity mainActivity;
     DatabaseReference quotesRef = FirebaseDatabase.getInstance().getReference("quotes");
     DatabaseReference authorsRef = FirebaseDatabase.getInstance().getReference("authors");
     DatabaseReference tagsRef = FirebaseDatabase.getInstance().getReference("tags");
+    DatabaseReference quoteOfDayRef = FirebaseDatabase.getInstance().getReference("quoteOftheDay");
+    DatabaseReference trendingRef = FirebaseDatabase.getInstance().getReference("trending");
     public static LinkedHashMap<String, Author> authors = new LinkedHashMap<>();
     public static ArrayList<Quote> quotes = new ArrayList<>();
     public static ArrayList<String> tags = new ArrayList<>();
-    public static ArrayList<BookMarkQuoteId> bookMarkQuoteIds = new ArrayList<>();
+    private static String quoteOftheDayId;
+    public static Quote quoteOftheDay;
+    public static ArrayList<String> trendingAuthors = new ArrayList<>();
+    public static ArrayList<String> trendingTags = new ArrayList<>();
+    int count = 0;
 
-    public QuotesUtil(final IUpdateView updateView) {
-        this.updateView = updateView;
+    public QuotesUtil(final MainActivity mainActivity) {
+        this.mainActivity = mainActivity;
+        quotesEventListener = new ValueEventListener() {
+            @Override
+            public void onDataChange(DataSnapshot dataSnapshot) {
+               Log.d("done","We're done loading the initial "+dataSnapshot.getChildrenCount()+" items");
+                updateView();
+            }
+
+            @Override
+            public void onCancelled(DatabaseError databaseError) {
+
+            }
+        };
+
         quotesChildListener = new ChildEventListener() {
             @Override
             public void onChildAdded(DataSnapshot dataSnapshot, String s) {
@@ -67,29 +92,7 @@ public class QuotesUtil {
 
             }
         };
-//
-//        quotesListener = new ValueEventListener() {
-//            @Override
-//            public void onDataChange(DataSnapshot dataSnapshot) {
-//                ArrayList<Quote> quotesNew = new ArrayList<>();
-//                for (DataSnapshot snap : dataSnapshot.getChildren()
-//                        ) {
-//                    try {
-//                        Quote quote = getQuote(snap);
-//                        quotesNew.add(quote);
-//                    } catch (Exception ex) {
-//                        continue;
-//                    }
-//                }
-//                quotes = quotesNew;
-//                callUpdateView(quotes);
-//            }
-//
-//            @Override
-//            public void onCancelled(DatabaseError databaseError) {
-//
-//            }
-//        };
+
         authorsListener = new ValueEventListener() {
             @Override
             public void onDataChange(DataSnapshot dataSnapshot) {
@@ -130,9 +133,59 @@ public class QuotesUtil {
 
             }
         };
+
+        quoteOftheDayListener = new ValueEventListener() {
+            @Override
+            public void onDataChange(DataSnapshot dataSnapshot) {
+                if (dataSnapshot.exists()) {
+                    quoteOftheDayId = dataSnapshot.child("id").getValue().toString();
+                } else {
+                    mainActivity.myProgressBar.hideProgressBar();
+                }
+                quotesRef.addChildEventListener(quotesChildListener);
+                quotesRef.addListenerForSingleValueEvent(quotesEventListener);
+            }
+
+            @Override
+            public void onCancelled(DatabaseError databaseError) {
+                mainActivity.myProgressBar.hideProgressBar();
+            }
+        };
+
+        trendingsListener = new ValueEventListener() {
+            @Override
+            public void onDataChange(DataSnapshot dataSnapshot) {
+                if (dataSnapshot.exists()) {
+                    DataSnapshot trendAuth = dataSnapshot.child("authors");
+                    if (trendAuth.exists()) {
+                        for (DataSnapshot item : trendAuth.getChildren()
+                                ) {
+                            trendingAuthors.add(item.getValue().toString());
+                        }
+                    }
+                    DataSnapshot trentags = dataSnapshot.child("tags");
+                    if (trentags.exists()) {
+                        for (DataSnapshot item : trentags.getChildren()
+                                ) {
+                            trendingTags.add(item.getValue().toString());
+                        }
+                    }
+                }
+            }
+
+            @Override
+            public void onCancelled(DatabaseError databaseError) {
+
+            }
+        };
     }
 
-    public static Quote getQuote(DataSnapshot snap) {
+    private void updateView() {
+        mainActivity.myProgressBar.hideProgressBar();
+        mainActivity.updateView(quotes, quoteOftheDay);
+    }
+
+    public Quote getQuote(DataSnapshot snap) {
         Quote quote = new Quote();
         try {
             quote.id = snap.getKey();
@@ -142,13 +195,19 @@ public class QuotesUtil {
             if (snap.child("likes").exists()) {
                 quote.likes = (long) snap.child("likes").getValue();
             }
-            quote.tags = new RealmList<>();
+            quote.tags = new ArrayList<>();
             for (DataSnapshot sanpshot : snap.child("tags").getChildren()
                     ) {
-                quote.tags.add(new RealmString(sanpshot.getValue().toString()));
+                quote.tags.add(sanpshot.getValue().toString());
             }
             quote = synchWithUser(quote);
+            if (Objects.equals(quote.id, quoteOftheDayId)) {
+                quoteOftheDay = quote;
+            }
         } catch (Exception ex) {
+            if (mainActivity.myProgressBar != null) {
+                mainActivity.myProgressBar.hideProgressBar();
+            }
             throw ex;
         }
         return quote;
@@ -172,13 +231,19 @@ public class QuotesUtil {
         }
     }
 
-    public void addQuotesListener() {
-        quotesRef.addChildEventListener(quotesChildListener);
+    public void addQuotesListener(boolean addAllListeners) {
+        if (addAllListeners) {
+            quoteOfDayRef.addListenerForSingleValueEvent(quoteOftheDayListener);
+            addAuthorsListener();
+        } else {
+            quotesRef.addChildEventListener(quotesChildListener);
+        }
     }
 
     public void addAuthorsListener() {
         authorsRef.addListenerForSingleValueEvent(authorsListener);
         tagsRef.addListenerForSingleValueEvent(tagsListener);
+        trendingRef.addListenerForSingleValueEvent(trendingsListener);
     }
 
     public void removeAuthorsListenr() {
@@ -187,10 +252,6 @@ public class QuotesUtil {
 
     public void removeQuotesListener() {
         quotesRef.removeEventListener(quotesChildListener);
-    }
-
-    public void callUpdateView(ArrayList<Quote> quotes) {
-        this.updateView.updateView(quotes);
     }
 
     public static Author getAuthorByName(String name) {
@@ -205,5 +266,35 @@ public class QuotesUtil {
             }
         }
         return result;
+    }
+
+    public void setDataThenUpdateView() {
+        mainActivity.myProgressBar.showProgressBar();
+        final FirebaseUser fUser = FirebaseAuth.getInstance().getCurrentUser();
+        if (FirebaseAuth.getInstance().getCurrentUser() != null) {
+            DatabaseReference mUserRef = FirebaseDatabase.getInstance().getReference("users")
+                    .child(fUser.getUid());
+            mUserRef.addListenerForSingleValueEvent(new ValueEventListener() {
+                @Override
+                public void onDataChange(DataSnapshot dataSnapshot) {
+                    User.currentUser = dataSnapshot.getValue(User.class);
+                    User.currentUser.id = fUser.getUid();
+                    setQuotes();
+                }
+
+                @Override
+                public void onCancelled(DatabaseError databaseError) {
+                    if (mainActivity.myProgressBar != null) {
+                        mainActivity.myProgressBar.hideProgressBar();
+                    }
+                }
+            });
+        } else {
+            setQuotes();
+        }
+    }
+
+    private void setQuotes() {
+        addQuotesListener(true);
     }
 }

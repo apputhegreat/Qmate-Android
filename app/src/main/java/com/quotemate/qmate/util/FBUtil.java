@@ -2,7 +2,6 @@ package com.quotemate.qmate.util;
 
 import android.support.annotation.NonNull;
 
-import com.facebook.AccessToken;
 import com.google.firebase.auth.FirebaseAuth;
 import com.google.firebase.auth.FirebaseUser;
 import com.google.firebase.auth.UserInfo;
