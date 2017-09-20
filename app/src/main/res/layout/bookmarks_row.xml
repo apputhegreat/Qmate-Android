@@ -18,7 +18,7 @@
         android:layout_marginLeft="5dp"
         android:layout_marginRight="20dp"
         android:tint="@color/placeHolderColor"
-        android:src="@drawable/ic_star_black_24dp" />
+        android:src="@drawable/bookmarked" />
 
     <TextView
         android:lineSpacingExtra="1dp"

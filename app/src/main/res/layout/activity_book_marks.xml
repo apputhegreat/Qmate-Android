@@ -3,37 +3,48 @@
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
     android:background="@color/backgroundColor"
     tools:context="com.quotemate.qmate.BookMarksActivity">
 
     <android.support.v7.widget.Toolbar
         android:id="@+id/toolbar"
+        android:elevation="1dp"
         android:layout_width="match_parent"
         android:layout_height="50dp"
-        android:elevation="2dp"
-        android:gravity="left"
-        android:background="@color/cardColor"
-        android:layout_alignParentTop="true">
+        android:background="@android:color/white"
+        android:focusableInTouchMode="true"
+        android:minHeight="45dp"
+        app:titleTextColor="@android:color/black">
+
+        <android.support.v7.widget.AppCompatImageView
+            android:id="@+id/back_btn"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:paddingLeft="10dp"
+            android:paddingRight="25dp"
+            android:tint="@color/iconColor"
+            android:src="@drawable/back" />
 
         <TextView
             android:id="@+id/book_marks_title"
-            android:letterSpacing="0.04"
             fontPath="fonts/Cabin-Regular.ttf"
-            tools:ignore="MissingPrefix"
-            android:textSize="16sp"
-            android:gravity="left"
-            android:background="@color/transparent"
-            android:textAlignment="gravity"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
+            android:background="@color/transparent"
+            android:gravity="left"
+            android:letterSpacing="0.04"
             android:text="Bookmarks"
+            android:textAlignment="gravity"
             android:textColor="@color/contentColor"
-             />
+            android:textSize="16sp"
+            tools:ignore="MissingPrefix" />
     </android.support.v7.widget.Toolbar>
+
     <android.support.v7.widget.RecyclerView
-        android:layout_below="@+id/toolbar"
         android:id="@+id/book_marks_recycler_view"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
+        android:layout_below="@+id/toolbar"
         android:scrollbars="vertical" />
 </RelativeLayout>

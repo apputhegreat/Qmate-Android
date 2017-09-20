@@ -1,12 +1,12 @@
 <?xml version="1.0" encoding="utf-8"?>
 <RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:ads="http://schemas.android.com/apk/res-auto"
     xmlns:app="http://schemas.android.com/apk/res-auto"
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    xmlns:ads="http://schemas.android.com/apk/res-auto"
-    tools:context=".MainActivity"
-    android:background="@android:color/white">
+    android:background="@android:color/white"
+    tools:context=".MainActivity">
 
     <android.support.v7.widget.Toolbar
         android:id="@+id/toolbar"
@@ -18,38 +18,55 @@
         android:minHeight="45dp"
         app:titleTextColor="@android:color/black">
 
+        <RelativeLayout
+            android:layout_width="match_parent"
+            android:layout_height="match_parent">
+
+            <android.support.v7.widget.AppCompatImageView
+                android:id="@+id/more_btn"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_alignParentRight="true"
+                android:layout_centerVertical="true"
+                android:paddingRight="10dp"
+                android:paddingLeft="10dp"
+                android:src="@drawable/more" />
+
             <TextView
-                android:gravity="center_vertical"
+                android:layout_toLeftOf="@+id/more_btn"
                 android:id="@+id/search_bar"
                 fontPath="fonts/Cabin-Regular.ttf"
                 android:layout_width="match_parent"
                 android:layout_height="match_parent"
-                android:layout_alignParentLeft="true"
                 android:layout_centerVertical="true"
                 android:background="@android:color/transparent"
-                android:drawableLeft="@drawable/ic_search_black_24dp"
-                android:drawablePadding="5dp"
-                android:drawableTint="@color/yellowGreen"
+                android:drawableLeft="@drawable/search"
+                android:drawablePadding="8dp"
+                android:drawableTint="@color/iconColor"
+                android:gravity="center_vertical"
                 android:text="Search by Tag or Authors"
                 android:textColor="@color/placeHolderColor"
                 android:textSize="15sp"
                 tools:ignore="MissingPrefix" />
+        </RelativeLayout>
+
+
     </android.support.v7.widget.Toolbar>
 
     <RelativeLayout
-        android:layout_marginBottom="30dp"
-        android:layout_above="@+id/ad_view_layout"
         android:id="@+id/bottom_layout"
         android:layout_width="match_parent"
         android:layout_height="65dp"
-        android:layout_alignParentStart="true">
+        android:layout_above="@+id/ad_view_layout"
+        android:layout_alignParentStart="true"
+        android:layout_marginBottom="30dp">
 
         <com.balysv.materialripple.MaterialRippleLayout
             android:id="@+id/spin"
-            android:elevation="1dp"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:layout_centerInParent="true">
+            android:layout_centerInParent="true"
+            android:elevation="1dp">
 
             <TextView
                 android:id="@+id/spin_text"
@@ -58,10 +75,10 @@
                 android:layout_height="wrap_content"
                 android:background="@drawable/bg_spin_gray"
                 android:gravity="center"
+                android:letterSpacing="0.04"
                 android:paddingLeft="-5dp"
                 android:paddingRight="-5dp"
                 android:text="Spin"
-                android:letterSpacing="0.04"
                 android:textAlignment="center"
                 android:textColor="@color/cardColor"
                 android:textSize="16sp"
@@ -69,87 +86,91 @@
         </com.balysv.materialripple.MaterialRippleLayout>
 
         <RelativeLayout
-            android:visibility="visible"
             android:id="@+id/tag_spin"
-            android:layout_centerVertical="true"
             android:layout_width="wrap_content"
+            android:layout_height="44dp"
             android:layout_alignParentLeft="true"
-            android:layout_toLeftOf="@+id/spin"
-            android:orientation="vertical"
-            android:background="@color/placeHolderColor"
+            android:layout_centerVertical="true"
             android:layout_marginLeft="15dp"
             android:layout_marginRight="-10dp"
-            android:layout_height="44dp">
+            android:layout_toLeftOf="@+id/spin"
+            android:background="@color/placeHolderColor"
+            android:orientation="vertical"
+            android:visibility="visible">
+
             <View
-                android:visibility="gone"
+                android:layout_width="match_parent"
+                android:layout_height="10dp"
                 android:layout_alignParentTop="true"
-                android:layout_width="match_parent"
                 android:background="@color/gray"
-                android:layout_height="10dp"/>
+                android:visibility="gone" />
+
             <TextView
-                fontPath="fonts/Cabin-Regular.ttf"
                 android:id="@+id/current_tag_text"
-                android:layout_centerInParent="true"
+                fontPath="fonts/Cabin-Regular.ttf"
                 android:layout_width="match_parent"
-                android:textAlignment="center"
+                android:layout_height="wrap_content"
+                android:layout_centerInParent="true"
+                android:ellipsize="end"
                 android:gravity="center"
                 android:lines="1"
                 android:paddingLeft="5dp"
                 android:paddingRight="10dp"
-                android:ellipsize="end"
-                android:textSize="14sp"
-                android:layout_height="wrap_content"
-                android:textColor="@android:color/white"
                 android:text="All"
+                android:textAlignment="center"
+                android:textColor="@android:color/white"
+                android:textSize="14sp"
                 tools:ignore="MissingPrefix" />
+
             <View
-                android:visibility="gone"
-                android:layout_alignParentBottom="true"
                 android:layout_width="match_parent"
-                android:layout_height="10dp"/>
+                android:layout_height="10dp"
+                android:layout_alignParentBottom="true"
+                android:visibility="gone" />
         </RelativeLayout>
+
         <RelativeLayout
-            android:visibility="visible"
             android:id="@+id/author_spin"
-            android:layout_marginRight="15dp"
-            android:layout_marginLeft="-10dp"
-            android:layout_centerVertical="true"
             android:layout_width="wrap_content"
             android:layout_height="44dp"
             android:layout_alignParentRight="true"
+            android:layout_centerVertical="true"
+            android:layout_marginLeft="-10dp"
+            android:layout_marginRight="15dp"
             android:layout_toRightOf="@+id/spin"
-            android:orientation="vertical"
             android:background="@color/placeHolderColor"
-            >
+            android:orientation="vertical"
+            android:visibility="visible">
 
             <View
-                android:visibility="gone"
+                android:layout_width="match_parent"
+                android:layout_height="10dp"
                 android:layout_alignParentTop="true"
-                android:layout_width="match_parent"
                 android:background="@color/gray"
-                android:layout_height="10dp"/>
+                android:visibility="gone" />
 
             <View
-                android:visibility="gone"
-                android:layout_alignParentBottom="true"
                 android:layout_width="match_parent"
+                android:layout_height="10dp"
+                android:layout_alignParentBottom="true"
                 android:background="@color/gray"
-                android:layout_height="10dp"/>
+                android:visibility="gone" />
+
             <TextView
-                fontPath="fonts/Cabin-Regular.ttf"
-                android:layout_height="wrap_content"
                 android:id="@+id/current_author_text"
+                fontPath="fonts/Cabin-Regular.ttf"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
                 android:layout_centerInParent="true"
-                android:textAlignment="center"
+                android:ellipsize="end"
                 android:gravity="center"
                 android:lines="1"
                 android:paddingLeft="15dp"
                 android:paddingRight="5dp"
-                android:ellipsize="end"
-                android:textSize="14sp"
-                android:textColor="@android:color/white"
-                android:layout_width="match_parent"
                 android:text="All"
+                android:textAlignment="center"
+                android:textColor="@android:color/white"
+                android:textSize="14sp"
                 tools:ignore="MissingPrefix" />
         </RelativeLayout>
 
@@ -161,12 +182,13 @@
         android:layout_height="wrap_content"
         android:layout_alignParentBottom="true"
         android:layout_centerHorizontal="true">
+
         <com.google.android.gms.ads.doubleclick.PublisherAdView
+            android:id="@+id/ad_view"
             android:layout_width="match_parent"
             android:layout_height="45dp"
-            ads:adSize="BANNER"
-            android:id="@+id/ad_view"
             android:visibility="gone"
+            ads:adSize="BANNER"
             ads:adUnitId="@string/banner_home_footer" />
     </LinearLayout>
 
@@ -174,8 +196,32 @@
         android:id="@+id/vertical_viewpager"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
+        android:layout_above="@+id/bottom_layout"
+        android:layout_below="@+id/toolbar"
         android:layout_marginLeft="20dp"
         android:layout_marginRight="20dp"
+        android:visibility="visible" />
+
+    <LinearLayout
+        android:id="@+id/no_quotes_view"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
         android:layout_above="@+id/bottom_layout"
-        android:layout_below="@+id/toolbar" />
+        android:layout_below="@+id/toolbar"
+        android:layout_marginLeft="20dp"
+        android:layout_marginRight="20dp"
+        android:gravity="center"
+        android:visibility="gone">
+
+        <TextView
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_above="@+id/bottom_layout"
+            android:layout_below="@+id/toolbar"
+            android:padding="10dp"
+            android:text="Hmmm, seems like no quotes exists in the selection. Please try other selection"
+            android:textColor="@color/gray"
+            android:textSize="22sp" />
+    </LinearLayout>
+
 </RelativeLayout>

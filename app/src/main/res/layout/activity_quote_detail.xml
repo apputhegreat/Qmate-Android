@@ -10,11 +10,24 @@
 
     <android.support.v7.widget.Toolbar
         android:id="@+id/detail_toolbar"
-        android:layout_width="match_parent"
-        android:layout_height="?attr/actionBarSize"
         android:elevation="2dp"
+        android:layout_width="match_parent"
+        android:layout_height="50dp"
+        android:background="@android:color/white"
+        android:focusableInTouchMode="true"
+        android:minHeight="45dp"
+        app:titleTextColor="@android:color/black"
         android:layout_alignParentTop="true"
-        />
+        >
+        <android.support.v7.widget.AppCompatImageView
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:id="@+id/back_btn"
+            android:paddingRight="25dp"
+            android:paddingLeft="10dp"
+            android:tint="@color/iconColor"
+            android:src="@drawable/back" />
+    </android.support.v7.widget.Toolbar>
 
 
     <android.support.v4.widget.NestedScrollView

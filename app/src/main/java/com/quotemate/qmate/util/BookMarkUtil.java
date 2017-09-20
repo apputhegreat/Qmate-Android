@@ -23,6 +23,7 @@ public class BookMarkUtil {
     }
 
     public void handleBookMark(Quote quote, AppCompatImageView bookMarkImgView,final boolean updateUI) {
+        Analytics.sendBookmarkEvent();
         if (User.currentUser != null) {
             if(quote.isBookMarked) {
                 int pos=-1;
@@ -35,12 +36,12 @@ public class BookMarkUtil {
                     quote.isBookMarked = false;
                     User.currentUser.bookMarkedQuoteIds.remove(pos);
                     if(updateUI) {
-                        bookMarkImgView.setImageDrawable(ContextCompat.getDrawable(context, R.drawable.ic_star_border_black_24dp));
+                        bookMarkImgView.setImageDrawable(ContextCompat.getDrawable(context, R.drawable.bookmark));
                     }
                 }
             } else {
                 if(updateUI) {
-                    bookMarkImgView.setImageDrawable(ContextCompat.getDrawable(context, R.drawable.ic_star_black_24dp));
+                    bookMarkImgView.setImageDrawable(ContextCompat.getDrawable(context, R.drawable.bookmarked));
                 }
                 quote.isBookMarked = true;
                 User.currentUser.bookMarkedQuoteIds.add(quote.id);

@@ -116,10 +116,10 @@ public class QuoteDetailFragment extends Fragment {
         final AppCompatImageView bookMarkImgView = (AppCompatImageView) rootView.findViewById(R.id.book_mark_img);
         MaterialRippleLayout shareBtn = (MaterialRippleLayout) rootView.findViewById(R.id.share_quote_btn);
         if (mSelectedQuote.isBookMarked) {
-            bookMarkImgView.setImageDrawable(ContextCompat.getDrawable(getActivity(), R.drawable.ic_star_black_24dp));
+            bookMarkImgView.setImageDrawable(ContextCompat.getDrawable(getActivity(), R.drawable.bookmarked));
         }
         if (mSelectedQuote.isLiked) {
-            likeImgView.setImageDrawable(ContextCompat.getDrawable(getActivity(), R.drawable.ic_favorite_black_24dp));
+            likeImgView.setImageDrawable(ContextCompat.getDrawable(getActivity(), R.drawable.liked));
         }
         likeBtn.setOnClickListener(new View.OnClickListener() {
             @Override

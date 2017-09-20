@@ -1,6 +1,6 @@
 <?xml version="1.0" encoding="utf-8"?>
 <RelativeLayout
-    android:visibility="gone"
+    android:visibility="visible"
     android:layout_marginTop="20dp"
     android:background="@color/yellowGreen"
     android:id="@+id/share_bottom_content"
@@ -8,7 +8,7 @@
     android:layout_width="match_parent"
     android:gravity="center"
     xmlns:tools="http://schemas.android.com/tools"
-    tools:showIn="@layout/fragment_content"
+    tools:showIn="@layout/share_quote_layout"
     android:layout_height="wrap_content"
     android:paddingTop="20dp"
     android:paddingBottom="20dp"
@@ -35,26 +35,11 @@
             android:layout_toRightOf="@+id/share_app_icon"/>
     </RelativeLayout>
     <LinearLayout
-        android:paddingTop="10dp"
         android:orientation="horizontal"
         android:gravity="center"
         android:layout_centerHorizontal="true"
         android:layout_below="@+id/icon_title_layout"
         android:layout_width="match_parent"
         android:layout_height="wrap_content">
-        <android.support.v7.widget.AppCompatImageView
-            android:layout_marginRight="15dp"
-            android:layout_width="40dp"
-            android:layout_height="40dp"
-            android:src="@drawable/twitter_icon"/>
-        <android.support.v7.widget.AppCompatImageView
-            android:layout_width="40dp"
-            android:layout_height="40dp"
-            android:src="@drawable/instagram_icon"/>
-        <android.support.v7.widget.AppCompatImageView
-            android:layout_width="40dp"
-            android:layout_height="40dp"
-            android:layout_marginLeft="15dp"
-            android:src="@drawable/facebook_icon"/>
     </LinearLayout>
 </RelativeLayout>

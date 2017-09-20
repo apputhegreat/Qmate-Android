@@ -1,0 +1,98 @@
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:id="@+id/quote_layout"
+    android:layout_width="match_parent"
+    android:layout_height="wrap_content"
+    android:layout_gravity="bottom"
+    android:background="@android:color/white"
+    android:orientation="vertical">
+
+    <TextView
+        android:id="@+id/quote_text"
+        fontPath="fonts/JosefinSans-SemiBold.ttf"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_gravity="center"
+        android:layout_marginTop="10dp"
+        android:gravity="center"
+        android:letterSpacing="0.04"
+        android:lineSpacingExtra="5dp"
+        android:maxWidth="320dp"
+        android:padding="10dp"
+        android:text="If you want to shine like a sun, first burn like a sun"
+        android:textAlignment="center"
+        android:textColor="@android:color/black"
+        android:textSize="24sp"
+        tools:ignore="MissingPrefix" />
+
+    <de.hdodenhof.circleimageview.CircleImageView
+        android:id="@+id/author_image"
+        android:layout_width="46dp"
+        android:layout_height="46dp"
+        android:layout_below="@+id/quote_text"
+        android:layout_centerHorizontal="true"
+        android:layout_gravity="center"
+        android:layout_marginTop="12dp"
+        android:src="@drawable/profile" />
+
+    <TextView
+        android:id="@+id/quote_author"
+        fontPath="fonts/Cabin-Regular.ttf"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_below="@+id/author_image"
+        android:layout_gravity="center"
+        android:layout_margin="4dp"
+        android:letterSpacing="0.04"
+        android:textAlignment="center"
+        android:textColor="@color/placeHolderColor"
+        android:textSize="14sp"
+        tools:ignore="MissingPrefix"
+        tools:text="Abdul Kalam" />
+
+    <RelativeLayout
+        android:id="@+id/share_bottom_content"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_below="@+id/quote_author"
+        android:layout_gravity="center"
+        android:background="@color/yellowGreen"
+        android:paddingBottom="10dp"
+        android:paddingTop="10dp">
+
+        <RelativeLayout
+            android:id="@+id/icon_title_layout"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_centerHorizontal="true"
+            android:gravity="center">
+
+            <android.support.v7.widget.AppCompatImageView
+                android:id="@+id/share_app_icon"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:src="@mipmap/qtoniq" />
+
+            <TextView
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_centerVertical="true"
+                android:layout_toRightOf="@+id/share_app_icon"
+                android:paddingLeft="5dp"
+                android:text="Qtoniq"
+                android:textColor="@android:color/black"
+                android:textSize="22sp" />
+        </RelativeLayout>
+
+        <!--<LinearLayout-->
+            <!--android:layout_width="match_parent"-->
+            <!--android:layout_height="wrap_content"-->
+            <!--android:layout_below="@+id/icon_title_layout"-->
+            <!--android:layout_centerHorizontal="true"-->
+            <!--android:gravity="center"-->
+            <!--android:orientation="horizontal">-->
+
+        <!--</LinearLayout>-->
+    </RelativeLayout>
+
+</LinearLayout>

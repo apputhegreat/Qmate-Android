@@ -7,6 +7,6 @@
     <item
         app:showAsAction="always"
         android:id="@+id/navigation_profile"
-        android:icon="@drawable/ic_home_black_24dp"
+        android:icon="@drawable/more"
         android:title="@string/title_profile" />
 </menu>
