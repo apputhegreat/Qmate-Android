@@ -20,17 +20,20 @@ import java.util.ArrayList;
  * Created by anji kinnara on 6/10/17.
  */
 
-public class KeyValueAdapter extends ArrayAdapter<Pair<String,String>> {
-    ArrayList<Pair<String,String>> pairs;
+public class KeyValueAdapter extends ArrayAdapter<Pair<String, String>> {
+    private final boolean isSearchView;
+    ArrayList<Pair<String, String>> pairs;
     private Filter mFilter;
 
     private static class ViewHolder {
         TextView displayText;
     }
-    public KeyValueAdapter(@NonNull Context context, ArrayList<Pair<String ,String>> pairs) {
+
+    public KeyValueAdapter(@NonNull Context context, ArrayList<Pair<String, String>> pairs, boolean isSearchView) {
         super(context, 0, pairs);
         this.pairs = pairs;
         mFilter = new SearchFilter(this, pairs);
+        this.isSearchView = isSearchView;
     }
 
     @Override
@@ -43,7 +46,7 @@ public class KeyValueAdapter extends ArrayAdapter<Pair<String,String>> {
         return mFilter;
     }
 
-    public Pair<String,String> getItem(int pos) {
+    public Pair<String, String> getItem(int pos) {
         return pairs.get(pos);
     }
 
@@ -55,7 +58,12 @@ public class KeyValueAdapter extends ArrayAdapter<Pair<String,String>> {
 
         if (v == null) {
             LayoutInflater vi = (LayoutInflater) getContext().getSystemService(Context.LAYOUT_INFLATER_SERVICE);
-            v = vi.inflate(R.layout.rectangle_string_row, null);
+            if(isSearchView) {
+                v = vi.inflate(R.layout.search_list_row, null);
+            } else {
+                v = vi.inflate(R.layout.rectangle_string_row, null);
+            }
+
 
             // cache view fields into the holder
             holder = new ViewHolder();
@@ -63,12 +71,11 @@ public class KeyValueAdapter extends ArrayAdapter<Pair<String,String>> {
 
             // associate the holder with the view for later lookup
             v.setTag(holder);
-        }
-        else {
+        } else {
             // view already exists, get the holder instance from the view
-            holder = (ViewHolder)v.getTag();
+            holder = (ViewHolder) v.getTag();
         }
-        Pair<String,String> pair = pairs.get(position);
+        Pair<String, String> pair = pairs.get(position);
         holder.displayText.setText(pair.second);
         return v;
     }

@@ -14,6 +14,7 @@ import com.google.firebase.database.DatabaseReference;
 import com.google.firebase.database.FirebaseDatabase;
 import com.google.firebase.database.ValueEventListener;
 import com.quotemate.qmate.model.User;
+import com.quotemate.qmate.util.Analytics;
 import com.quotemate.qmate.util.QuotesUtil;
 
 /**
@@ -30,7 +31,8 @@ public class Qtoniq extends Application {
 //                .build()
 //        );
         FirebaseDatabase.getInstance().setPersistenceEnabled(true);
-
+        Analytics.init(this);
+        Analytics.sendStartedAppEvent();
     }
 
 

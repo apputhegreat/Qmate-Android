@@ -40,6 +40,7 @@ import com.google.firebase.auth.GoogleAuthProvider;
 import com.quotemate.qmate.MainActivity;
 import com.quotemate.qmate.Qtoniq;
 import com.quotemate.qmate.R;
+import com.quotemate.qmate.util.Analytics;
 import com.quotemate.qmate.util.Constants;
 import com.quotemate.qmate.util.CustomProgressBar;
 import com.quotemate.qmate.util.KeyBoardUtil;
@@ -146,6 +147,8 @@ public class FBLoginFragment extends DialogFragment {
             @Override
             public void onClick(View v) {
                 if(Qtoniq.isConnectedToInternet(getActivity())) {
+                    //showProgress(true, "Logging in with facebook");
+                    Analytics.sendFacebookLoginEvent();
                     loginButton.performClick();
                 } else {
                     Toast.makeText(getActivity(),"No Internet connection",Toast.LENGTH_SHORT).show();
@@ -156,6 +159,8 @@ public class FBLoginFragment extends DialogFragment {
 
     private void signInWithGoogle() {
         if(Qtoniq.isConnectedToInternet(getActivity())) {
+           // showProgress(true, "Signing in with google");
+            Analytics.sendGSigninEvent();
             Intent signInIntent = Auth.GoogleSignInApi.getSignInIntent(mGoogleApiClient);
             startActivityForResult(signInIntent, Constants.RC_SIGN_IN);
         } else {
@@ -165,6 +170,7 @@ public class FBLoginFragment extends DialogFragment {
 
     @Override
     public void onActivityResult(int requestCode, int resultCode, Intent data) {
+        showProgress(false,null);
         super.onActivityResult(requestCode, resultCode, data);
         if(requestCode==Constants.RC_SIGN_IN) {
             GoogleSignInResult result = Auth.GoogleSignInApi.getSignInResultFromIntent(data);
@@ -213,11 +219,12 @@ public class FBLoginFragment extends DialogFragment {
     }
 
     private void signInWithCredential(AuthCredential credential) {
+        showProgress(true, "Signing In");
         mAuth.signInWithCredential(credential)
                 .addOnCompleteListener(getActivity(), new OnCompleteListener<AuthResult>() {
                     @Override
                     public void onComplete(@NonNull Task<AuthResult> task) {
-                        showProgress(false);
+                        showProgress(false,null);
                         Log.d("Facebooke sign in", "signInWithCredential:onComplete:" + task.isSuccessful());
                         if (!task.isSuccessful()) {
                             Log.w("Facebooke sign in", "signInWithCredential", task.getException());
@@ -229,9 +236,12 @@ public class FBLoginFragment extends DialogFragment {
                 });
     }
 
-    private void showProgress(final boolean show) {
+    private void showProgress(final boolean show, String message) {
         if(mProgressBar!=null) {
             if(show) {
+                if(message!=null) {
+                    mProgressBar.setProgressBarMessage("Signing In");
+                }
                 mProgressBar.showProgressBar();
             } else {
                 mProgressBar.hideProgressBar();

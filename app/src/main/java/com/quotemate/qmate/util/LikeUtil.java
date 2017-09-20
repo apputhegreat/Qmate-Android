@@ -24,6 +24,7 @@ public class LikeUtil {
     }
 
     public void handleLike(Quote quote, AppCompatImageView likeImgView, TextView badge) {
+        Analytics.sendLikeEvent();
         if (User.currentUser != null) {
             if (quote.isLiked) {
                 int pos = -1;
@@ -35,13 +36,13 @@ public class LikeUtil {
                 if (pos != -1) {
                     quote.isLiked = false;
                     User.currentUser.likedQuoteIds.remove(pos);
-                    likeImgView.setImageDrawable(ContextCompat.getDrawable(context, R.drawable.ic_favorite_border_black_24dp));
+                    likeImgView.setImageDrawable(ContextCompat.getDrawable(context, R.drawable.like));
                     FBUtil.updateLikes(quote.id, -1);
                     quote.likes = quote.likes - 1;
                 }
             } else {
                 quote.isLiked = true;
-                likeImgView.setImageDrawable(ContextCompat.getDrawable(context, R.drawable.ic_favorite_black_24dp));
+                likeImgView.setImageDrawable(ContextCompat.getDrawable(context, R.drawable.liked));
                 User.currentUser.likedQuoteIds.add(quote.id);
                 FBUtil.updateLikes(quote.id, +1);
                 quote.likes = quote.likes + 1;

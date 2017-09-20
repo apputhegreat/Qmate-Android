@@ -3,16 +3,28 @@
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
     android:background="@color/cardColor"
     tools:context="com.quotemate.qmate.ProfileActivity">
 
     <android.support.v7.widget.Toolbar
         android:id="@+id/toolbar"
+        android:elevation="1dp"
         android:layout_width="match_parent"
         android:layout_height="50dp"
-        android:layout_alignParentTop="true"
-        android:elevation="2dp"
-        android:gravity="left">
+        android:background="@android:color/white"
+        android:focusableInTouchMode="true"
+        android:minHeight="45dp"
+        app:titleTextColor="@android:color/black">
+
+        <android.support.v7.widget.AppCompatImageView
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:id="@+id/back_btn"
+            android:paddingRight="25dp"
+            android:tint="@color/iconColor"
+            android:paddingLeft="10dp"
+            android:src="@drawable/back" />
 
         <TextView
             fontPath="fonts/Cabin-Regular.ttf"
@@ -43,11 +55,11 @@
             android:layout_marginTop="2dp"
             android:width="150dp"
             android:background="@color/cardColor"
-            android:drawableLeft="@drawable/ic_star_black_36dp"
-            android:drawablePadding="20dp"
+            android:drawableLeft="@drawable/bookmarks"
+            android:drawablePadding="25dp"
             android:drawableTint="@color/yellowGreen"
             android:letterSpacing="0.04"
-            android:padding="10dp"
+            android:paddingLeft="17dp"
             android:stateListAnimator="@null"
             android:text="Bookmarks"
             android:textAlignment="viewStart"
@@ -65,11 +77,11 @@
             android:layout_marginTop="2dp"
             android:width="150dp"
             android:background="@color/cardColor"
-            android:drawableLeft="@drawable/ic_share_black_24dp"
+            android:drawableLeft="@drawable/invite"
             android:drawablePadding="20dp"
             android:drawableTint="@color/yellowGreen"
             android:letterSpacing="0.04"
-            android:padding="10dp"
+            android:padding="15dp"
             android:stateListAnimator="@null"
             android:text="Let others know about the app"
             android:textAlignment="viewStart"
@@ -87,21 +99,22 @@
             android:layout_marginTop="2dp"
             android:width="150dp"
             android:background="@color/cardColor"
+            android:paddingLeft="15dp"
             android:text="Logout"
             android:textAllCaps="false"
             android:textColor="@color/contentColor">
 
             <de.hdodenhof.circleimageview.CircleImageView xmlns:app="http://schemas.android.com/apk/res-auto"
                 android:id="@+id/user_img"
-                android:layout_width="46dp"
-                android:layout_height="46dp"
+                android:layout_width="40dp"
+                android:layout_height="40dp"
                 android:layout_alignParentLeft="true"
                 android:layout_below="@+id/quote_text"
                 android:layout_centerHorizontal="true"
                 android:layout_centerVertical="true"
                 android:padding="2dp"
-                android:src="@drawable/ic_person_black_36dp"
-                app:civ_border_color="#FF000000"
+                android:src="@drawable/profile"
+                app:civ_border_color="#FFF"
                 app:civ_border_width="1dp" />
 
             <TextView
@@ -110,8 +123,9 @@
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:layout_centerInParent="true"
-                android:layout_marginLeft="10dp"
+                android:layout_marginLeft="18dp"
                 android:layout_toRightOf="@+id/user_img"
+                android:letterSpacing="0.04"
                 android:textColor="@color/contentColor"
                 android:textSize="15sp"
                 tools:text="Anji kinnara" />

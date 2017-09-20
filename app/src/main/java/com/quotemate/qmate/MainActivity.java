@@ -7,7 +7,6 @@ import android.content.Intent;
 import android.content.SharedPreferences;
 import android.content.pm.PackageInfo;
 import android.content.pm.PackageManager;
-import android.net.Uri;
 import android.os.Bundle;
 import android.os.Handler;
 import android.preference.PreferenceManager;
@@ -15,11 +14,11 @@ import android.support.v4.content.ContextCompat;
 import android.support.v4.view.ViewPager;
 import android.support.v7.app.AlertDialog;
 import android.support.v7.app.AppCompatActivity;
+import android.support.v7.widget.AppCompatImageView;
 import android.support.v7.widget.Toolbar;
-import android.view.Menu;
-import android.view.MenuItem;
 import android.view.MotionEvent;
 import android.view.View;
+import android.widget.LinearLayout;
 import android.widget.RelativeLayout;
 import android.widget.TextView;
 import android.widget.Toast;
@@ -38,6 +37,7 @@ import com.quotemate.qmate.login.FBLoginFragment;
 import com.quotemate.qmate.model.Author;
 import com.quotemate.qmate.model.Quote;
 import com.quotemate.qmate.model.User;
+import com.quotemate.qmate.util.Analytics;
 import com.quotemate.qmate.util.Constants;
 import com.quotemate.qmate.util.CustomProgressBar;
 import com.quotemate.qmate.util.FBUtil;
@@ -92,19 +92,30 @@ public class MainActivity extends AppCompatActivity {
     private RemoteConfigController mRemoteConfigController;
     private AlertDialog updateDialog;
     private int mspinCount = 0;
+    private LinearLayout noQuotesLayout;
+    private int totalRead = 0;
+    private int lastPos = 0;
+    private AppCompatImageView moreBtn;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
+        mIntroUtil = new IntroUtil(this);
+        totalRead = 0;
         mRemoteConfigController = new RemoteConfigController(this);
         checkVersionInfo();
         handleAuth();
         initProgressBar();
         zoomViewHandle = new Handler();
         toolBar = (Toolbar) findViewById(R.id.toolbar);
-        setSupportActionBar(toolBar);
-
+        moreBtn = (AppCompatImageView) findViewById(R.id.more_btn);
+        moreBtn.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                gotoProfilePage();
+            }
+        });
         searchBar = (TextView) findViewById(R.id.search_bar);
         searchBar.setOnClickListener(new View.OnClickListener() {
             @Override
@@ -119,7 +130,7 @@ public class MainActivity extends AppCompatActivity {
         //mQuoteOFtheDayLabel = (TextView) findViewById(R.id.quote_of_day_label);
 
         handleAdView();
-
+        noQuotesLayout = (LinearLayout) findViewById(R.id.no_quotes_view);
         bottomLayout = (RelativeLayout) findViewById(R.id.bottom_layout);
         spin = (MaterialRippleLayout) findViewById(R.id.spin);
         spinTxt = (TextView) findViewById(R.id.spin_text);
@@ -146,16 +157,16 @@ public class MainActivity extends AppCompatActivity {
         setSpinTxtAppearance();
 
         setTitle("");
+
         initViewPager();
-        mIntroUtil = new IntroUtil(this);
-        mIntroUtil.showSearchInfo(searchBar, 1500, "search quotes by author or any tag");
-        mIntroUtil.showSpinInfo(spin, 6000, "spin here to select random author and tags");
+        //mIntroUtil.showSearchInfo(searchBar, 1500, "search quotes by author or any tag");
+        //mIntroUtil.showSpinInfo(spin, 6000, "spin here to select random author and tags");
         zoomViewRuunable = new Runnable() {
             public void run() {
                 showZooView(true);
             }
         };
-        zoomViewHandle.postDelayed(zoomViewRuunable, 2000);
+        zoomViewHandle.postDelayed(zoomViewRuunable, 1500);
         setAlarmQuoteOftheDay();
     }
 
@@ -207,7 +218,8 @@ public class MainActivity extends AppCompatActivity {
                     AlarmManager.INTERVAL_DAY, pendingIntent);
 
             SharedPreferences.Editor editor = prefs.edit();
-            editor.putBoolean("firstTime", true);
+            editor.putBoolean("firstTime", false);
+            editor.commit();
             editor.apply();
         }
     }
@@ -248,25 +260,10 @@ public class MainActivity extends AppCompatActivity {
         mAuth.addAuthStateListener(mAuthListener);
     }
 
-    @Override
-    public boolean onCreateOptionsMenu(Menu menu) {
-        getMenuInflater().inflate(R.menu.navigation, menu);
-        return true;
-    }
-
-    @Override
-    public boolean onOptionsItemSelected(MenuItem item) {
-        switch (item.getItemId()) {
-            case R.id.navigation_profile:
-                gotoProfilePage();
-                return true;
-            default:
-                return super.onOptionsItemSelected(item);
-        }
-    }
 
     private void gotoProfilePage() {
         if (FirebaseAuth.getInstance().getCurrentUser() != null) {
+            Analytics.sendProfileEvent();
             Intent intent = new Intent(this, ProfileActivity.class);
             intent.setFlags(FLAG_ACTIVITY_REORDER_TO_FRONT);
             startActivity(intent);
@@ -316,6 +313,7 @@ public class MainActivity extends AppCompatActivity {
     }
 
     private void startSearchActivity() {
+        Analytics.sendSearchEvent();
         Intent intent = new Intent(this, SearchActivity.class);
         intent.putExtra("authorId", currentAutohrText.getText().toString());
         intent.putExtra("tag", currentTagText.getText().toString());
@@ -353,17 +351,29 @@ public class MainActivity extends AppCompatActivity {
         ArrayList<Quote> filteredQuotes = FilterQuotes.getFilteredQuotes(authorId, tag);
         currentListSize = filteredQuotes.size();
         if (isSpin && filteredQuotes.isEmpty()) {
-            filteredQuotes = FilterQuotes.getFilteredQuotes(authorId, "All");
-            if (filteredQuotes.isEmpty()) {
-                filteredQuotes = FilterQuotes.getFilteredQuotes("-1", "All");
+            filteredQuotes = FilterQuotes.getFilteredQuotes("-1", tag);
+            if(filteredQuotes.isEmpty()) {
+                currentTag = "All";
+                currentTagText.setText("All");
+                filteredQuotes = FilterQuotes.getFilteredQuotes(authorId, "All");
+                if (filteredQuotes.isEmpty()) {
+                    currentAuthor = QuotesUtil.authors.get("-1");
+                    currentAutohrText.setText("All");
+                    filteredQuotes = FilterQuotes.getFilteredQuotes("-1", "All");
+                }
+            } else {
                 currentAuthor = QuotesUtil.authors.get("-1");
                 currentAutohrText.setText("All");
             }
-            currentTag = "All";
-            currentTagText.setText("All");
             updateView(filteredQuotes, null);
         } else {
-            updateView(filteredQuotes, null);
+            if (filteredQuotes.isEmpty()) {
+                noQuotesLayout.setVisibility(View.VISIBLE);
+                viewPager.setVisibility(View.GONE);
+            } else {
+                updateView(filteredQuotes, null);
+
+            }
         }
     }
 
@@ -384,11 +394,15 @@ public class MainActivity extends AppCompatActivity {
             public void onPageSelected(int position) {
                 if (!isZoomView) {
                     zoomViewHandle.removeCallbacks(zoomViewRuunable);
-                    zoomViewHandle.postDelayed(zoomViewRuunable, 3000);
+                    zoomViewHandle.postDelayed(zoomViewRuunable, 1500);
+                }
+                if(position > lastPos) {
+                    totalRead++;
                 }
                 if (position != 0 && position == currentListSize - 1) {
                     Toast.makeText(MainActivity.this, "Great! you have read all the quote in this category", Toast.LENGTH_SHORT).show();
                 }
+                lastPos = position;
             }
 
             @Override
@@ -428,6 +442,8 @@ public class MainActivity extends AppCompatActivity {
     }
 
     public void updateView(ArrayList<Quote> quotes, Quote quoteOftheDay) {
+        noQuotesLayout.setVisibility(View.GONE);
+        viewPager.setVisibility(View.VISIBLE);
         if (quoteOftheDay != null) {
             if (!quotes.isEmpty()) {
                 quotes.remove(quoteOftheDay);
@@ -461,6 +477,7 @@ public class MainActivity extends AppCompatActivity {
     }
 
     private void handleSpinnerClick() {
+        Analytics.sendSpinEvent();
         if (FirebaseAuth.getInstance().getCurrentUser() != null) {
             if (isFirstInstance) {
                 isFirstInstance = false;
@@ -479,6 +496,7 @@ public class MainActivity extends AppCompatActivity {
 
     @Override
     public void onBackPressed() {
+        Analytics.cardsOnCloseApp(totalRead);
         moveTaskToBack(true);
     }
 

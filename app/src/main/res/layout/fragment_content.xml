@@ -37,7 +37,7 @@
             android:layout_marginTop="19dp"
             android:layout_below="@+id/quote_text"
             android:layout_centerHorizontal="true"
-            android:src="@drawable/ic_person_black_36dp"
+            android:src="@drawable/profile"
             />
 
         <TextView
@@ -53,9 +53,6 @@
             android:textSize="14sp"
             tools:ignore="MissingPrefix"
             tools:text="Abdul Kalam" />
-
-        <include
-            layout="@layout/share_bottom_content"/>
 
     </RelativeLayout>
 
@@ -76,7 +73,7 @@
                 android:layout_height="wrap_content"
                 android:id="@+id/book_mark_img"
                 android:backgroundTint="@android:color/white"
-                android:src="@drawable/ic_star_border_black_24dp"
+                android:src="@drawable/bookmark"
                 android:tint="@color/gray" />
         </com.balysv.materialripple.MaterialRippleLayout>
 
@@ -97,7 +94,7 @@
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
                     android:backgroundTint="@android:color/white"
-                    android:src="@drawable/ic_favorite_border_black_24dp"
+                    android:src="@drawable/like"
                     android:tint="@color/gray" />
 
                 <TextView
@@ -130,7 +127,7 @@
                 android:layout_height="wrap_content"
                 android:id="@+id/share_img"
                 android:backgroundTint="@android:color/white"
-                android:src="@drawable/ic_share_black_24dp"
+                android:src="@drawable/share"
                 android:tint="@color/gray" />
         </com.balysv.materialripple.MaterialRippleLayout>
     </RelativeLayout>

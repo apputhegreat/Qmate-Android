@@ -19,11 +19,13 @@ import android.widget.ArrayAdapter;
 import android.widget.EditText;
 import android.widget.GridView;
 import android.widget.ListView;
+import android.widget.RelativeLayout;
 import android.widget.Spinner;
 
 import com.quotemate.qmate.adapters.KeyValueAdapter;
 import com.quotemate.qmate.model.Author;
 import com.quotemate.qmate.selectAuthor.SearchFilter;
+import com.quotemate.qmate.util.Analytics;
 import com.quotemate.qmate.util.KeyBoardUtil;
 import com.quotemate.qmate.util.QuotesUtil;
 import com.quotemate.qmate.util.Transitions;
@@ -35,6 +37,8 @@ import java.util.List;
 import uk.co.chrisjenx.calligraphy.CalligraphyContextWrapper;
 
 public class SearchActivity extends AppCompatActivity {
+    public static final String AUTHOR = "Author";
+    public static final String TAG = "Tag";
     EditText searchBar;
     GridView authorGridView;
     GridView tagGridView;
@@ -54,41 +58,55 @@ public class SearchActivity extends AppCompatActivity {
     private ArrayList<Pair<String, String>> mList;
     private float x1, x2;
     static final int MIN_DISTANCE = 150;
+    private AppCompatImageView backButton;
+    private RelativeLayout select_spinner_layout;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_search);
         Toolbar toolbar = (Toolbar) findViewById(R.id.toolbar);
-        setSupportActionBar(toolbar);
-        ActionBar actionBar = getSupportActionBar();
-        if (actionBar != null) {
-            actionBar.setDisplayHomeAsUpEnabled(false);
-        }
+//        setSupportActionBar(toolbar);
+//        ActionBar actionBar = getSupportActionBar();
+//        if (actionBar != null) {
+//            actionBar.setDisplayHomeAsUpEnabled(false);
+//        }
         tags = QuotesUtil.tags;
         searchBar = (EditText) findViewById(R.id.search_bar);
-        cancelSearch = (AppCompatImageView) findViewById(R.id.close_search);
+        backButton = (AppCompatImageView) findViewById(R.id.back_btn);
         searchSpinner = (Spinner) findViewById(R.id.search_spinner);
-        categories.add("Author");
-        categories.add("Tags");
-        selectedCategory = "Author";
+        categories.add(AUTHOR);
+        categories.add(TAG);
+        selectedCategory = AUTHOR;
+        select_spinner_layout = (RelativeLayout) findViewById(R.id.search_spinner_layout);
         searchBar.setHint("Search "+selectedCategory);
         searchBar.setOnFocusChangeListener(new View.OnFocusChangeListener() {
             @Override
             public void onFocusChange(View view, boolean b) {
                 if(b) {
                     mListView.setVisibility(View.VISIBLE);
+                    cancelSearch.setVisibility(View.VISIBLE);
                     setAdapter();
                 } else {
                     mListView.setVisibility(View.GONE);
                 }
             }
         });
+        cancelSearch = (AppCompatImageView) findViewById(R.id.cancel_search);
+        cancelSearch.setVisibility(View.GONE);
+        backButton.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                onBackPressed();
+            }
+        });
         cancelSearch.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
+                cancelSearch.setVisibility(View.GONE);
                 mListView.setVisibility(View.GONE);
                 searchBar.clearFocus();
+                searchBar.setText("");
                 KeyBoardUtil.hideKeyboard(SearchActivity.this);
             }
         });
@@ -115,6 +133,12 @@ public class SearchActivity extends AppCompatActivity {
         dataAdapter.setDropDownViewResource(R.layout.spinner_view);
 
         // attaching data adapter to spinner
+        select_spinner_layout.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                searchSpinner.performClick();
+            }
+        });
         searchSpinner.setAdapter(dataAdapter);
         searchSpinner.setOnItemSelectedListener(new AdapterView.OnItemSelectedListener() {
             @Override
@@ -136,8 +160,8 @@ public class SearchActivity extends AppCompatActivity {
         // trending
         authorGridView = (GridView) findViewById(R.id.trending_authors_grid);
         tagGridView = (GridView) findViewById(R.id.trending_tags_grid);
-        authorGridView.setAdapter(new KeyValueAdapter(this, trendingauthorPairList));
-        tagGridView.setAdapter(new  KeyValueAdapter(this ,trendingtagPairList));
+        authorGridView.setAdapter(new KeyValueAdapter(this, trendingauthorPairList, false));
+        tagGridView.setAdapter(new  KeyValueAdapter(this ,trendingtagPairList, false));
         authorGridView.setOnItemClickListener(new AdapterView.OnItemClickListener() {
             @Override
             public void onItemClick(AdapterView<?> adapterView, View view, int i, long l) {
@@ -176,6 +200,7 @@ public class SearchActivity extends AppCompatActivity {
         return super.onTouchEvent(event);
     }
     private void sendSelectedTag(String tag) {
+        Analytics.sendTagSelectEvent(tag);
         Intent intent = new Intent();
         intent.putExtra("tag", tag);
         setResult(RESULT_OK, intent);
@@ -183,6 +208,7 @@ public class SearchActivity extends AppCompatActivity {
     }
 
     private void sendSelectedAuthor(String authorId) {
+        Analytics.sendAuthorSelectEvent(authorId);
         Intent intent = new Intent();
         intent.putExtra("authorId", authorId);
         setResult(RESULT_OK, intent);
@@ -221,15 +247,15 @@ public class SearchActivity extends AppCompatActivity {
     private void setAdapter() {
         mList = new ArrayList<>();
         switch (selectedCategory) {
-            case "Author":
+            case AUTHOR:
                 mList = new ArrayList<>(authorPairList);
                 break;
-            case "Tags":
+            case TAG:
                 mList =  new ArrayList<>(tagPairList);
                 break;
         }
         if(mAdapter==null) {
-            mAdapter = new KeyValueAdapter(SearchActivity.this, mList);
+            mAdapter = new KeyValueAdapter(SearchActivity.this, mList, true);
             mListView.setAdapter(mAdapter);
         } else {
             mAdapter.clear();
@@ -243,10 +269,10 @@ public class SearchActivity extends AppCompatActivity {
 
     private void returnResult() {
         switch (selectedCategory) {
-            case "Author":
+            case AUTHOR:
                 sendSelectedAuthor(mSelectedKeyValueapair.first);
                 break;
-            case "Tags":
+            case TAG:
                 sendSelectedTag(mSelectedKeyValueapair.first);
                 break;
         }

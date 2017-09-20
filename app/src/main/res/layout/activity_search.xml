@@ -12,17 +12,20 @@
         android:layout_width="match_parent"
         android:layout_height="50dp"
         android:layout_alignParentTop="true"
+        android:background="@android:color/white"
         android:contentInsetEnd="0dp"
         android:contentInsetLeft="0dp"
         android:contentInsetRight="0dp"
         android:contentInsetStart="0dp"
-        android:elevation="2dp"
+        android:elevation="1dp"
         android:focusableInTouchMode="true"
         android:gravity="left"
+        android:minHeight="45dp"
         app:contentInsetEnd="0dp"
         app:contentInsetLeft="0dp"
         app:contentInsetRight="0dp"
-        app:contentInsetStart="0dp">
+        app:contentInsetStart="0dp"
+        app:titleTextColor="@android:color/black">
 
         <RelativeLayout
             android:layout_width="match_parent"
@@ -30,45 +33,83 @@
             android:background="@android:color/white"
             android:gravity="center">
 
-            <Spinner
-                android:id="@+id/search_spinner"
+            <RelativeLayout
+                android:id="@+id/search_spinner_layout"
                 android:layout_width="wrap_content"
                 android:layout_height="38dp"
                 android:layout_alignParentLeft="true"
                 android:layout_centerVertical="true"
-                android:layout_marginLeft="15dp"
-                android:background="@color/backgroundColor"
-                android:overlapAnchor="false"
-                android:popupBackground="@@color/cardColor"
-                tools:listitem="@layout/spinner_view"></Spinner>
+                android:layout_marginLeft="10dp"
+                android:background="@color/placeHolderColor"
+                android:orientation="horizontal">
 
-            <EditText
-                android:letterSpacing="0.04"
-                android:id="@+id/search_bar"
-                fontPath="fonts/Cabin-Regular.ttf"
-                android:layout_width="230dp"
-                android:layout_height="38dp"
-                android:layout_centerVertical="true"
-                android:layout_marginRight="10dp"
-                android:layout_toRightOf="@+id/search_spinner"
+                <Spinner
+                    android:id="@+id/search_spinner"
+                    android:layout_width="wrap_content"
+                    android:layout_height="38dp"
+                    android:layout_centerVertical="true"
+                    android:background="@color/placeHolderColor"
+                    android:overlapAnchor="false"
+                    android:popupBackground="@@color/cardColor"
+                    tools:listitem="@layout/spinner_view"></Spinner>
+
+                <android.support.v7.widget.AppCompatImageView
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_centerVertical="true"
+                    android:layout_gravity="center"
+                    android:layout_toRightOf="@+id/search_spinner"
+                    android:src="@drawable/ic_expand_more_black_18dp"
+                    android:tint="@color/cardColor" />
+
+            </RelativeLayout>
+
+            <RelativeLayout
                 android:background="@drawable/rectangle_place_holder"
-                android:drawableLeft="@drawable/ic_search_black_24dp"
-                android:drawablePadding="10dp"
-                android:drawableTint="@color/yellowGreen"
-                android:hint="Search author"
-                android:paddingLeft="10dp"
-                android:textColor="@color/placeHolderColor"
-                android:textColorHint="@color/placeHolderColor"
-                android:textSize="14sp"
-                tools:ignore="MissingPrefix" />
+                android:layout_centerVertical="true"
+                android:layout_toRightOf="@+id/search_spinner_layout"
+                android:layout_width="220dp"
+                android:layout_marginRight="10dp"
+                android:layout_height="38dp">
+
+                <EditText
+                    android:background="@android:color/transparent"
+                    android:id="@+id/search_bar"
+                    fontPath="fonts/Cabin-Regular.ttf"
+                    android:layout_width="190dp"
+                    android:layout_height="38dp"
+                    android:drawableLeft="@drawable/search"
+                    android:drawablePadding="10dp"
+                    android:drawableTint="@color/iconColor"
+                    android:hint="Search author"
+                    android:inputType="textCapWords"
+                    android:letterSpacing="0.04"
+                    android:paddingLeft="10dp"
+                    android:textColor="@color/placeHolderColor"
+                    android:textColorHint="@color/placeHolderColor"
+                    android:textCursorDrawable="@null"
+                    android:textSize="14sp"
+                    tools:ignore="MissingPrefix" />
+                <android.support.v7.widget.AppCompatImageView
+                    android:layout_width="wrap_content"
+                    android:layout_alignParentRight="true"
+                    android:layout_height="wrap_content"
+                    android:layout_centerVertical="true"
+                    android:id="@+id/cancel_search"
+                    android:tint="@color/iconColor"
+                    android:src="@drawable/ic_cancel_black_24dp"/>
+            </RelativeLayout>
+
 
             <android.support.v7.widget.AppCompatImageView
-                android:id="@+id/close_search"
+                android:id="@+id/back_btn"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:layout_alignParentRight="true"
                 android:layout_centerVertical="true"
-                android:src="@drawable/ic_share_black_24dp" />
+                android:layout_marginRight="10dp"
+                android:src="@drawable/ic_chevron_right_black_24dp"
+                android:tint="@color/iconColor" />
         </RelativeLayout>
 
     </android.support.v7.widget.Toolbar>
@@ -89,12 +130,12 @@
         android:visibility="visible">
 
         <TextView
-            android:letterSpacing="0.04"
             android:id="@+id/trending_authors_header"
             fontPath="fonts/JosefinSans-SemiBold.ttf"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:layout_marginBottom="15dp"
+            android:letterSpacing="0.04"
             android:text="Trending Authors"
             android:textColor="@color/placeHolderColor"
             android:textSize="16sp"
@@ -111,13 +152,13 @@
             android:verticalSpacing="10dp"></GridView>
 
         <TextView
-            android:letterSpacing="0.04"
             android:id="@+id/trending_tags_header"
             fontPath="fonts/JosefinSans-SemiBold.ttf"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:layout_marginBottom="15dp"
             android:layout_marginTop="15dp"
+            android:letterSpacing="0.04"
             android:text="Trending Tags"
             android:textColor="@color/placeHolderColor"
             android:textSize="16sp" />

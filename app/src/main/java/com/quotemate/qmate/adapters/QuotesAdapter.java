@@ -6,10 +6,14 @@ package com.quotemate.qmate.adapters;
 
 import android.content.Context;
 import android.graphics.Bitmap;
+import android.graphics.Canvas;
+import android.graphics.Point;
 import android.os.Handler;
+import android.support.annotation.NonNull;
 import android.support.v4.content.ContextCompat;
 import android.support.v4.view.PagerAdapter;
 import android.support.v7.widget.AppCompatImageView;
+import android.view.Display;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -29,6 +33,7 @@ import com.quotemate.qmate.login.FBLoginFragment;
 import com.quotemate.qmate.model.Author;
 import com.quotemate.qmate.model.Quote;
 import com.quotemate.qmate.model.User;
+import com.quotemate.qmate.util.Analytics;
 import com.quotemate.qmate.util.BookMarkUtil;
 import com.quotemate.qmate.util.IntroUtil;
 import com.quotemate.qmate.util.LikeUtil;
@@ -76,17 +81,8 @@ public class QuotesAdapter extends PagerAdapter {
     public Object instantiateItem(ViewGroup container, final int position) {
         final View itemView = layoutInflater.inflate(R.layout.fragment_content, container, false);
         final Quote quote = quotes.get(position);
-        TextView quoteText = (TextView) itemView.findViewById(R.id.quote_text);
-        quoteText.setText(quote.text);
-        final View quoteLayout = itemView.findViewById(R.id.quote_layout);
-        //context.showZooView();
         TextView authorText = (TextView) itemView.findViewById(R.id.quote_author);
-        authorText.setText(quote.author);
-        CircleImageView authorImg = (CircleImageView) itemView.findViewById(R.id.author_image);
-        Author author = QuotesUtil.authors.get(quote.authorId);
-        if (author != null && author.image != null) {
-            setImageFromRef(author.image, authorImg);
-        }
+        setQuoteView(itemView, quote);
         MaterialRippleLayout likeBtn = (MaterialRippleLayout) itemView.findViewById(R.id.like_quote_btn);
         final TextView likeCountBadge = (TextView) itemView.findViewById(R.id.badge_like);
         final AppCompatImageView likeImgView = (AppCompatImageView) itemView.findViewById(R.id.like_image);
@@ -103,13 +99,13 @@ public class QuotesAdapter extends PagerAdapter {
             RelativeLayout actionsLayout = (RelativeLayout) itemView.findViewById(R.id.action_btns_quote);
             actionsLayout.setVisibility(View.GONE);
         } else {
-            mIntroUtil.showSwipeInfo(authorText,500,"swipe up to view more quotes");
+            mIntroUtil.showSwipeInfo(authorText,500,"Swipe up to view more quotes");
         }
         if (quote.isBookMarked) {
-            bookMarkImgView.setImageDrawable(ContextCompat.getDrawable(context, R.drawable.ic_star_black_24dp));
+            bookMarkImgView.setImageDrawable(ContextCompat.getDrawable(context, R.drawable.bookmarked));
         }
         if (quote.isLiked) {
-            likeImgView.setImageDrawable(ContextCompat.getDrawable(context, R.drawable.ic_favorite_black_24dp));
+            likeImgView.setImageDrawable(ContextCompat.getDrawable(context, R.drawable.liked));
         }
         likeBtn.setOnClickListener(new View.OnClickListener() {
             @Override
@@ -141,6 +137,19 @@ public class QuotesAdapter extends PagerAdapter {
         return itemView;
     }
 
+    @NonNull
+    private void setQuoteView(View itemView, Quote quote) {
+        TextView quoteText = (TextView) itemView.findViewById(R.id.quote_text);
+        quoteText.setText(quote.text);
+        TextView authorText = (TextView) itemView.findViewById(R.id.quote_author);
+        authorText.setText(quote.author);
+        CircleImageView authorImg = (CircleImageView) itemView.findViewById(R.id.author_image);
+        Author author = QuotesUtil.authors.get(quote.authorId);
+        if (author != null && author.image != null) {
+            setImageFromRef(author.image, authorImg);
+        }
+    }
+
     private void setImageFromRef(String imageURL, final ImageView view) {
         StorageReference ref = FirebaseStorage.getInstance().getReferenceFromUrl(imageURL);
         Glide.with(context)
@@ -150,16 +159,31 @@ public class QuotesAdapter extends PagerAdapter {
     }
 
     private void handleShare(Quote quote, View view) {
+        Analytics.sendShareEvent();
         boolean resultExternal = Permissions.checkExternalStoragePermission(context);
         if (resultExternal) {
-            view.findViewById(R.id.share_bottom_content).setVisibility(View.VISIBLE);
-            View shareview = view.findViewById(R.id.quote_layout);
-            Bitmap bitmap = ShareView.takeScreenshot(shareview);
+            final LayoutInflater inflater = (LayoutInflater)this.context.getSystemService(Context.LAYOUT_INFLATER_SERVICE);
+            final View shareview = inflater.inflate(R.layout.share_quote_layout, null);
+            setQuoteView(shareview, quote);
+
+
+            Bitmap bitmap = getViewBitmap(shareview);
             File imagePath = ShareView.saveBitmap(bitmap);
-            shareview.findViewById(R.id.share_bottom_content).setVisibility(View.GONE);
             String shareBody = quote.text + "\n-" + quote.author;
             ShareView.shareIt(context, imagePath, shareBody);
         }
+    }
+
+    private Bitmap getViewBitmap(View v)
+    {
+        v.measure(RelativeLayout.LayoutParams.MATCH_PARENT, RelativeLayout.LayoutParams.WRAP_CONTENT);
+        int width= v.getMeasuredHeight();
+        int height= v.getMeasuredWidth();
+        Bitmap b = Bitmap.createBitmap(width ,height, Bitmap.Config.ARGB_8888);
+        Canvas c = new Canvas(b);
+        v.layout(0, 0, width, height);
+        v.draw(c);
+        return b;
     }
 
     @Override

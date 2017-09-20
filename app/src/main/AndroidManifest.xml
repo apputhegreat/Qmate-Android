@@ -60,13 +60,14 @@
                 <category android:name="android.intent.category.LAUNCHER" />
             </intent-filter>
         </activity>
-        <activity android:name=".SearchActivity" />
-        <activity android:name=".ProfileActivity" />
-        <activity android:name=".BookMarksActivity" />
+        <activity android:screenOrientation="portrait" android:name=".SearchActivity" />
+        <activity android:screenOrientation="portrait" android:name=".ProfileActivity" />
+        <activity android:screenOrientation="portrait" android:name=".BookMarksActivity" />
         <activity
+            android:screenOrientation="portrait"
             android:name=".QuoteDetailActivity"
             android:label="@string/title_quote_detail"
-            android:theme="@style/AppTheme">
+            >
         </activity>
     </application>
 

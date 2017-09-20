@@ -20,4 +20,5 @@
     <color name="black_overlay">#66635959</color>
     <color name="chat">#00b451</color>
     <color name="yellowGreen">#e8d008</color>
+    <color name="iconColor">#414141</color>
 </resources>
