@@ -1,14 +1,12 @@
 package com.quotemate.qmate;
 
 import android.content.Context;
-import android.support.v7.app.ActionBar;
-import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
+import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.AppCompatImageView;
 import android.support.v7.widget.DefaultItemAnimator;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
-import android.support.v7.widget.Toolbar;
 import android.view.MenuItem;
 import android.view.View;
 import android.widget.TextView;
@@ -37,7 +35,6 @@ public class BookMarksActivity extends AppCompatActivity {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_book_marks);
         Analytics.sendBookmarksEvent();
-        Toolbar toolbar = (Toolbar) findViewById(R.id.toolbar);
         backButton = (AppCompatImageView) findViewById(R.id.back_btn);
         backButton.setOnClickListener(new View.OnClickListener() {
             @Override
@@ -53,6 +50,11 @@ public class BookMarksActivity extends AppCompatActivity {
         recyclerView.setItemAnimator(new DefaultItemAnimator());
         recyclerView.setAdapter(mAdapter);
         recyclerView.addItemDecoration(new RecyclerViewDivider(this));
+    }
+
+    @Override
+    protected void onStart(){
+        super.onStart();
         prepareBookMarksData();
     }
 
@@ -62,6 +64,7 @@ public class BookMarksActivity extends AppCompatActivity {
     }
 
     private void prepareBookMarksData() {
+        quotesList.clear();
         for (Quote quote : QuotesUtil.quotes
                 ) {
             if (quote.isBookMarked) {

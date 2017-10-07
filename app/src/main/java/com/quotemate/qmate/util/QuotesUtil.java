@@ -49,6 +49,11 @@ public class QuotesUtil {
 
     public QuotesUtil(final MainActivity mainActivity) {
         this.mainActivity = mainActivity;
+        trendingRef.keepSynced(true);
+        tagsRef.keepSynced(true);
+        quoteOfDayRef.keepSynced(true);
+        quotesRef.keepSynced(true);
+        authorsRef.keepSynced(true);
         quotesEventListener = new ValueEventListener() {
             @Override
             public void onDataChange(DataSnapshot dataSnapshot) {
