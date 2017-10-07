@@ -2,9 +2,9 @@
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="wrap_content"
-    android:paddingTop="20dp"
-    android:paddingBottom="25dp"
     android:background="@android:color/white"
+    android:paddingBottom="25dp"
+    android:paddingTop="20dp"
     tools:context="com.quotemate.qmate.login.FBLoginFragment">
 
     <com.facebook.login.widget.LoginButton
@@ -12,50 +12,85 @@
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:visibility="gone" />
+
     <TextView
-        fontPath="fonts/Cabin-Regular.ttf"
         android:id="@+id/info_txt_login"
-        android:layout_alignParentTop="true"
-        android:textSize="15sp"
-        android:layout_marginBottom="25dp"
-        android:textColor="@color/placeHolderColor"
-        android:textAlignment="center"
-        android:text="Please Login to spin the Quote world"
+        fontPath="fonts/Cabin-Regular.ttf"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
+        android:layout_alignParentTop="true"
+        android:layout_marginBottom="25dp"
+        android:text="Please Login to spin the Quote world"
+        android:textAlignment="center"
+        android:textColor="@color/placeHolderColor"
+        android:textSize="15sp"
         tools:ignore="MissingPrefix" />
+
     <RelativeLayout
-        android:layout_centerHorizontal="true"
-        android:layout_below="@+id/info_txt_login"
+        android:id="@+id/login_buttons"
         android:layout_width="wrap_content"
-        android:layout_height="wrap_content">
+        android:layout_height="wrap_content"
+        android:layout_below="@+id/info_txt_login"
+        android:layout_centerHorizontal="true">
+
         <Button
-            android:layout_marginRight="10dp"
             android:id="@+id/fb_login_custom_btn"
+            fontPath="fonts/Cabin-SemiBold.ttf"
             android:layout_width="140dp"
             android:layout_height="40dp"
+            android:layout_marginRight="10dp"
+            android:background="@color/fbLoginColor"
             android:stateListAnimator="@null"
             android:text="Facebook"
-            android:textSize="16sp"
-            fontPath="fonts/Cabin-SemiBold.ttf"
             android:textAllCaps="false"
-            android:background="@color/fbLoginColor"
             android:textColor="@android:color/white"
+            android:textSize="16sp"
             tools:ignore="MissingPrefix" />
+
         <Button
-            fontPath="fonts/Cabin-SemiBold.ttf"
-            android:layout_marginLeft="10dp"
             android:id="@+id/g_login_custom_btn"
+            fontPath="fonts/Cabin-SemiBold.ttf"
             android:layout_width="140dp"
             android:layout_height="40dp"
+            android:layout_marginLeft="10dp"
             android:layout_toRightOf="@+id/fb_login_custom_btn"
+            android:background="@color/gLoginColor"
             android:stateListAnimator="@null"
             android:text="Google"
-            android:textSize="16sp"
             android:textAllCaps="false"
-            android:background="@color/gLoginColor"
             android:textColor="@android:color/white"
+            android:textSize="16sp"
             tools:ignore="MissingPrefix" />
     </RelativeLayout>
+
+    <LinearLayout
+        android:layout_below="@+id/login_buttons"
+        android:orientation="horizontal"
+        android:layout_centerHorizontal="true"
+        android:layout_width="wrap_content"
+        android:layout_marginTop="12dp"
+        android:layout_height="wrap_content">
+        <TextView
+            fontPath="fonts/Cabin-Regular.ttf"
+            android:layout_width="wrap_content"
+            android:autoLink="web"
+            android:linksClickable="true"
+            android:layout_height="wrap_content"
+            android:text="Read our"
+            android:textAlignment="center"
+            android:textColor="@color/placeHolderColor"
+            android:textSize="16sp" />
+        <TextView
+            android:id="@+id/privacy_policy"
+            fontPath="fonts/Cabin-Regular.ttf"
+            android:layout_width="wrap_content"
+            android:autoLink="web"
+            android:linksClickable="true"
+            android:layout_height="wrap_content"
+            android:text=" Privacy Policy"
+            android:textAlignment="center"
+            android:textColor="@color/placeHolderColor"
+            android:textSize="16sp" />
+    </LinearLayout>
 
 </RelativeLayout>

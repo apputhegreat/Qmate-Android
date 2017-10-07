@@ -40,6 +40,7 @@ import com.quotemate.qmate.util.LikeUtil;
 import com.quotemate.qmate.util.Permissions;
 import com.quotemate.qmate.util.QuotesUtil;
 import com.quotemate.qmate.util.ShareView;
+import com.vipul.hp_hp.library.Layout_to_Image;
 
 import java.io.File;
 import java.util.ArrayList;
@@ -165,9 +166,10 @@ public class QuotesAdapter extends PagerAdapter {
             final LayoutInflater inflater = (LayoutInflater)this.context.getSystemService(Context.LAYOUT_INFLATER_SERVICE);
             final View shareview = inflater.inflate(R.layout.share_quote_layout, null);
             setQuoteView(shareview, quote);
+            Layout_to_Image layout_to_image=new Layout_to_Image(context,shareview);
 
-
-            Bitmap bitmap = getViewBitmap(shareview);
+            //Bitmap bitmap = getViewBitmap(shareview);
+            Bitmap bitmap = layout_to_image.convert_layout();
             File imagePath = ShareView.saveBitmap(bitmap);
             String shareBody = quote.text + "\n-" + quote.author;
             ShareView.shareIt(context, imagePath, shareBody);

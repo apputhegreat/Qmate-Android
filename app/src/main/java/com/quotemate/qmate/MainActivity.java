@@ -59,7 +59,6 @@ import uk.co.chrisjenx.calligraphy.CalligraphyContextWrapper;
 import static android.content.Intent.FLAG_ACTIVITY_REORDER_TO_FRONT;
 
 public class MainActivity extends AppCompatActivity {
-
     private QuotesUtil quotesUtil;
     private MyVerticalViewPager viewPager;
     private TextView searchBar;
@@ -201,7 +200,7 @@ public class MainActivity extends AppCompatActivity {
 
     private void setAlarmQuoteOftheDay() {
         SharedPreferences prefs = PreferenceManager.getDefaultSharedPreferences(this);
-        if (!prefs.getBoolean("firstTime", false)) {
+        if (prefs.getBoolean("firstTime", true)) {
 
             Intent alarmIntent = new Intent(this, AlarmReceiver.class);
             PendingIntent pendingIntent = PendingIntent.getBroadcast(this, 0, alarmIntent, 0);
@@ -259,7 +258,6 @@ public class MainActivity extends AppCompatActivity {
         mAuthListener = FBUtil.getAuthStateListener(this);
         mAuth.addAuthStateListener(mAuthListener);
     }
-
 
     private void gotoProfilePage() {
         if (FirebaseAuth.getInstance().getCurrentUser() != null) {
@@ -352,7 +350,7 @@ public class MainActivity extends AppCompatActivity {
         currentListSize = filteredQuotes.size();
         if (isSpin && filteredQuotes.isEmpty()) {
             filteredQuotes = FilterQuotes.getFilteredQuotes("-1", tag);
-            if(filteredQuotes.isEmpty()) {
+            if (filteredQuotes.isEmpty()) {
                 currentTag = "All";
                 currentTagText.setText("All");
                 filteredQuotes = FilterQuotes.getFilteredQuotes(authorId, "All");
@@ -396,7 +394,7 @@ public class MainActivity extends AppCompatActivity {
                     zoomViewHandle.removeCallbacks(zoomViewRuunable);
                     zoomViewHandle.postDelayed(zoomViewRuunable, 1500);
                 }
-                if(position > lastPos) {
+                if (position > lastPos) {
                     totalRead++;
                 }
                 if (position != 0 && position == currentListSize - 1) {

@@ -2,6 +2,7 @@ package com.quotemate.qmate.login;
 
 
 import android.content.Intent;
+import android.net.Uri;
 import android.os.Bundle;
 import android.support.annotation.NonNull;
 import android.support.v4.app.DialogFragment;
@@ -13,6 +14,7 @@ import android.view.View;
 import android.view.ViewGroup;
 import android.view.WindowManager;
 import android.widget.Button;
+import android.widget.TextView;
 import android.widget.Toast;
 
 import com.facebook.AccessToken;
@@ -37,6 +39,7 @@ import com.google.firebase.auth.AuthResult;
 import com.google.firebase.auth.FacebookAuthProvider;
 import com.google.firebase.auth.FirebaseAuth;
 import com.google.firebase.auth.GoogleAuthProvider;
+import com.google.firebase.remoteconfig.FirebaseRemoteConfig;
 import com.quotemate.qmate.MainActivity;
 import com.quotemate.qmate.Qtoniq;
 import com.quotemate.qmate.R;
@@ -129,6 +132,17 @@ public class FBLoginFragment extends DialogFragment {
     @Override
     public void onViewCreated(View view, Bundle savedInstance) {
         super.onViewCreated(view, savedInstance);
+        TextView privacyPolicy = (TextView) view.findViewById(R.id.privacy_policy);
+        privacyPolicy.setClickable(true);
+        privacyPolicy.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                Analytics.sendPrivacyPolicyEvent();
+                Intent myIntent = new Intent(Intent.ACTION_VIEW,
+                        Uri.parse(FirebaseRemoteConfig.getInstance().getString(Constants.URL_PRIVACY_POLICY)));
+                startActivity(myIntent);
+            }
+        });
         loginButton = (LoginButton) view.findViewById(R.id.login_button);
         loginButton.setReadPermissions("public_profile");
         loginButton.setReadPermissions("user_status");
