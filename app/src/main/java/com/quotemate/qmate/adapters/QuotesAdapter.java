@@ -83,7 +83,7 @@ public class QuotesAdapter extends PagerAdapter {
         final View itemView = layoutInflater.inflate(R.layout.fragment_content, container, false);
         final Quote quote = quotes.get(position);
         TextView authorText = (TextView) itemView.findViewById(R.id.quote_author);
-        setQuoteView(itemView, quote);
+        QuotesUtil.setQuoteView(context, itemView, quote);
         MaterialRippleLayout likeBtn = (MaterialRippleLayout) itemView.findViewById(R.id.like_quote_btn);
         final TextView likeCountBadge = (TextView) itemView.findViewById(R.id.badge_like);
         final AppCompatImageView likeImgView = (AppCompatImageView) itemView.findViewById(R.id.like_image);
@@ -100,7 +100,7 @@ public class QuotesAdapter extends PagerAdapter {
             RelativeLayout actionsLayout = (RelativeLayout) itemView.findViewById(R.id.action_btns_quote);
             actionsLayout.setVisibility(View.GONE);
         } else {
-            mIntroUtil.showSwipeInfo(authorText,500,"Swipe up to view more quotes");
+            mIntroUtil.showSwipeInfo(authorText, 500, "Swipe up to view more quotes");
         }
         if (quote.isBookMarked) {
             bookMarkImgView.setImageDrawable(ContextCompat.getDrawable(context, R.drawable.bookmarked));
@@ -115,7 +115,7 @@ public class QuotesAdapter extends PagerAdapter {
                     openLoginDialog();
                     return;
                 }
-              likeUtil.handleLike(quote, likeImgView, likeCountBadge);
+                likeUtil.handleLike(quote, likeImgView, likeCountBadge);
             }
         });
         bookMarkBtn.setOnClickListener(new View.OnClickListener() {
@@ -125,68 +125,19 @@ public class QuotesAdapter extends PagerAdapter {
                     openLoginDialog();
                     return;
                 }
-                bookMarkUtil.handleBookMark(quote, bookMarkImgView,true);
+                bookMarkUtil.handleBookMark(quote, bookMarkImgView, true);
             }
         });
         shareBtn.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
-                handleShare(quote, itemView);
+                ShareView.handleShare(context, quote);
             }
         });
         container.addView(itemView);
         return itemView;
     }
 
-    @NonNull
-    private void setQuoteView(View itemView, Quote quote) {
-        TextView quoteText = (TextView) itemView.findViewById(R.id.quote_text);
-        quoteText.setText(quote.text);
-        TextView authorText = (TextView) itemView.findViewById(R.id.quote_author);
-        authorText.setText(quote.author);
-        CircleImageView authorImg = (CircleImageView) itemView.findViewById(R.id.author_image);
-        Author author = QuotesUtil.authors.get(quote.authorId);
-        if (author != null && author.image != null) {
-            setImageFromRef(author.image, authorImg);
-        }
-    }
-
-    private void setImageFromRef(String imageURL, final ImageView view) {
-        StorageReference ref = FirebaseStorage.getInstance().getReferenceFromUrl(imageURL);
-        Glide.with(context)
-                .using(new FirebaseImageLoader())
-                .load(ref)
-                .into(view);
-    }
-
-    private void handleShare(Quote quote, View view) {
-        Analytics.sendShareEvent();
-        boolean resultExternal = Permissions.checkExternalStoragePermission(context);
-        if (resultExternal) {
-            final LayoutInflater inflater = (LayoutInflater)this.context.getSystemService(Context.LAYOUT_INFLATER_SERVICE);
-            final View shareview = inflater.inflate(R.layout.share_quote_layout, null);
-            setQuoteView(shareview, quote);
-            Layout_to_Image layout_to_image=new Layout_to_Image(context,shareview);
-
-            //Bitmap bitmap = getViewBitmap(shareview);
-            Bitmap bitmap = layout_to_image.convert_layout();
-            File imagePath = ShareView.saveBitmap(bitmap);
-            String shareBody = quote.text + "\n-" + quote.author;
-            ShareView.shareIt(context, imagePath, shareBody);
-        }
-    }
-
-    private Bitmap getViewBitmap(View v)
-    {
-        v.measure(RelativeLayout.LayoutParams.MATCH_PARENT, RelativeLayout.LayoutParams.WRAP_CONTENT);
-        int width= v.getMeasuredHeight();
-        int height= v.getMeasuredWidth();
-        Bitmap b = Bitmap.createBitmap(width ,height, Bitmap.Config.ARGB_8888);
-        Canvas c = new Canvas(b);
-        v.layout(0, 0, width, height);
-        v.draw(c);
-        return b;
-    }
 
     @Override
     public void destroyItem(ViewGroup container, int position, Object object) {

@@ -1,6 +1,5 @@
 package com.quotemate.qmate;
 
-import android.graphics.Bitmap;
 import android.os.Bundle;
 import android.support.v4.app.Fragment;
 import android.support.v4.content.ContextCompat;
@@ -9,22 +8,16 @@ import android.support.v7.widget.AppCompatImageView;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
-import android.widget.ImageView;
 import android.widget.TextView;
 
 import com.balysv.materialripple.MaterialRippleLayout;
-import com.bumptech.glide.Glide;
-import com.firebase.ui.storage.images.FirebaseImageLoader;
-import com.google.firebase.storage.FirebaseStorage;
-import com.google.firebase.storage.StorageReference;
 import com.quotemate.qmate.model.Quote;
 import com.quotemate.qmate.util.BookMarkUtil;
+import com.quotemate.qmate.util.GlideUtil;
 import com.quotemate.qmate.util.LikeUtil;
-import com.quotemate.qmate.util.Permissions;
 import com.quotemate.qmate.util.QuotesUtil;
 import com.quotemate.qmate.util.ShareView;
 
-import java.io.File;
 import java.util.Objects;
 
 import de.hdodenhof.circleimageview.CircleImageView;
@@ -79,7 +72,7 @@ public class QuoteDetailFragment extends Fragment {
         Quote quote = null;
         for (Quote item : QuotesUtil.quotes
                 ) {
-            if (Objects.equals(item.id,id)) {
+            if (Objects.equals(item.id, id)) {
                 quote = item;
                 break;
             }
@@ -101,7 +94,7 @@ public class QuoteDetailFragment extends Fragment {
             authorTxt.setText(mQuoteAuthor);
         }
         if (mQuoteAuthorImg != null) {
-            setImageFromRef(mQuoteAuthorImg, imageView);
+            GlideUtil.setImageFromRef(getContext(), mQuoteAuthorImg, imageView);
         }
         MaterialRippleLayout likeBtn = (MaterialRippleLayout) rootView.findViewById(R.id.like_quote_btn);
         final TextView likeCountBadge = (TextView) rootView.findViewById(R.id.badge_like);
@@ -136,28 +129,10 @@ public class QuoteDetailFragment extends Fragment {
         shareBtn.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
-                handleShare(mSelectedQuote, rootView);
+                ShareView.handleShare(getContext(), mSelectedQuote);
             }
         });
         return rootView;
     }
 
-    private void setImageFromRef(String imageURL, final ImageView view) {
-        StorageReference ref = FirebaseStorage.getInstance().getReferenceFromUrl(imageURL);
-        Glide.with(getContext())
-                .using(new FirebaseImageLoader())
-                .load(ref)
-                .into(view);
-    }
-
-    private void handleShare(Quote quote, View view) {
-        boolean resultExternal = Permissions.checkExternalStoragePermission(getContext());
-        if (resultExternal) {
-            Bitmap bitmap = ShareView.takeScreenshot(view);
-            File imagePath = ShareView.saveBitmap(bitmap);
-            String shareBody = quote.text
-                    + "\n-" + quote.author;
-            ShareView.shareIt(getContext(), imagePath, shareBody);
-        }
-    }
 }

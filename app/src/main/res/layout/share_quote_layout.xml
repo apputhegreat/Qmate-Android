@@ -58,7 +58,7 @@
         android:layout_gravity="center"
         android:background="@color/yellowGreen"
         android:paddingBottom="10dp"
-        android:paddingTop="10dp">
+        android:paddingTop="15dp">
 
         <RelativeLayout
             android:id="@+id/icon_title_layout"
@@ -84,15 +84,29 @@
                 android:textSize="22sp" />
         </RelativeLayout>
 
-        <!--<LinearLayout-->
-            <!--android:layout_width="match_parent"-->
-            <!--android:layout_height="wrap_content"-->
-            <!--android:layout_below="@+id/icon_title_layout"-->
-            <!--android:layout_centerHorizontal="true"-->
-            <!--android:gravity="center"-->
-            <!--android:orientation="horizontal">-->
-
-        <!--</LinearLayout>-->
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_below="@+id/icon_title_layout"
+            android:layout_centerHorizontal="true"
+            android:gravity="center"
+            android:paddingTop="15dp"
+            android:orientation="horizontal">
+            <android.support.v7.widget.AppCompatImageView
+                android:layout_width="36dp"
+                android:layout_height="36dp"
+                android:src="@drawable/twitter"/>
+            <android.support.v7.widget.AppCompatImageView
+                android:layout_width="36dp"
+                android:layout_height="36dp"
+                android:layout_marginLeft="25dp"
+                android:layout_marginRight="25dp"
+                android:src="@drawable/instagram"/>
+            <android.support.v7.widget.AppCompatImageView
+                android:layout_width="36dp"
+                android:layout_height="36dp"
+                android:src="@drawable/facebook"/>
+        </LinearLayout>
     </RelativeLayout>
 
 </LinearLayout>
