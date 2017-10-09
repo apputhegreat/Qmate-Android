@@ -1,7 +1,12 @@
 package com.quotemate.qmate.util;
 
+import android.content.Context;
+import android.support.annotation.NonNull;
 import android.util.Log;
+import android.view.View;
+import android.widget.TextView;
 
+import com.bumptech.glide.Glide;
 import com.google.firebase.auth.FirebaseAuth;
 import com.google.firebase.auth.FirebaseUser;
 import com.google.firebase.database.ChildEventListener;
@@ -11,6 +16,7 @@ import com.google.firebase.database.DatabaseReference;
 import com.google.firebase.database.FirebaseDatabase;
 import com.google.firebase.database.ValueEventListener;
 import com.quotemate.qmate.MainActivity;
+import com.quotemate.qmate.R;
 import com.quotemate.qmate.model.Author;
 import com.quotemate.qmate.model.Quote;
 import com.quotemate.qmate.model.User;
@@ -18,6 +24,8 @@ import com.quotemate.qmate.model.User;
 import java.util.ArrayList;
 import java.util.LinkedHashMap;
 import java.util.Objects;
+
+import de.hdodenhof.circleimageview.CircleImageView;
 
 
 /**
@@ -301,5 +309,18 @@ public class QuotesUtil {
 
     private void setQuotes() {
         addQuotesListener(true);
+    }
+
+    @NonNull
+    public static void setQuoteView(Context context, View itemView, Quote quote) {
+        TextView quoteText = (TextView) itemView.findViewById(R.id.quote_text);
+        quoteText.setText(quote.text);
+        TextView authorText = (TextView) itemView.findViewById(R.id.quote_author);
+        authorText.setText(quote.author);
+        CircleImageView authorImg = (CircleImageView) itemView.findViewById(R.id.author_image);
+        Author author = QuotesUtil.authors.get(quote.authorId);
+        if (author != null && author.image != null) {
+           GlideUtil.setImageFromRef(context,author.image, authorImg);
+        }
     }
 }
