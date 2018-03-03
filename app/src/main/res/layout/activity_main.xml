@@ -212,7 +212,7 @@
         android:layout_marginRight="20dp"
         android:gravity="center"
         android:orientation="vertical"
-        android:visibility="visible">
+        android:visibility="gone">
         <TextView
             fontPath="fonts/JosefinSans-SemiBold.ttf"
             android:layout_width="match_parent"
@@ -220,7 +220,7 @@
             android:layout_alignParentTop="true"
             android:gravity="left"
             android:letterSpacing="0.04"
-            android:text="'No quotes found'"
+            android:text="No quotes found"
             android:textAlignment="center"
             android:textColor="@android:color/black"
             android:textSize="32sp"

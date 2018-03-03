@@ -67,7 +67,7 @@ public class ShareView {
 
             Bitmap bitmap = layout_to_image.convert_layout();
             File imagePath = ShareView.saveBitmap(bitmap);
-            String shareBody = quote.text + "\n-" + quote.author;
+            String shareBody = quote.text + "\n-" + quote.author + "\n" + "https://play.google.com/store/apps/details?id=com.quotemate.qmate&hl=en";
             ShareView.shareIt(context, imagePath, shareBody);
         }
     }
