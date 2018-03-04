@@ -226,21 +226,33 @@ public class QuotesUtil {
         return quote;
     }
 
-    private static Quote synchWithUser(Quote quote) {
+    public static Quote synchWithUser(Quote quote) {
         if (User.currentUser != null) {
             if (!User.currentUser.bookMarkedQuoteIds.isEmpty()) {
                 if (User.currentUser.bookMarkedQuoteIds.contains(quote.id)) {
                     quote.isBookMarked = true;
+                } else {
+                    quote.isBookMarked = false;
                 }
             }
             if (!User.currentUser.likedQuoteIds.isEmpty()) {
                 if (User.currentUser.likedQuoteIds.contains(quote.id)) {
                     quote.isLiked = true;
+                } else {
+                    quote.isLiked = false;
                 }
             }
             return quote;
         } else {
             return quote;
+        }
+    }
+
+    public static  void cleanUpUserData() {
+        for ( Quote quote: quotes
+             ) {
+            quote.isLiked = false;
+            quote.isBookMarked = false;
         }
     }
 

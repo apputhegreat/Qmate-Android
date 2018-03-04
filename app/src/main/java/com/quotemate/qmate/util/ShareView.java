@@ -5,9 +5,11 @@ import android.content.Intent;
 import android.graphics.Bitmap;
 import android.net.Uri;
 import android.os.Environment;
+import android.support.v4.content.FileProvider;
 import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
+import android.widget.Toast;
 
 import com.quotemate.qmate.R;
 import com.quotemate.qmate.model.Quote;
@@ -45,7 +47,9 @@ public class ShareView {
     }
 
     public static void shareIt(Context context, File imagePath, String shareBody) {
-        Uri uri = Uri.fromFile(imagePath);
+        Uri uri = FileProvider.getUriForFile(context,
+                context.getString(R.string.file_provider_authority),
+                imagePath);
         Intent sharingIntent = new Intent(android.content.Intent.ACTION_SEND);
         sharingIntent.setType("image/*");
         sharingIntent.putExtra(android.content.Intent.EXTRA_SUBJECT, "Qtoniq");
@@ -56,16 +60,32 @@ public class ShareView {
         context.startActivity(Intent.createChooser(sharingIntent, "Share via"));
     }
 
+    public static Bitmap convertLayout(View view)
+    {
+        view.setDrawingCacheEnabled(true);
+
+        view.measure(View.MeasureSpec.makeMeasureSpec(0, View.MeasureSpec.UNSPECIFIED), View.MeasureSpec.makeMeasureSpec(0, View.MeasureSpec.UNSPECIFIED));
+
+        view.layout(0, 0, view.getMeasuredWidth(), view.getMeasuredHeight());
+
+        view.buildDrawingCache(true);
+
+        Bitmap bMap = Bitmap.createBitmap(view.getDrawingCache());
+
+        return bMap;
+    }
+
+
     public static void handleShare(Context context, Quote quote) {
         Analytics.sendShareEvent();
+        Permissions.requestAppPermissions(context);
         boolean resultExternal = Permissions.checkExternalStoragePermission(context);
         if (resultExternal) {
             final LayoutInflater inflater = (LayoutInflater)context.getSystemService(Context.LAYOUT_INFLATER_SERVICE);
             final View shareview = inflater.inflate(R.layout.share_quote_layout, null);
             QuotesUtil.setQuoteView(context,shareview, quote);
-            Layout_to_Image layout_to_image=new Layout_to_Image(context,shareview);
 
-            Bitmap bitmap = layout_to_image.convert_layout();
+            Bitmap bitmap = ShareView.convertLayout(shareview);
             File imagePath = ShareView.saveBitmap(bitmap);
             String shareBody = quote.text + "\n-" + quote.author + "\n" + "https://play.google.com/store/apps/details?id=com.quotemate.qmate&hl=en";
             ShareView.shareIt(context, imagePath, shareBody);

@@ -50,7 +50,7 @@
                     android:layout_centerVertical="true"
                     android:background="@color/placeHolderColor"
                     android:overlapAnchor="false"
-                    android:popupBackground="@@color/cardColor"
+                    android:popupBackground="@color/cardColor"
                     tools:listitem="@layout/spinner_view"></Spinner>
 
                 <android.support.v7.widget.AppCompatImageView

@@ -15,6 +15,30 @@
       },
       "oauth_client": [
         {
+          "client_id": "886413840216-cesvoo03rrrckrc1p9lve20t4uagafcv.apps.googleusercontent.com",
+          "client_type": 1,
+          "android_info": {
+            "package_name": "com.quotemate.qmate",
+            "certificate_hash": "d984b7b5087730885a5539b3a3ceb632237cdbb3"
+          }
+        },
+        {
+          "client_id": "886413840216-om2ikgvekbbh9c4j61l74c8l3ajhqiuj.apps.googleusercontent.com",
+          "client_type": 1,
+          "android_info": {
+            "package_name": "com.quotemate.qmate",
+            "certificate_hash": "e1c611856156c7edc0e702043f7269d06bc9b7ee"
+          }
+        },
+        {
+          "client_id": "886413840216-ch8in6jr2dfnorv4ivtkq6ne84fdkusr.apps.googleusercontent.com",
+          "client_type": 1,
+          "android_info": {
+            "package_name": "com.quotemate.qmate",
+            "certificate_hash": "00c8404beac701b724e9595b15fa585778a03c19"
+          }
+        },
+        {
           "client_id": "886413840216-hfvk0j7u07ncv347p6us9o6l195vdrhn.apps.googleusercontent.com",
           "client_type": 3
         }
@@ -29,8 +53,13 @@
           "status": 1
         },
         "appinvite_service": {
-          "status": 1,
-          "other_platform_oauth_client": []
+          "status": 2,
+          "other_platform_oauth_client": [
+            {
+              "client_id": "886413840216-hfvk0j7u07ncv347p6us9o6l195vdrhn.apps.googleusercontent.com",
+              "client_type": 3
+            }
+          ]
         },
         "ads_service": {
           "status": 2

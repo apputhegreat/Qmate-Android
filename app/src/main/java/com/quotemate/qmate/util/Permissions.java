@@ -50,4 +50,27 @@ public class Permissions {
             return true;
         }
     }
+    public static void requestAppPermissions(Context context) {
+        if (android.os.Build.VERSION.SDK_INT < Build.VERSION_CODES.LOLLIPOP) {
+            return;
+        }
+
+        if (hasReadPermissions(context) && hasWritePermissions(context)) {
+            return;
+        }
+
+        ActivityCompat.requestPermissions((Activity) context,
+                new String[] {
+                        Manifest.permission.READ_EXTERNAL_STORAGE,
+                        Manifest.permission.WRITE_EXTERNAL_STORAGE,
+                }, 111); // your request code
+    }
+
+    private static boolean hasReadPermissions(Context context) {
+        return (ContextCompat.checkSelfPermission(context, Manifest.permission.READ_EXTERNAL_STORAGE) == PackageManager.PERMISSION_GRANTED);
+    }
+
+    private static boolean hasWritePermissions(Context context) {
+        return (ContextCompat.checkSelfPermission(context, Manifest.permission.WRITE_EXTERNAL_STORAGE) == PackageManager.PERMISSION_GRANTED);
+    }
 }

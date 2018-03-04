@@ -16,7 +16,7 @@ import com.quotemate.qmate.Services.NotificationQOD;
 
 public class AlarmReceiver extends BroadcastReceiver {
     @Override
-    public void onReceive(final Context context, Intent intent) {
+    public void onReceive(final Context context, final Intent intent) {
         FirebaseDatabase.getInstance().getReference("quoteOftheDay/id")
                 .addListenerForSingleValueEvent(new ValueEventListener() {
                     @Override
@@ -32,6 +32,8 @@ public class AlarmReceiver extends BroadcastReceiver {
                                                 String author = dataSnapshot.child("author").getValue().toString();
                                                 Intent intent1 = new Intent(context, NotificationQOD.class);
                                                 intent1.putExtra("body", text + "\n" + "--"+author);
+                                                intent1.putExtra("quoteOftheDay", true);
+                                                intent1.addFlags(Intent.FLAG_ACTIVITY_NEW_TASK | Intent.FLAG_ACTIVITY_CLEAR_TOP);
                                                 context.startService(intent1);
                                             }
                                         }

@@ -75,32 +75,32 @@ public class QuotesAdapter extends PagerAdapter {
 
     @Override
     public boolean isViewFromObject(View view, Object object) {
-        return view == ((LinearLayout) object);
+        return view == object;
     }
 
     @Override
     public Object instantiateItem(ViewGroup container, final int position) {
         final View itemView = layoutInflater.inflate(R.layout.fragment_content, container, false);
         final Quote quote = quotes.get(position);
-        TextView authorText = (TextView) itemView.findViewById(R.id.quote_author);
+        TextView authorText = itemView.findViewById(R.id.quote_author);
         QuotesUtil.setQuoteView(context, itemView, quote);
-        MaterialRippleLayout likeBtn = (MaterialRippleLayout) itemView.findViewById(R.id.like_quote_btn);
-        final TextView likeCountBadge = (TextView) itemView.findViewById(R.id.badge_like);
-        final AppCompatImageView likeImgView = (AppCompatImageView) itemView.findViewById(R.id.like_image);
+        MaterialRippleLayout likeBtn = itemView.findViewById(R.id.like_quote_btn);
+        final TextView likeCountBadge = itemView.findViewById(R.id.badge_like);
+        final AppCompatImageView likeImgView = itemView.findViewById(R.id.like_image);
         if (quote.likes != 0) {
             likeCountBadge.setVisibility(View.VISIBLE);
             likeCountBadge.setText(String.valueOf(quote.likes));
         } else {
             likeCountBadge.setVisibility(View.INVISIBLE);
         }
-        MaterialRippleLayout bookMarkBtn = (MaterialRippleLayout) itemView.findViewById(R.id.book_mark_quote_btn);
-        final AppCompatImageView bookMarkImgView = (AppCompatImageView) itemView.findViewById(R.id.book_mark_img);
-        MaterialRippleLayout shareBtn = (MaterialRippleLayout) itemView.findViewById(R.id.share_quote_btn);
+        MaterialRippleLayout bookMarkBtn = itemView.findViewById(R.id.book_mark_quote_btn);
+        final AppCompatImageView bookMarkImgView = itemView.findViewById(R.id.book_mark_img);
+        MaterialRippleLayout shareBtn = itemView.findViewById(R.id.share_quote_btn);
         if (isQuoteOftheDay) {
-            RelativeLayout actionsLayout = (RelativeLayout) itemView.findViewById(R.id.action_btns_quote);
+            RelativeLayout actionsLayout = itemView.findViewById(R.id.action_btns_quote);
             actionsLayout.setVisibility(View.GONE);
         } else {
-            mIntroUtil.showSwipeInfo(authorText, 500, "Swipe up to view more quotes");
+            mIntroUtil.showSwipeInfo(itemView, 100, "Swipe up to view more quotes");
         }
         if (quote.isBookMarked) {
             bookMarkImgView.setImageDrawable(ContextCompat.getDrawable(context, R.drawable.bookmarked));

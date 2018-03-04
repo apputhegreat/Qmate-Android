@@ -16,4 +16,5 @@
     <string name="title_quote_list">Quotes</string>
     <string name="title_quote_detail">Quote Detail</string>
     <string name="invitation_message">invite your friends</string>
+    <string name="file_provider_authority" translatable="false">ccom.quotemate.qmate.fileprovider</string>
 </resources>

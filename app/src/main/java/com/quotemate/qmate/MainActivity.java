@@ -24,7 +24,6 @@ import android.widget.TextView;
 import android.widget.Toast;
 
 import com.balysv.materialripple.MaterialRippleLayout;
-import com.google.android.gms.ads.AdRequest;
 import com.google.android.gms.ads.doubleclick.PublisherAdRequest;
 import com.google.android.gms.ads.doubleclick.PublisherAdView;
 import com.google.firebase.auth.FirebaseAuth;
@@ -55,6 +54,7 @@ import java.util.Collections;
 
 import me.kaelaela.verticalviewpager.transforms.ZoomOutTransformer;
 import uk.co.chrisjenx.calligraphy.CalligraphyContextWrapper;
+import android.view.Gravity;
 
 import static android.content.Intent.FLAG_ACTIVITY_REORDER_TO_FRONT;
 
@@ -94,6 +94,7 @@ public class MainActivity extends AppCompatActivity {
     private LinearLayout noQuotesLayout;
     private int totalRead = 0;
     private int lastPos = 0;
+    private boolean isRefreshed = false;
     private AppCompatImageView moreBtn;
 
     @Override
@@ -107,15 +108,15 @@ public class MainActivity extends AppCompatActivity {
         handleAuth();
         initProgressBar();
         zoomViewHandle = new Handler();
-        toolBar = (Toolbar) findViewById(R.id.toolbar);
-        moreBtn = (AppCompatImageView) findViewById(R.id.more_btn);
+        toolBar = findViewById(R.id.toolbar);
+        moreBtn = findViewById(R.id.more_btn);
         moreBtn.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
                 gotoProfilePage();
             }
         });
-        searchBar = (TextView) findViewById(R.id.search_bar);
+        searchBar = findViewById(R.id.search_bar);
         searchBar.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
@@ -123,24 +124,24 @@ public class MainActivity extends AppCompatActivity {
             }
         });
 
-        currentAutohrText = (TextView) findViewById(R.id.current_author_text);
-        currentTagText = (TextView) findViewById(R.id.current_tag_text);
+        currentAutohrText = findViewById(R.id.current_author_text);
+        currentTagText = findViewById(R.id.current_tag_text);
 
         //mQuoteOFtheDayLabel = (TextView) findViewById(R.id.quote_of_day_label);
 
         handleAdView();
-        noQuotesLayout = (LinearLayout) findViewById(R.id.no_quotes_view);
-        bottomLayout = (RelativeLayout) findViewById(R.id.bottom_layout);
-        spin = (MaterialRippleLayout) findViewById(R.id.spin);
-        spinTxt = (TextView) findViewById(R.id.spin_text);
-        mSpinTag = (RelativeLayout) findViewById(R.id.tag_spin);
+        noQuotesLayout = findViewById(R.id.no_quotes_view);
+        bottomLayout = findViewById(R.id.bottom_layout);
+        spin = findViewById(R.id.spin);
+        spinTxt = findViewById(R.id.spin_text);
+        mSpinTag = findViewById(R.id.tag_spin);
         mSpinTag.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
                 startSearchActivity();
             }
         });
-        mSpinAuthor = (RelativeLayout) findViewById(R.id.author_spin);
+        mSpinAuthor = findViewById(R.id.author_spin);
         mSpinAuthor.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
@@ -207,11 +208,16 @@ public class MainActivity extends AppCompatActivity {
 
             AlarmManager manager = (AlarmManager) getSystemService(Context.ALARM_SERVICE);
 
+            Calendar mainCalender = Calendar.getInstance();
             Calendar calendar = Calendar.getInstance();
             calendar.setTimeInMillis(System.currentTimeMillis());
-            calendar.set(Calendar.HOUR_OF_DAY, 8);
-            calendar.set(Calendar.MINUTE, 5);
+            calendar.set(Calendar.HOUR_OF_DAY, 7);
+            calendar.set(Calendar.MINUTE, 00);
             calendar.set(Calendar.SECOND, 1);
+
+            if(calendar.before(mainCalender)) {
+                calendar.add(Calendar.DATE,1);
+            }
 
             manager.setRepeating(AlarmManager.RTC_WAKEUP, calendar.getTimeInMillis(),
                     AlarmManager.INTERVAL_DAY, pendingIntent);
@@ -238,14 +244,14 @@ public class MainActivity extends AppCompatActivity {
     }
 
     private void handleAdView() {
-        mAdView = (PublisherAdView) findViewById(R.id.ad_view);
-        PublisherAdRequest adRequest = new PublisherAdRequest.Builder()
-                .addTestDevice(AdRequest.DEVICE_ID_EMULATOR)
-                // Check the LogCat to get your test device dID
-                .addTestDevice("5BF4A0AFE64771B1CB3559898CD956F2")
-                .build();
-        mAdView.loadAd(adRequest);
-        mAdView.setVisibility(View.GONE);
+        long showAds = FirebaseRemoteConfig.getInstance().getLong(Constants.show_ads);
+        if(showAds == 1) {
+            mAdView = findViewById(R.id.ad_view);
+            PublisherAdRequest adRequest = new PublisherAdRequest.Builder()
+                    .build();
+            mAdView.loadAd(adRequest);
+            mAdView.setVisibility(View.VISIBLE);
+        }
     }
 
     private void initProgressBar() {
@@ -274,6 +280,12 @@ public class MainActivity extends AppCompatActivity {
     @Override
     public void onStart() {
         super.onStart();
+        if(!isFirstInstance && !isRefreshed && adapter != null) {
+            viewPager.setAdapter(adapter);
+            adapter.notifyDataSetChanged();
+        }
+        isFirstInstance = false;
+        isRefreshed = false;
     }
 
     @Override
@@ -320,6 +332,22 @@ public class MainActivity extends AppCompatActivity {
     }
 
     @Override
+    protected void onNewIntent(Intent intent) {
+        super.onNewIntent(intent);
+        if(Qtoniq.isConnectedToInternet(this)) {
+            isFirstInstance = true;
+            adapter = null;
+            QuotesUtil.quotes.clear();
+            currentAuthor = QuotesUtil.authors.get("-1");
+            currentTag = "All";
+            currentAutohrText.setText("All");
+            currentTagText.setText("All");
+            initViewPager();
+        }
+    }
+
+
+    @Override
     protected void onActivityResult(int requestCode, int resultCode, Intent data) {
         super.onActivityResult(requestCode, resultCode, data);
         if (requestCode == 100 && resultCode == RESULT_OK) {
@@ -342,12 +370,12 @@ public class MainActivity extends AppCompatActivity {
                 }
             }
             filterQuotesAndUpdateView(authorId, tag, false);
+            isRefreshed = true;
         }
     }
 
     private void filterQuotesAndUpdateView(String authorId, String tag, boolean isSpin) {
         ArrayList<Quote> filteredQuotes = FilterQuotes.getFilteredQuotes(authorId, tag);
-        currentListSize = filteredQuotes.size();
         if (isSpin && filteredQuotes.isEmpty()) {
             filteredQuotes = FilterQuotes.getFilteredQuotes("-1", tag);
             if (filteredQuotes.isEmpty()) {
@@ -381,11 +409,12 @@ public class MainActivity extends AppCompatActivity {
     }
 
     public void initViewPager() {
-        viewPager = (MyVerticalViewPager) findViewById(R.id.vertical_viewpager);
+        viewPager = findViewById(R.id.vertical_viewpager);
         viewPager.setPageTransformer(false, new ZoomOutTransformer());
         viewPager.addOnPageChangeListener(new ViewPager.OnPageChangeListener() {
             @Override
             public void onPageScrolled(int position, float positionOffset, int positionOffsetPixels) {
+
             }
 
             @Override
@@ -397,10 +426,30 @@ public class MainActivity extends AppCompatActivity {
                 if (position > lastPos) {
                     totalRead++;
                 }
-                if (position != 0 && position == currentListSize - 1) {
-                    Toast.makeText(MainActivity.this, "Great! you have read all the quote in this category", Toast.LENGTH_SHORT).show();
-                }
                 lastPos = position;
+                if (position == currentListSize - 1) {
+                    if(currentListSize == 1) {
+                        runOnUiThread(new Runnable() {
+                            @Override
+                            public void run() {
+                                Toast toast = Toast.makeText(MainActivity.this, "Only one quote in this category", Toast.LENGTH_SHORT);
+                                toast.setGravity(Gravity.BOTTOM|Gravity.CENTER_HORIZONTAL, 0, 420);
+                                toast.show();
+                            }
+                        });
+
+                    } else if (position == currentListSize - 1) {
+                        runOnUiThread(new Runnable() {
+                            @Override
+                            public void run() {
+                                Toast toast = Toast.makeText(MainActivity.this, "Great! you have read all the quotes in this category", Toast.LENGTH_SHORT);
+                                toast.setGravity(Gravity.BOTTOM|Gravity.CENTER_HORIZONTAL, 0, 420);
+                                toast.show();
+                            }
+                        });
+
+                    }
+                }
             }
 
             @Override
@@ -440,6 +489,12 @@ public class MainActivity extends AppCompatActivity {
     }
 
     public void updateView(ArrayList<Quote> quotes, Quote quoteOftheDay) {
+        currentListSize = quotes.size();
+        if(currentListSize == 1) {
+            Toast toast = Toast.makeText(MainActivity.this, "Only one quote in this category", Toast.LENGTH_SHORT);
+            toast.setGravity(Gravity.BOTTOM|Gravity.CENTER_HORIZONTAL, 0, 420);
+            toast.show();
+        }
         noQuotesLayout.setVisibility(View.GONE);
         viewPager.setVisibility(View.VISIBLE);
         if (quoteOftheDay != null) {
@@ -518,7 +573,7 @@ public class MainActivity extends AppCompatActivity {
 
     private void handleUpdateApp() {
         updateDialog = new UpdateAppDialog(this).dialog;
-        updateDialog.setCancelable(false);
+        updateDialog.setCancelable(true);
         updateDialog.show();
     }
 }
