@@ -114,7 +114,7 @@ public class ProfileActivity extends AppCompatActivity implements View.OnClickLi
         Analytics.sendInviteEvent();
         Intent sendIntent = new Intent();
         sendIntent.setAction(Intent.ACTION_SEND);
-        sendIntent.putExtra(Intent.EXTRA_TEXT, "A good quote on a bad day can rewrite the journey. Download the 'Qtoniq' app \n" + "app_store_url");
+        sendIntent.putExtra(Intent.EXTRA_TEXT, "A good quote on a bad day can rewrite the journey. Download the 'Qtoniq' app \n" + "https://play.google.com/store/apps/details?id=com.quotemate.qmate&hl=en");
         sendIntent.putExtra(Intent.EXTRA_SUBJECT, getString(R.string.invitation_message));
         sendIntent.setType("text/plain");
         startActivity(Intent.createChooser(sendIntent, "Send to a friend"));
