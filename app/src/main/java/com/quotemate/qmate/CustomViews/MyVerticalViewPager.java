@@ -13,7 +13,7 @@ import me.kaelaela.verticalviewpager.VerticalViewPager;
 
 public class MyVerticalViewPager extends VerticalViewPager {
     private float x1, x2, y1, y2;
-    static final int MIN_DISTANCE = 250;
+    static final int MIN_DISTANCE = 50;
     public MyVerticalViewPager(Context context) {
         super(context);
     }

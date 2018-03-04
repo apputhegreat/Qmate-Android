@@ -13,4 +13,5 @@ public class Constants {
 
     // remote config
     public static final String play_store_version_code = "current_version_code";
+    public static final String show_ads = "SHOW_ADS";
 }

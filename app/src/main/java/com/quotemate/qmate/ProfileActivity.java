@@ -22,6 +22,7 @@ import com.quotemate.qmate.model.User;
 import com.quotemate.qmate.util.Analytics;
 import com.quotemate.qmate.util.Constants;
 import com.quotemate.qmate.util.InviteDialog;
+import com.quotemate.qmate.util.QuotesUtil;
 import com.quotemate.qmate.util.Transitions;
 
 import de.hdodenhof.circleimageview.CircleImageView;
@@ -73,6 +74,7 @@ public class ProfileActivity extends AppCompatActivity implements View.OnClickLi
         inviteButton = (Button) findViewById(R.id.invite_btn);
         inviteButton.setOnClickListener(this);
     }
+
 
     @Override
     public boolean onTouchEvent(MotionEvent event) {
@@ -133,6 +135,7 @@ public class ProfileActivity extends AppCompatActivity implements View.OnClickLi
             if (AccessToken.getCurrentAccessToken() != null) {
                 LoginManager.getInstance().logOut();
             }
+            QuotesUtil.cleanUpUserData();
             handleBackPressed();
         }
     }

@@ -46,6 +46,7 @@ import com.quotemate.qmate.R;
 import com.quotemate.qmate.util.Analytics;
 import com.quotemate.qmate.util.Constants;
 import com.quotemate.qmate.util.CustomProgressBar;
+import com.quotemate.qmate.util.FBUtil;
 import com.quotemate.qmate.util.KeyBoardUtil;
 
 public class FBLoginFragment extends DialogFragment {
@@ -67,6 +68,7 @@ public class FBLoginFragment extends DialogFragment {
                 mProfileTracker = new ProfileTracker() {
                     @Override
                     protected void onCurrentProfileChanged(Profile oldProfile, Profile currentProfile) {
+
                         mProfileTracker.stopTracking();
                     }
                 };
@@ -154,6 +156,7 @@ public class FBLoginFragment extends DialogFragment {
         gloginCustomButton.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
+                FBUtil.NEW_LOGIN = true;
                 signInWithGoogle();
             }
         });
@@ -163,6 +166,7 @@ public class FBLoginFragment extends DialogFragment {
                 if(Qtoniq.isConnectedToInternet(getActivity())) {
                     //showProgress(true, "Logging in with facebook");
                     Analytics.sendFacebookLoginEvent();
+                    FBUtil.NEW_LOGIN = true;
                     loginButton.performClick();
                 } else {
                     Toast.makeText(getActivity(),"No Internet connection",Toast.LENGTH_SHORT).show();

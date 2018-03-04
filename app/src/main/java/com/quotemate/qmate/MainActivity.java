@@ -94,6 +94,7 @@ public class MainActivity extends AppCompatActivity {
     private LinearLayout noQuotesLayout;
     private int totalRead = 0;
     private int lastPos = 0;
+    private boolean isRefreshed = false;
     private AppCompatImageView moreBtn;
 
     @Override
@@ -238,14 +239,18 @@ public class MainActivity extends AppCompatActivity {
     }
 
     private void handleAdView() {
-        mAdView = (PublisherAdView) findViewById(R.id.ad_view);
-        PublisherAdRequest adRequest = new PublisherAdRequest.Builder()
-                .addTestDevice(AdRequest.DEVICE_ID_EMULATOR)
-                // Check the LogCat to get your test device dID
-                .addTestDevice("5BF4A0AFE64771B1CB3559898CD956F2")
-                .build();
-        mAdView.loadAd(adRequest);
-        mAdView.setVisibility(View.GONE);
+        long showAds = FirebaseRemoteConfig.getInstance().getLong(Constants.show_ads);
+        if(showAds != 0) {
+            mAdView = findViewById(R.id.ad_view);
+            PublisherAdRequest adRequest = new PublisherAdRequest.Builder()
+                    .addTestDevice(AdRequest.DEVICE_ID_EMULATOR)
+                    // Check the LogCat to get your test device dID
+                    .addTestDevice("5BF4A0AFE64771B1CB3559898CD956F2")
+                    .build();
+            mAdView.loadAd(adRequest);
+            mAdView.setVisibility(View.VISIBLE);
+        }
+
     }
 
     private void initProgressBar() {
@@ -274,6 +279,12 @@ public class MainActivity extends AppCompatActivity {
     @Override
     public void onStart() {
         super.onStart();
+        if(!isFirstInstance && !isRefreshed) {
+            viewPager.setAdapter(adapter);
+            adapter.notifyDataSetChanged();
+        }
+        isFirstInstance = false;
+        isRefreshed = false;
     }
 
     @Override
@@ -342,6 +353,7 @@ public class MainActivity extends AppCompatActivity {
                 }
             }
             filterQuotesAndUpdateView(authorId, tag, false);
+            isRefreshed = true;
         }
     }
 
@@ -397,7 +409,7 @@ public class MainActivity extends AppCompatActivity {
                 if (position > lastPos) {
                     totalRead++;
                 }
-                if (position != 0 && position == currentListSize - 1) {
+                if (position == currentListSize - 1) {
                     Toast.makeText(MainActivity.this, "Great! you have read all the quote in this category", Toast.LENGTH_SHORT).show();
                 }
                 lastPos = position;

@@ -124,6 +124,8 @@ public class SearchActivity extends AppCompatActivity {
                 ) {
             trendingtagPairList.add(new Pair<>(str,str));
         }
+        trendingauthorPairList.add(new Pair<>("-1", "All"));
+        trendingtagPairList.add(new Pair<>("All", "All"));
 
         // Creating adapter for spinner
         ArrayAdapter<String> dataAdapter = new ArrayAdapter<>(this, R.layout.simple_spinner_item, categories);
